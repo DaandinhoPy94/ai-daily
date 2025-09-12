@@ -497,6 +497,13 @@ export type Database = {
             referencedRelation: "topics"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "fk_articles_hero_image_id"
+            columns: ["hero_image_id"]
+            isOneToOne: false
+            referencedRelation: "media_assets"
+            referencedColumns: ["id"]
+          },
         ]
       }
       authors: {
