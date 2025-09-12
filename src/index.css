@@ -2,39 +2,47 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* AI Dagelijks Design System - FD-inspired layout with modern AI branding */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Page & Layout Colors */
+    --background: 31 17% 96%; /* #F5EFEA warm light beige */
+    --foreground: 0 0% 6.7%; /* #111 dark text */
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 31 17% 97%; /* #F6F0EB card background */
+    --card-foreground: 0 0% 6.7%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 31 17% 97%;
+    --popover-foreground: 0 0% 7%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Brand Colors */
+    --primary: 17 81% 54%; /* #E36B2C salmon/orange accent */
+    --primary-foreground: 0 0% 98%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --accent: 17 81% 54%; /* #E36B2C salmon/orange accent */
+    --accent-foreground: 0 0% 100%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --secondary: 31 17% 94%; /* Lighter card variant */
+    --secondary-foreground: 0 0% 7%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    /* Neutral Grays */
+    --muted: 31 17% 96%; /* Lighter card variant */
+    --muted-foreground: 0 0% 40%; /* #666 muted text */
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    /* Status Colors */
+    --success: 123 38% 32%; /* #2E7D32 up indicator */
+    --destructive: 351 70% 47%; /* #C62828 down indicator */
+    --warning: 0 0% 40%; /* #666 neutral indicator */
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    /* Borders & Interactions */
+    --border: 0 0% 86.7%; /* #DDD */
+    --input: 0 0% 86.7%;
+    --ring: 17 81% 54%; /* Accent for focus rings */
+    --hover-bg: 0 0% 0% / 0.04; /* Hover highlight */
+
+    /* Stocks Bar */
+    --stocks-bg: 31 20% 94%; /* #EFE7E0 */
 
     --radius: 0.5rem;
 
@@ -56,33 +64,38 @@ All colors MUST be HSL.
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    /* Dark Mode Palette */
+    --background: 0 0% 7%; /* Dark background */
+    --foreground: 31 17% 96%; /* Light text */
 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    --card: 0 0% 12%; /* Dark cards */
+    --card-foreground: 31 17% 96%;
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 0 0% 12%;
+    --popover-foreground: 31 17% 96%;
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 31 17% 96%; /* Light text in dark mode */
+    --primary-foreground: 0 0% 7%;
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    --accent: 17 81% 54%; /* Keep same accent */
+    --accent-foreground: 0 0% 100%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --secondary: 0 0% 15%; /* Dark secondary */
+    --secondary-foreground: 31 17% 96%;
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --muted: 0 0% 60%; /* Lighter muted text in dark */
+    --muted-foreground: 0 0% 60%;
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
+    --success: 123 38% 45%; /* Lighter green for dark mode */
+    --destructive: 351 70% 60%; /* Lighter red for dark mode */
+    --warning: 0 0% 60%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
+    --border: 0 0% 20%; /* Dark borders */
+    --input: 0 0% 20%;
+    --ring: 17 81% 54%;
+    --hover-bg: 255 255% 100% / 0.06; /* Light hover in dark mode */
+
+    --stocks-bg: 0 0% 10%; /* Dark stocks bar */
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;
@@ -100,6 +113,142 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans;
+  }
+
+  /* Typography hierarchy */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-serif font-bold leading-tight;
+  }
+
+  /* News card animations */
+  .news-card-image {
+    @apply transition-transform duration-200 ease-in-out;
+  }
+
+  .news-card:hover .news-card-image {
+    @apply scale-102 -translate-y-px;
+  }
+
+  /* Header topic hover effects */
+  .header-topic {
+    @apply relative transition-all duration-150 ease-in-out;
+  }
+
+  .header-topic::after {
+    @apply absolute bottom-0 left-0 w-full h-0.5 bg-accent scale-x-0 transition-transform duration-150 ease-in-out origin-left;
+    content: '';
+  }
+
+  .header-topic:hover::after {
+    @apply scale-x-100;
+  }
+
+  .header-topic:hover {
+    @apply bg-hover-bg shadow-sm;
+  }
+
+  /* Button variants */
+  .btn-subscribe {
+    @apply bg-accent text-accent-foreground px-3 py-2 rounded-md text-sm font-medium transition-colors duration-150 ease-in-out;
+  }
+
+  .btn-subscribe:hover {
+    @apply brightness-90;
+  }
+
+  /* Grid system for news layout */
+  .news-grid {
+    @apply grid grid-cols-1 md:grid-cols-8 lg:grid-cols-12 gap-6;
+  }
+
+  /* Stocks bar styling */
+  .stocks-bar {
+    background: hsl(var(--stocks-bg));
+  }
+}
+
+@layer utilities {
+  /* Grid column utilities for responsive design */
+  .hero-left { 
+    grid-column: span 1;
+  }
+  .hero-middle { 
+    grid-column: span 1;
+  }
+  .hero-right { 
+    grid-column: span 1;
+  }
+  
+  @media (min-width: 768px) {
+    .hero-left { grid-column: span 4; }
+    .hero-middle { grid-column: span 4; }
+    .hero-right { grid-column: span 8; }
+  }
+  
+  @media (min-width: 1024px) {
+    .hero-left { grid-column: span 5; }
+    .hero-middle { grid-column: span 5; }
+    .hero-right { grid-column: span 2; }
+  }
+
+  /* Scale utilities */
+  .scale-102 { transform: scale(1.02); }
+
+  /* Hover background */
+  .hover-bg {
+    background: hsl(var(--hover-bg));
+  }
+
+  /* Line clamp utilities */
+  .line-clamp-1 {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* Scrollbar hide */
+  .scrollbar-none {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Mobile-first safe area support */
+  @supports (padding: env(safe-area-inset-top)) {
+    .safe-top {
+      padding-top: env(safe-area-inset-top);
+    }
+    
+    .safe-bottom {
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+  }
+
+  /* Reduced motion preferences */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
   }
 }
