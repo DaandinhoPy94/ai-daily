@@ -6,8 +6,7 @@ interface Article {
   title: string;
   readTimeMinutes: number;
   topicName?: string;
-  image_path?: string; // Media asset image URL from Supabase storage
-  image_alt?: string; // Media asset alt text
+  image_standard?: string; // Media asset image URL from hero_image_id join
 }
 
 interface ArticleListRowProps {
@@ -16,9 +15,9 @@ interface ArticleListRowProps {
 }
 
 export function ArticleListRow({ article, showDivider = true }: ArticleListRowProps) {
-  const imageUrl = !article.image_path ? 
+  const imageUrl = !article.image_standard || article.image_standard === 'placeholder' ? 
     'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=144&h=144&fit=crop' : 
-    article.image_path;
+    article.image_standard;
   
   return (
     <>
@@ -31,7 +30,7 @@ export function ArticleListRow({ article, showDivider = true }: ArticleListRowPr
           <div className="flex-shrink-0">
             <img
               src={imageUrl}
-              alt={article.image_alt || article.title}
+              alt={article.title}
               className="w-[72px] h-[72px] object-cover rounded-md"
               loading="lazy"
               decoding="async"

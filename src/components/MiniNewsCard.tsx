@@ -6,8 +6,7 @@ interface Article {
   title: string;
   readTimeMinutes: number;
   topicName?: string;
-  image_path?: string; // Media asset image URL from Supabase storage
-  image_alt?: string; // Media asset alt text
+  image_standard?: string; // Media asset image URL from hero_image_id join
 }
 
 interface MiniNewsCardProps {
@@ -15,9 +14,9 @@ interface MiniNewsCardProps {
 }
 
 export function MiniNewsCard({ article }: MiniNewsCardProps) {
-  const imageUrl = !article.image_path ? 
+  const imageUrl = !article.image_standard || article.image_standard === 'placeholder' ? 
     'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400&h=225&fit=crop' : 
-    article.image_path;
+    article.image_standard;
   
   return (
     <Link 
@@ -29,7 +28,7 @@ export function MiniNewsCard({ article }: MiniNewsCardProps) {
         <div className="relative aspect-video mb-2 overflow-hidden rounded-lg">
           <img
             src={imageUrl}
-            alt={article.image_alt || article.title}
+            alt={article.title}
             className="w-full h-full object-cover group-active:scale-[1.01] transition-transform duration-200"
             loading="lazy"
             decoding="async"
