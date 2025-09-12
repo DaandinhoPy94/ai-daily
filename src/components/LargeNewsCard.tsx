@@ -8,7 +8,8 @@ interface Article {
   subtitle?: string; // New subtitle field from Supabase
   readTimeMinutes: number;
   category?: string; // Topic name
-  media_asset?: string; // Media asset image URL
+  image_path?: string; // Media asset image URL from Supabase storage
+  image_alt?: string; // Media asset alt text
 }
 
 interface LargeNewsCardProps {
@@ -17,9 +18,9 @@ interface LargeNewsCardProps {
 }
 
 export function LargeNewsCard({ article, className = '' }: LargeNewsCardProps) {
-  const imageUrl = article.media_asset === 'placeholder' || !article.media_asset ? 
+  const imageUrl = !article.image_path ? 
     'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&h=450&fit=crop' : 
-    article.media_asset;
+    article.image_path;
   
   return (
     <Link 
@@ -31,7 +32,7 @@ export function LargeNewsCard({ article, className = '' }: LargeNewsCardProps) {
         <div className="relative aspect-video mb-3 overflow-hidden rounded-lg">
           <img
             src={imageUrl}
-            alt={article.title}
+            alt={article.image_alt || article.title}
             className="w-full h-full object-cover group-active:scale-[1.01] transition-transform duration-200"
             loading="lazy"
             decoding="async"
