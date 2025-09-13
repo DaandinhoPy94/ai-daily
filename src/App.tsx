@@ -14,11 +14,7 @@ import Profile from "./pages/Profile";
 import Preferences from "./pages/Preferences";
 import MijnNieuws from "./pages/MijnNieuws";
 
-import China from "./pages/China";
-import VS from "./pages/VS";
-import Europa from "./pages/Europa";
-import Research from "./pages/Research";
-import Regelgeving from "./pages/Regelgeving";
+import Topic from "./pages/Topic";
 import RSSFeeds from "./pages/RSSFeeds";
 import Meer from "./pages/Meer";
 import Search from "./pages/Search";
@@ -62,11 +58,7 @@ const App = () => (
               </ProtectedRoute>
             } />
             
-            <Route path="/china" element={<China />} />
-            <Route path="/vs" element={<VS />} />
-            <Route path="/europa" element={<Europa />} />
-            <Route path="/research" element={<Research />} />
-            <Route path="/regelgeving" element={<Regelgeving />} />
+            <Route path="/:slug" element={<Topic />} />
             <Route path="/rss-feeds" element={<RSSFeeds />} />
             <Route path="/search" element={<Search />} />
             <Route path="/meer" element={<Meer />} />

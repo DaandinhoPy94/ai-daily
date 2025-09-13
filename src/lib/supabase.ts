@@ -93,6 +93,73 @@ export async function getTopics() {
   }
 }
 
+// Main topics (type='main')
+export async function getMainTopics() {
+  try {
+    const { data, error } = await (supabase as any)
+      .from('topics')
+      .select('*')
+      .eq('type', 'main')
+      .eq('is_active', true)
+      .order('display_order', { ascending: true });
+    if (error) throw error;
+    return data;
+  } catch (error) {
+    console.error('Error fetching main topics:', error);
+    return [];
+  }
+}
+
+// Subtopics for a main topic
+export async function getSubTopics(parentSlug: string) {
+  try {
+    const { data, error } = await (supabase as any)
+      .from('topics')
+      .select('*')
+      .eq('parent_slug', parentSlug)
+      .eq('is_active', true)
+      .order('display_order', { ascending: true });
+    if (error) throw error;
+    return data;
+  } catch (error) {
+    console.error('Error fetching subtopics:', error);
+    return [];
+  }
+}
+
+// Resolve topic slug using backend function
+export async function resolveTopicSlug(slug: string) {
+  try {
+    const { data, error } = await (supabase as any)
+      .rpc('resolve_topic_slug', { p_slug: slug });
+    if (error) throw error;
+    return data;
+  } catch (error) {
+    console.error('Error resolving topic slug:', error);
+    return slug; // Fallback to original slug
+  }
+}
+
+// Get topic by resolved slug
+export async function getTopicBySlug(slug: string) {
+  try {
+    // First resolve the slug
+    const resolvedSlug = await resolveTopicSlug(slug);
+    
+    const { data, error } = await (supabase as any)
+      .from('topics')
+      .select('*')
+      .eq('slug', resolvedSlug)
+      .eq('is_active', true)
+      .maybeSingle();
+    if (error) throw error;
+    return data;
+  } catch (error) {
+    console.error('Error fetching topic by slug:', error);
+    return null;
+  }
+}
+
 // Article detail by slug
 export async function getArticleBySlug(slug: string) {
   try {

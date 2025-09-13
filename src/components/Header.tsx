@@ -5,24 +5,29 @@ import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { AuthModal } from '@/components/auth/AuthModal';
 import { AccountMenu } from '@/components/auth/AccountMenu';
-
-const navigationItems = [
-  { name: 'Mijn nieuws', path: '/mijn-nieuws' },
-  { name: 'Net binnen', path: '/net-binnen' },
-  { name: 'China', path: '/china' },
-  { name: 'VS', path: '/vs' },
-  { name: 'Europa', path: '/europa' },
-  { name: 'Research', path: '/research' },
-  { name: 'Regelgeving', path: '/regelgeving' }
-];
+import { getMainTopics } from '@/lib/supabase';
 
 export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [mainTopics, setMainTopics] = useState<any[]>([]);
   const [searchParams] = useSearchParams();
   const location = useLocation();
   const { user } = useAuth();
+
+  // Load main topics
+  useEffect(() => {
+    const loadTopics = async () => {
+      try {
+        const topics = await getMainTopics();
+        setMainTopics(topics || []);
+      } catch (error) {
+        console.error('Error loading main topics:', error);
+      }
+    };
+    loadTopics();
+  }, []);
 
   // Check for signin param on mount
   useEffect(() => {
@@ -30,6 +35,16 @@ export function Header() {
       setShowAuthModal(true);
     }
   }, [searchParams, user]);
+
+  // Create navigation items from main topics
+  const navigationItems = [
+    { name: 'Mijn nieuws', path: '/mijn-nieuws' },
+    { name: 'Net binnen', path: '/net-binnen' },
+    ...mainTopics.map(topic => ({ 
+      name: topic.name, 
+      path: `/${topic.slug}` 
+    }))
+  ];
 
 
   return (
