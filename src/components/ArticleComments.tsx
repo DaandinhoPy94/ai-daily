@@ -28,6 +28,156 @@ interface ArticleCommentsProps {
   articleId: string;
 }
 
+interface CommentItemProps {
+  comment: Comment;
+  isReply?: boolean;
+  user: any;
+  replyingTo: string | null;
+  replyContent: string;
+  submitting: boolean;
+  onSetReplyingTo: (commentId: string | null) => void;
+  onSetReplyContent: (content: string) => void;
+  onSubmitReply: (parentId: string) => void;
+  onReaction: (commentId: string, reactionType: 'like' | 'dislike') => void;
+}
+
+function CommentItem({
+  comment,
+  isReply = false,
+  user,
+  replyingTo,
+  replyContent,
+  submitting,
+  onSetReplyingTo,
+  onSetReplyContent,
+  onSubmitReply,
+  onReaction
+}: CommentItemProps) {
+  const currentReplyContent = replyingTo === comment.id ? replyContent : '';
+  
+  return (
+    <div className={`${isReply ? 'ml-8 mt-4' : 'mb-6'} border-b border-border pb-4`}>
+      <div className="flex items-start gap-3">
+        <div className="w-8 h-8 bg-muted rounded-full flex items-center justify-center flex-shrink-0">
+          {comment.author?.avatar_url ? (
+            <img
+              src={comment.author.avatar_url}
+              alt={comment.author.display_name}
+              className="w-8 h-8 rounded-full"
+            />
+          ) : (
+            <span className="text-xs font-medium">
+              {comment.author?.display_name?.charAt(0) || 'A'}
+            </span>
+          )}
+        </div>
+        
+        <div className="flex-1">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="font-medium text-sm">
+              {comment.author?.display_name || 'Anoniem'}
+            </span>
+            <span className="text-xs text-muted-foreground">
+              {formatDistanceToNow(new Date(comment.created_at), { addSuffix: true, locale: nl })}
+            </span>
+          </div>
+          
+          <p className="text-sm mb-3">{comment.content}</p>
+          
+          <div className="flex items-center gap-4 text-xs">
+            {!isReply && (
+              <button
+                onClick={() => onSetReplyingTo(replyingTo === comment.id ? null : comment.id)}
+                className="text-muted-foreground hover:text-foreground transition-colors"
+              >
+                Reageren
+              </button>
+            )}
+            
+            <button
+              onClick={() => onReaction(comment.id, 'like')}
+              className={`flex items-center gap-1 transition-colors ${
+                comment.user_reaction === 'like' 
+                  ? 'text-green-600' 
+                  : 'text-muted-foreground hover:text-foreground'
+              }`}
+              disabled={!user}
+            >
+              <ThumbsUp className="w-4 h-4" />
+              <span>{comment.likes_count}</span>
+            </button>
+            
+            <button
+              onClick={() => onReaction(comment.id, 'dislike')}
+              className={`flex items-center gap-1 transition-colors ${
+                comment.user_reaction === 'dislike' 
+                  ? 'text-red-600' 
+                  : 'text-muted-foreground hover:text-foreground'
+              }`}
+              disabled={!user}
+            >
+              <ThumbsDown className="w-4 h-4" />
+              <span>{comment.dislikes_count}</span>
+            </button>
+          </div>
+
+          {replyingTo === comment.id && user && (
+            <div className="mt-4">
+              <Textarea
+                value={currentReplyContent}
+                onChange={(e) => onSetReplyContent(e.target.value)}
+                placeholder="Schrijf je antwoord..."
+                className="mb-2"
+                rows={3}
+                autoFocus
+              />
+              <div className="flex gap-2">
+                <Button
+                  onClick={() => onSubmitReply(comment.id)}
+                  disabled={!currentReplyContent.trim() || submitting}
+                  size="sm"
+                >
+                  Verstuur
+                </Button>
+                <Button
+                  onClick={() => {
+                    onSetReplyingTo(null);
+                    onSetReplyContent('');
+                  }}
+                  variant="outline"
+                  size="sm"
+                >
+                  Annuleren
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {comment.replies && comment.replies.length > 0 && (
+            <div className="mt-4">
+              {comment.replies.map((reply) => (
+                <CommentItem
+                  key={reply.id}
+                  comment={reply}
+                  isReply
+                  user={user}
+                  replyingTo={replyingTo}
+                  replyContent={replyContent}
+                  submitting={submitting}
+                  onSetReplyingTo={onSetReplyingTo}
+                  onSetReplyContent={onSetReplyContent}
+                  onSubmitReply={onSubmitReply}
+                  onReaction={onReaction}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function ArticleComments({ articleId }: ArticleCommentsProps) {
   const { user, profile } = useAuth();
   const [comments, setComments] = useState<Comment[]>([]);
@@ -222,119 +372,6 @@ export function ArticleComments({ articleId }: ArticleCommentsProps) {
     }
   };
 
-  const CommentItem = ({ comment, isReply = false }: { comment: Comment; isReply?: boolean }) => {
-    const currentReplyContent = replyingTo === comment.id ? replyContent : '';
-    
-    return (
-      <div className={`${isReply ? 'ml-8 mt-4' : 'mb-6'} border-b border-border pb-4`}>
-        <div className="flex items-start gap-3">
-          <div className="w-8 h-8 bg-muted rounded-full flex items-center justify-center flex-shrink-0">
-            {comment.author?.avatar_url ? (
-              <img
-                src={comment.author.avatar_url}
-                alt={comment.author.display_name}
-                className="w-8 h-8 rounded-full"
-              />
-            ) : (
-              <span className="text-xs font-medium">
-                {comment.author?.display_name?.charAt(0) || 'A'}
-              </span>
-            )}
-          </div>
-          
-          <div className="flex-1">
-            <div className="flex items-center gap-2 mb-2">
-              <span className="font-medium text-sm">
-                {comment.author?.display_name || 'Anoniem'}
-              </span>
-              <span className="text-xs text-muted-foreground">
-                {formatDistanceToNow(new Date(comment.created_at), { addSuffix: true, locale: nl })}
-              </span>
-            </div>
-            
-            <p className="text-sm mb-3">{comment.content}</p>
-            
-            <div className="flex items-center gap-4 text-xs">
-              {!isReply && (
-                <button
-                  onClick={() => setReplyingTo(replyingTo === comment.id ? null : comment.id)}
-                  className="text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  Reageren
-                </button>
-              )}
-              
-              <button
-                onClick={() => handleReaction(comment.id, 'like')}
-                className={`flex items-center gap-1 transition-colors ${
-                  comment.user_reaction === 'like' 
-                    ? 'text-green-600' 
-                    : 'text-muted-foreground hover:text-foreground'
-                }`}
-                disabled={!user}
-              >
-                <ThumbsUp className="w-4 h-4" />
-                <span>{comment.likes_count}</span>
-              </button>
-              
-              <button
-                onClick={() => handleReaction(comment.id, 'dislike')}
-                className={`flex items-center gap-1 transition-colors ${
-                  comment.user_reaction === 'dislike' 
-                    ? 'text-red-600' 
-                    : 'text-muted-foreground hover:text-foreground'
-                }`}
-                disabled={!user}
-              >
-                <ThumbsDown className="w-4 h-4" />
-                <span>{comment.dislikes_count}</span>
-              </button>
-            </div>
-
-            {replyingTo === comment.id && user && (
-              <div className="mt-4">
-                <Textarea
-                  ref={replyTextareaRef}
-                  value={currentReplyContent}
-                  onChange={(e) => setReplyContent(e.target.value)}
-                  placeholder="Schrijf je antwoord..."
-                  className="mb-2"
-                  rows={3}
-                />
-                <div className="flex gap-2">
-                  <Button
-                    onClick={() => handleSubmitReply(comment.id)}
-                    disabled={!currentReplyContent.trim() || submitting}
-                    size="sm"
-                  >
-                    Verstuur
-                  </Button>
-                  <Button
-                    onClick={() => {
-                      setReplyingTo(null);
-                      setReplyContent('');
-                    }}
-                    variant="outline"
-                    size="sm"
-                  >
-                    Annuleren
-                  </Button>
-                </div>
-              </div>
-            )}
-
-            {comment.replies && comment.replies.length > 0 && (
-              <div className="mt-4">
-                {comment.replies.map((reply) => (
-                  <CommentItem key={reply.id} comment={reply} isReply />
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-    );
-  };
 
   if (loading) {
     return (
@@ -387,7 +424,18 @@ export function ArticleComments({ articleId }: ArticleCommentsProps) {
       ) : (
         <div className="space-y-6">
           {comments.map((comment) => (
-            <CommentItem key={comment.id} comment={comment} />
+            <CommentItem
+              key={comment.id}
+              comment={comment}
+              user={user}
+              replyingTo={replyingTo}
+              replyContent={replyContent}
+              submitting={submitting}
+              onSetReplyingTo={setReplyingTo}
+              onSetReplyContent={setReplyContent}
+              onSubmitReply={handleSubmitReply}
+              onReaction={handleReaction}
+            />
           ))}
         </div>
       )}
