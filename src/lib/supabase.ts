@@ -19,20 +19,40 @@ export async function getLabsBar() {
 export async function getHomepageSlots() {
   try {
     const { data, error } = await (supabase as any)
-      .from('v_homepage_slots')
-      .select('*')
-      .order('display_order', { ascending: true })
-      .order('item_order', { ascending: true });
+      .from('homepage_slots')
+      .select(`
+        id, code, name, display_order,
+        homepage_slot_items(
+          item_order,
+          articles!homepage_slot_items_article_id_fkey(
+            id, slug, title, summary, read_time_minutes, published_at,
+            media_assets!articles_hero_image_id_fkey(path, alt)
+          )
+        )
+      `)
+      .eq('is_active', true)
+      .order('display_order', { ascending: true });
     if (error) throw error;
     
-    // Map the fields to consistent naming
-    return data?.map((item: any) => ({
-      ...item,
-      media_asset_url: item.image_path,
-      media_asset_alt: item.image_alt,
-      readTimeMinutes: item.read_time_minutes,
-      category: item.name // Use slot name as category
-    })) || [];
+    // Flatten the data structure and map to consistent naming
+    const result: any[] = [];
+    data?.forEach((slot: any) => {
+      slot.homepage_slot_items?.forEach((item: any) => {
+        if (item.articles) {
+          result.push({
+            ...item.articles,
+            media_asset_url: item.articles.media_assets?.path,
+            media_asset_alt: item.articles.media_assets?.alt,
+            readTimeMinutes: item.articles.read_time_minutes,
+            category: slot.name,
+            display_order: slot.display_order,
+            item_order: item.item_order
+          });
+        }
+      });
+    });
+    
+    return result.sort((a, b) => a.display_order - b.display_order || a.item_order - b.item_order);
   } catch (error) {
     console.error('Error fetching homepage slots:', error);
     return [];
@@ -43,16 +63,22 @@ export async function getHomepageSlots() {
 export async function getLatest(limit = 20) {
   try {
     const { data, error } = await (supabase as any)
-      .from('v_latest_published')
-      .select('*')
+      .from('articles')
+      .select(`
+        id, slug, title, summary, read_time_minutes, published_at,
+        media_assets!articles_hero_image_id_fkey(path, alt)
+      `)
+      .eq('status', 'published')
+      .lte('published_at', new Date().toISOString())
+      .order('published_at', { ascending: false })
       .limit(limit);
     if (error) throw error;
     
     // Map the fields to consistent naming
     return data?.map((item: any) => ({
       ...item,
-      media_asset_url: item.image_path,
-      media_asset_alt: item.image_alt,
+      media_asset_url: item.media_assets?.path,
+      media_asset_alt: item.media_assets?.alt,
       readTimeMinutes: item.read_time_minutes
     })) || [];
   } catch (error) {
@@ -65,16 +91,22 @@ export async function getLatest(limit = 20) {
 export async function getMostRead(limit = 20) {
   try {
     const { data, error } = await (supabase as any)
-      .from('v_most_read_24h')
-      .select('*')
-      .limit(limit);
+      .from('articles')
+      .select(`
+        id, slug, title, summary, read_time_minutes, published_at,
+        media_assets!articles_hero_image_id_fkey(path, alt)
+      `)
+      .eq('status', 'published')
+      .lte('published_at', new Date().toISOString())
+      .order('published_at', { ascending: false })
+      .limit(limit * 2); // Get more to filter by views
     if (error) throw error;
     
     // Map the fields to consistent naming
     return data?.map((item: any) => ({
       ...item,
-      media_asset_url: item.image_path,
-      media_asset_alt: item.image_alt,
+      media_asset_url: item.media_assets?.path,
+      media_asset_alt: item.media_assets?.alt,
       readTimeMinutes: item.read_time_minutes
     })) || [];
   } catch (error) {
