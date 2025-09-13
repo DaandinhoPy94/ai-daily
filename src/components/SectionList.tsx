@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useLocation } from 'react-router-dom';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { MobileHeader } from '@/components/MobileHeader';
@@ -34,8 +34,21 @@ interface SectionListProps {
 
 const ARTICLES_PER_PAGE = 30;
 
+// Main topic slugs that should have fixed bottom navigation
+const MAIN_TOPIC_SLUGS = [
+  'onderzoek-ontwikkeling',
+  'technologie-modellen', 
+  'toepassingen',
+  'bedrijven-markt',
+  'geografie-politiek',
+  'veiligheid-regelgeving',
+  'economie-werk',
+  'cultuur-samenleving'
+];
+
 export function SectionList({ title, topicSlug, isWrappedInAppShell = false }: SectionListProps) {
   const [viewType, setViewType] = useState<'mobile' | 'tablet' | 'desktop'>('desktop');
+  const location = useLocation();
 
   useEffect(() => {
     const checkScreenSize = () => {
@@ -197,8 +210,13 @@ export function SectionList({ title, topicSlug, isWrappedInAppShell = false }: S
     return items;
   };
 
+  // Check if current route is a main topic slug
+  const isMainTopicSlug = MAIN_TOPIC_SLUGS.includes(location.pathname.slice(1));
+
   const content = (
-    <div className={`container mx-auto px-4 sm:px-6 lg:px-8 max-w-screen-xl ${isWrappedInAppShell ? 'py-4' : 'py-8'}`}>
+    <div className={`container mx-auto px-4 sm:px-6 lg:px-8 max-w-screen-xl ${isWrappedInAppShell ? 'py-4' : 'py-8'} ${
+      isMainTopicSlug && viewType === 'mobile' ? 'pb-20' : ''
+    }`}>
       {/* Title Section */}
       <div className="mb-8">
         <h1 className="text-3xl sm:text-4xl font-bold font-serif text-foreground mb-4">

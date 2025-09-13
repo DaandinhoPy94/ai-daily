@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Home, Clock, Heart, Zap, MoreHorizontal } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { MeerSheet } from '@/components/MeerSheet';
 
 interface BottomTabBarProps {
@@ -9,10 +9,29 @@ interface BottomTabBarProps {
   viewType?: 'mobile' | 'tablet' | 'desktop';
 }
 
+// Main topic slugs that should have fixed bottom navigation
+const MAIN_TOPIC_SLUGS = [
+  'onderzoek-ontwikkeling',
+  'technologie-modellen', 
+  'toepassingen',
+  'bedrijven-markt',
+  'geografie-politiek',
+  'veiligheid-regelgeving',
+  'economie-werk',
+  'cultuur-samenleving'
+];
+
 export function BottomTabBar({ activeTab = 'Voorpagina', viewType = 'mobile' }: BottomTabBarProps) {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [showMeerSheet, setShowMeerSheet] = useState(false);
+
+  // Check if current route is a main topic slug
+  const isMainTopicSlug = MAIN_TOPIC_SLUGS.includes(location.pathname.slice(1));
+  
+  // Use fixed positioning on tablet/mobile for main topic slug routes
+  const shouldBeFixed = isMainTopicSlug && (viewType === 'mobile' || viewType === 'tablet');
 
   const tabs = [
     { id: 'Voorpagina', label: 'Voorpagina', icon: Home, href: '/' },
@@ -39,7 +58,7 @@ export function BottomTabBar({ activeTab = 'Voorpagina', viewType = 'mobile' }: 
   return (
     <>
       <nav 
-        className="sticky bottom-0 bg-background border-t border-border px-2 z-40"
+        className={`${shouldBeFixed ? 'fixed' : 'sticky'} bottom-0 bg-background border-t border-border px-2 z-40`}
         style={{
           paddingBottom: 'env(safe-area-inset-bottom)',
           height: 'calc(64px + env(safe-area-inset-bottom))'
