@@ -7,6 +7,8 @@ import { Input } from '@/components/ui/input';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
+import { MobileHeader } from '@/components/MobileHeader';
+import { BottomTabBar } from '@/components/BottomTabBar';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { 
@@ -36,6 +38,7 @@ export default function TopicsOverview() {
   const { user } = useAuth();
   const { toast } = useToast();
   
+  const [viewType, setViewType] = useState<'mobile' | 'tablet' | 'desktop'>('desktop');
   const [mainTopics, setMainTopics] = useState<TopicWithSubs[]>([]);
   const [followedTopicIds, setFollowedTopicIds] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
@@ -45,6 +48,24 @@ export default function TopicsOverview() {
   const [searchQuery, setSearchQuery] = useState('');
   
   const [pendingFollows, setPendingFollows] = useState<Set<string>>(new Set());
+
+  // Responsive viewport detection  
+  useEffect(() => {
+    const checkScreenSize = () => {
+      const width = window.innerWidth;
+      if (width < 768) {
+        setViewType('mobile');
+      } else if (width >= 768 && width <= 1024) {
+        setViewType('tablet');
+      } else {
+        setViewType('desktop');
+      }
+    };
+
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, []);
 
   // Fetch topics and follow status
   useEffect(() => {
@@ -179,22 +200,8 @@ export default function TopicsOverview() {
   const defaults = getDefaultSEO();
   const canonical = buildCanonical('/topic');
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-background">
-        <Header />
-        <main className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-screen-xl py-8">
-          <div className="flex items-center justify-center py-12">
-            <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent motion-reduce:animate-[spin_1.5s_linear_infinite]"></div>
-          </div>
-        </main>
-        <Footer />
-      </div>
-    );
-  }
-
-  return (
-    <div className="min-h-screen bg-background">
+  const pageContent = (
+    <>
       <Helmet>
         <html lang="nl" />
         <title>Alle AI onderwerpen - {defaults.siteName}</title>
@@ -208,8 +215,6 @@ export default function TopicsOverview() {
         <meta name="twitter:title" content="Alle AI onderwerpen" />
         <meta name="twitter:description" content="Ontdek alle AI onderwerpen en categorieën. Volg de onderwerpen die jou interesseren." />
       </Helmet>
-
-      <Header />
 
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-screen-xl py-8">
         {/* Control Block - Sticky */}
@@ -256,8 +261,15 @@ export default function TopicsOverview() {
           </div>
         )}
 
+        {/* Loading State */}
+        {loading && (
+          <div className="flex items-center justify-center py-12">
+            <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent motion-reduce:animate-[spin_1.5s_linear_infinite]"></div>
+          </div>
+        )}
+
         {/* Topics Content */}
-        {filteredTopics.length === 0 ? (
+        {!loading && (filteredTopics.length === 0 ? (
           // Empty State
           <Card>
             <CardContent className="text-center py-12">
@@ -351,9 +363,29 @@ export default function TopicsOverview() {
               </Card>
             ))}
           </div>
-        )}
+        ))}
       </main>
+    </>
+  );
 
+  // Mobile & Tablet: Use MobileHeader + BottomTabBar
+  if (viewType === 'mobile' || viewType === 'tablet') {
+    return (
+      <>
+        <div className="min-h-screen bg-background" style={{ paddingBottom: 'calc(64px + env(safe-area-inset-bottom))' }}>
+          <MobileHeader />
+          {pageContent}
+        </div>
+        <BottomTabBar viewType={viewType} />
+      </>
+    );
+  }
+
+  // Desktop: Use regular Header + Footer
+  return (
+    <div className="min-h-screen bg-background">
+      <Header />
+      {pageContent}
       <Footer />
     </div>
   );
