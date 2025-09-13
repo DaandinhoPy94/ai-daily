@@ -1,3 +1,5 @@
+console.log('ARTICLE:', article);
+
 import { Link } from 'react-router-dom';
 
 interface Article {
