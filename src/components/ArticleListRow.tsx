@@ -6,7 +6,8 @@ interface Article {
   title: string;
   readTimeMinutes: number;
   topicName?: string;
-  image_standard?: string; // Media asset image URL from hero_image_id join
+  image_path?: string; // Media asset image URL from hero_image_id join
+  imagePath?: string; // Alternative field name used by some data sources
 }
 
 interface ArticleListRowProps {
@@ -15,9 +16,10 @@ interface ArticleListRowProps {
 }
 
 export function ArticleListRow({ article, showDivider = true }: ArticleListRowProps) {
-  const imageUrl = !article.image_standard || article.image_standard === 'placeholder' ? 
+  const imagePath = article.image_path || article.imagePath;
+  const imageUrl = !imagePath || imagePath === 'placeholder' ? 
     'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=144&h=144&fit=crop' : 
-    article.image_standard;
+    imagePath;
   
   return (
     <>
