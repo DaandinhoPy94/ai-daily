@@ -17,7 +17,8 @@ interface Article {
   summary?: string;
   readTimeMinutes: number;
   topicName?: string;
-  imagePath?: string;
+  media_asset_url?: string;
+  media_asset_alt?: string;
 }
 
 interface Ticker {
@@ -60,7 +61,8 @@ export default function MobileIndex({ isWrappedInAppShell = false }: MobileIndex
           summary: item.summary,
           readTimeMinutes: item.read_time_minutes || 5,
           topicName: item.topic_name,
-          imagePath: item.image_path
+          media_asset_url: item.media_asset_url,
+          media_asset_alt: item.media_asset_alt
         }));
 
         // Transform latest data and exclude articles already used in most read
@@ -74,7 +76,8 @@ export default function MobileIndex({ isWrappedInAppShell = false }: MobileIndex
             title: item.title,
             readTimeMinutes: item.read_time_minutes || 5,
             topicName: item.topic_name,
-            imagePath: item.image_path
+            media_asset_url: item.media_asset_url,
+            media_asset_alt: item.media_asset_alt
           }));
 
         // Get first active topic section
@@ -93,7 +96,8 @@ export default function MobileIndex({ isWrappedInAppShell = false }: MobileIndex
             title: article.title,
             readTimeMinutes: article.read_time_minutes || 5,
             topicName: firstSection.topic_name,
-            imagePath: article.image_path
+            media_asset_url: article.media_asset_url,
+            media_asset_alt: article.media_asset_alt
           }));
         }
 
