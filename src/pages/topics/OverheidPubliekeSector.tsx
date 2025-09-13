@@ -5,8 +5,6 @@ import { MobileHeader } from '@/components/MobileHeader';
 import { BottomTabBar } from '@/components/BottomTabBar';
 import { Footer } from '@/components/Footer';
 import { TabletAppShell } from '@/components/TabletAppShell';
-import { NewsCard } from '@/components/NewsCard';
-import { gridArticles } from '@/data/mockData';
 
 export default function OverheidPubliekeSector() {
   const [viewType, setViewType] = useState<'mobile' | 'tablet' | 'desktop'>('mobile');
@@ -44,14 +42,13 @@ export default function OverheidPubliekeSector() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {gridArticles.slice(2, 9).map((article, index) => (
-            <NewsCard 
-              key={`${article.slug}-${index}`} 
-              article={article} 
-              variant="standard" 
-            />
-          ))}
+        <div className="text-center py-12">
+          <p className="text-muted-foreground text-lg">
+            Er zijn momenteel geen artikelen beschikbaar voor dit onderwerp.
+          </p>
+          <p className="text-muted-foreground text-sm mt-2">
+            Bekijk alle AI-nieuws op onze <a href="/" className="text-primary hover:underline">homepage</a>.
+          </p>
         </div>
       </div>
     </main>
