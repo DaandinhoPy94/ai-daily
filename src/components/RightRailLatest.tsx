@@ -20,6 +20,7 @@ export function RightRailLatest({ articles }: RightRailLatestProps) {
   return (
     <aside className="sticky top-24 bg-card border border-border rounded-lg p-4 lg:p-5">
       <h2 className="text-lg font-bold font-serif mb-4">Het laatste nieuws</h2>
+      <div className="h-px bg-border mb-4"></div>
       
       <div className="space-y-3">
         {articles.slice(0, 5).map((article, index) => (
