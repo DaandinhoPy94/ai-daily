@@ -24,7 +24,15 @@ export async function getHomepageSlots() {
       .order('display_order', { ascending: true })
       .order('item_order', { ascending: true });
     if (error) throw error;
-    return data;
+    
+    // Map the fields to consistent naming
+    return data?.map((item: any) => ({
+      ...item,
+      media_asset_url: item.image_path,
+      media_asset_alt: item.image_alt,
+      readTimeMinutes: item.read_time_minutes,
+      category: item.name // Use slot name as category
+    })) || [];
   } catch (error) {
     console.error('Error fetching homepage slots:', error);
     return [];
@@ -39,7 +47,14 @@ export async function getLatest(limit = 20) {
       .select('*')
       .limit(limit);
     if (error) throw error;
-    return data;
+    
+    // Map the fields to consistent naming
+    return data?.map((item: any) => ({
+      ...item,
+      media_asset_url: item.image_path,
+      media_asset_alt: item.image_alt,
+      readTimeMinutes: item.read_time_minutes
+    })) || [];
   } catch (error) {
     console.error('Error fetching latest:', error);
     return [];
@@ -54,7 +69,14 @@ export async function getMostRead(limit = 20) {
       .select('*')
       .limit(limit);
     if (error) throw error;
-    return data;
+    
+    // Map the fields to consistent naming
+    return data?.map((item: any) => ({
+      ...item,
+      media_asset_url: item.image_path,
+      media_asset_alt: item.image_alt,
+      readTimeMinutes: item.read_time_minutes
+    })) || [];
   } catch (error) {
     console.error('Error fetching most read:', error);
     return [];
@@ -175,6 +197,17 @@ export async function getArticleBySlug(slug: string) {
       .eq('status', 'published')
       .maybeSingle();
     if (error) throw error;
+    
+    // Map media_assets fields to consistent naming if data exists
+    if (data && data.media_assets) {
+      return {
+        ...data,
+        media_asset_url: data.media_assets.path,
+        media_asset_alt: data.media_assets.alt,
+        readTimeMinutes: data.read_time_minutes
+      };
+    }
+    
     return data;
   } catch (error) {
     console.error('Error fetching article:', error);
@@ -212,7 +245,16 @@ export async function searchArticles(query: string, options: { limit?: number; o
     });
 
     if (error) throw error;
-    return { data: data || [], error: null };
+    
+    // Map the fields to consistent naming for search results
+    const mappedData = data?.map((item: any) => ({
+      ...item,
+      media_asset_url: null, // Search doesn't return images yet, fallback will be used
+      media_asset_alt: null,
+      readTimeMinutes: item.read_time_minutes
+    })) || [];
+    
+    return { data: mappedData, error: null };
   } catch (error) {
     console.error('Search error:', error);
     return { data: [], error };
