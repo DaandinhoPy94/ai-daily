@@ -1,11 +1,6 @@
 import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
 
-interface Ticker {
-  symbol: string;
-  value: string;
-  delta: string;
-  direction: 'up' | 'down' | 'flat';
-}
+import { Ticker } from '@/types';
 
 interface MobileStocksStripProps {
   tickers: Ticker[];

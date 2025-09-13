@@ -7,14 +7,14 @@ interface StocksBarProps {
 
 export function StocksBar({ tickers }: StocksBarProps) {
   const getTrendIcon = (ticker: Ticker) => {
-    if (ticker.isUp) return <TrendingUp className="h-3 w-3 text-success" />;
-    if (ticker.isDown) return <TrendingDown className="h-3 w-3 text-destructive" />;
+    if (ticker.direction === 'up') return <TrendingUp className="h-3 w-3 text-success" />;
+    if (ticker.direction === 'down') return <TrendingDown className="h-3 w-3 text-destructive" />;
     return <Minus className="h-3 w-3 text-warning" />;
   };
 
   const getTrendColor = (ticker: Ticker) => {
-    if (ticker.isUp) return 'text-success';
-    if (ticker.isDown) return 'text-destructive';
+    if (ticker.direction === 'up') return 'text-success';
+    if (ticker.direction === 'down') return 'text-destructive';
     return 'text-warning';
   };
 

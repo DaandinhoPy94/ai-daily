@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { StockProvider } from "@/contexts/StockProvider";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import ResponsiveIndex from "./pages/ResponsiveIndex";
@@ -33,39 +34,41 @@ const App = () => (
         disableTransitionOnChange
       >
         <AuthProvider>
-          <TooltipProvider>
-            <Toaster />
-            <Sonner />
-          <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<ResponsiveIndex />} />
-            <Route path="/artikel/:slug" element={<ArticleDetail />} />
-            <Route path="/net-binnen" element={<NetBinnen />} />
-            <Route path="/auth/callback" element={<AuthCallback />} />
-            <Route path="/profile" element={
-              <ProtectedRoute>
-                <Profile />
-              </ProtectedRoute>
-            } />
-            <Route path="/preferences" element={
-              <ProtectedRoute>
-                <Preferences />
-              </ProtectedRoute>
-            } />
-            <Route path="/mijn-nieuws" element={
-              <ProtectedRoute>
-                <MijnNieuws />
-              </ProtectedRoute>
-            } />
-            
-            <Route path="/:slug" element={<Topic />} />
-            <Route path="/rss-feeds" element={<RSSFeeds />} />
-            <Route path="/search" element={<Search />} />
-            <Route path="/meer" element={<Meer />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-          </BrowserRouter>
-        </TooltipProvider>
+          <StockProvider>
+            <TooltipProvider>
+              <Toaster />
+              <Sonner />
+            <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<ResponsiveIndex />} />
+              <Route path="/artikel/:slug" element={<ArticleDetail />} />
+              <Route path="/net-binnen" element={<NetBinnen />} />
+              <Route path="/auth/callback" element={<AuthCallback />} />
+              <Route path="/profile" element={
+                <ProtectedRoute>
+                  <Profile />
+                </ProtectedRoute>
+              } />
+              <Route path="/preferences" element={
+                <ProtectedRoute>
+                  <Preferences />
+                </ProtectedRoute>
+              } />
+              <Route path="/mijn-nieuws" element={
+                <ProtectedRoute>
+                  <MijnNieuws />
+                </ProtectedRoute>
+              } />
+              
+              <Route path="/:slug" element={<Topic />} />
+              <Route path="/rss-feeds" element={<RSSFeeds />} />
+              <Route path="/search" element={<Search />} />
+              <Route path="/meer" element={<Meer />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+            </BrowserRouter>
+          </TooltipProvider>
+        </StockProvider>
       </AuthProvider>
     </ThemeProvider>
     </HelmetProvider>

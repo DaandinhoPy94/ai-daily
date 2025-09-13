@@ -7,12 +7,12 @@ import chipMacro from '../assets/ai-chip-macro.jpg';
 import controlRoom from '../assets/ai-control-room.jpg';
 
 export const tickers: Ticker[] = [
-  { symbol: "AEX", value: "896.62", delta: "-0.76%", isDown: true },
-  { symbol: "AMX", value: "921.47", delta: "-1.01%", isDown: true },
-  { symbol: "BTC", value: "108,658", delta: "-3.03%", isDown: true },
-  { symbol: "S&P FUT", value: "6,474.00", delta: "-0.69%", isDown: true },
-  { symbol: "EUR/USD", value: "1.1686", delta: "+0.05%", isUp: true },
-  { symbol: "OIL", value: "67.45", delta: "-0.74%", isDown: true }
+  { symbol: "AEX", value: "896.62", delta: "-0.76%", direction: "down" },
+  { symbol: "AMX", value: "921.47", delta: "-1.01%", direction: "down" },
+  { symbol: "BTC", value: "108,658", delta: "-3.03%", direction: "down" },
+  { symbol: "S&P FUT", value: "6,474.00", delta: "-0.69%", direction: "down" },
+  { symbol: "EUR/USD", value: "1.1686", delta: "+0.05%", direction: "up" },
+  { symbol: "OIL", value: "67.45", delta: "-0.74%", direction: "down" }
 ];
 
 export const heroArticles: NewsArticle[] = [

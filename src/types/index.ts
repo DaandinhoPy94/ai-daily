@@ -2,8 +2,7 @@ export interface Ticker {
   symbol: string;
   value: string;
   delta: string;
-  isUp?: boolean;
-  isDown?: boolean;
+  direction: 'up' | 'down' | 'flat';
 }
 
 export interface NewsArticle {
