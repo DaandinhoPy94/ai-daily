@@ -18,6 +18,10 @@ interface LargeNewsCardProps {
 }
 
 export function LargeNewsCard({ article, className = '' }: LargeNewsCardProps) {
+  // Log entire article object to verify media_asset_url is present
+  console.log('LargeNewsCard article object:', article);
+  console.log('LargeNewsCard media_asset_url:', article.media_asset_url);
+  
   const imageUrl = article.media_asset_url || 
     'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&h=450&fit=crop';
   

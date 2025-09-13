@@ -115,17 +115,25 @@ export default function Index() {
   });
 
   // Helper function to convert homepage slot for LargeNewsCard
-  const slotToLargeNewsCard = (slot: HomepageSlot) => ({
-    id: slot.article_id,
-    slug: slot.slug,
-    title: slot.title,
-    summary: slot.summary,
-    subtitle: slot.summary, // Using summary as subtitle for now
-    readTimeMinutes: slot.read_time_minutes,
-    category: slot.name, // Use the slot name as category
-    media_asset_url: slot.media_asset_url,
-    media_asset_alt: slot.media_asset_alt
-  });
+  const slotToLargeNewsCard = (slot: HomepageSlot) => {
+    const article = {
+      id: slot.article_id,
+      slug: slot.slug,
+      title: slot.title,
+      summary: slot.summary,
+      subtitle: slot.summary, // Using summary as subtitle for now
+      readTimeMinutes: slot.read_time_minutes,
+      category: slot.name, // Use the slot name as category
+      media_asset_url: slot.media_asset_url,
+      media_asset_alt: slot.media_asset_alt
+    };
+    
+    // Log to verify media_asset_url is filled
+    console.log('Index.tsx - slotToLargeNewsCard article:', article);
+    console.log('Index.tsx - media_asset_url check:', slot.media_asset_url);
+    
+    return article;
+  };
 
   // Group homepage slots by code
   const heroSlots = homepageSlots.filter(slot => slot.code === 'hero').sort((a, b) => a.item_order - b.item_order);
