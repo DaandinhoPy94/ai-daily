@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { X, Folder } from 'lucide-react';
+import { X, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { SearchBar } from '@/components/SearchBar';
@@ -68,8 +68,6 @@ export function MeerSheet({ isOpen, onClose, viewType }: MeerSheetProps) {
     onClose();
   };
 
-  const gridCols = viewType === 'mobile' ? 'grid-cols-2' : 'grid-cols-3';
-
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
       <SheetContent 
@@ -116,24 +114,19 @@ export function MeerSheet({ isOpen, onClose, viewType }: MeerSheetProps) {
                 />
               </div>
             ) : (
-              /* Topics Grid */
+              /* Topics List */
               <div className="p-4">
-                <h3 className="text-sm font-medium text-muted-foreground mb-4 uppercase tracking-wide">
-                  Hoofdonderwerpen
-                </h3>
-                <div className={`grid ${gridCols} gap-3`}>
+                <div className="space-y-1">
                   {mainTopics.map((topic) => (
                     <button
                       key={topic.slug}
                       onClick={() => handleTopicClick(topic.slug)}
-                      className="flex flex-col items-center p-4 bg-card border border-border rounded-lg hover:bg-accent/10 active:bg-accent/20 transition-colors"
+                      className="flex items-center justify-between w-full p-4 hover:bg-muted/50 rounded-lg transition-colors text-left"
                     >
-                      <div className="w-12 h-12 bg-muted rounded-lg flex items-center justify-center mb-3">
-                        <Folder className="w-6 h-6 text-muted-foreground" />
+                      <div>
+                        <span className="text-foreground font-medium">{topic.name}</span>
                       </div>
-                      <span className="text-sm font-medium text-center leading-tight">
-                        {topic.name}
-                      </span>
+                      <ChevronRight className="h-5 w-5 text-muted-foreground" />
                     </button>
                   ))}
                 </div>
