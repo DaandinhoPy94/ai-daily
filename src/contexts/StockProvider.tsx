@@ -25,19 +25,18 @@ export function StockProvider({ children }: StockProviderProps) {
     let direction: 'up' | 'down' | 'flat' = 'flat';
     let delta = '-';
     
-    if (prevValue && prevValue > 0) {
-      const absoluteChange = latestValue - prevValue;
-      const percentChange = (absoluteChange / prevValue) * 100;
+    if (prevValue !== null && prevValue !== 0) {
+      const percentChange = ((latestValue - prevValue) / prevValue) * 100;
       
-      if (absoluteChange > 0) {
+      if (percentChange > 0) {
         direction = 'up';
-        delta = `+${absoluteChange.toFixed(2)} (+${percentChange.toFixed(2)}%)`;
-      } else if (absoluteChange < 0) {
+        delta = `+${percentChange.toFixed(2)}%`;
+      } else if (percentChange < 0) {
         direction = 'down';
-        delta = `${absoluteChange.toFixed(2)} (${percentChange.toFixed(2)}%)`;
+        delta = `${percentChange.toFixed(2)}%`;
       } else {
         direction = 'flat';
-        delta = '0.00 (0.00%)';
+        delta = '0.00%';
       }
     }
 
