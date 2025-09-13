@@ -294,13 +294,12 @@ export function ArticleComments({ articleId }: ArticleCommentsProps) {
             {replyingTo === comment.id && user && (
               <div className="mt-4">
                 <Textarea
-                  key={`reply-${comment.id}`}
+                  ref={replyTextareaRef}
                   value={currentReplyContent}
                   onChange={(e) => setReplyContent(e.target.value)}
                   placeholder="Schrijf je antwoord..."
                   className="mb-2"
                   rows={3}
-                  autoFocus
                 />
                 <div className="flex gap-2">
                   <Button
