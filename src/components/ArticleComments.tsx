@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { ThumbsUp, ThumbsDown, MessageCircle } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -37,6 +37,17 @@ export function ArticleComments({ articleId }: ArticleCommentsProps) {
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
   const [replyContent, setReplyContent] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const replyTextareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Focus the reply textarea when replying starts
+  useEffect(() => {
+    if (replyingTo && replyTextareaRef.current) {
+      // Use setTimeout to ensure the textarea is rendered before focusing
+      setTimeout(() => {
+        replyTextareaRef.current?.focus();
+      }, 0);
+    }
+  }, [replyingTo]);
 
   const fetchComments = async () => {
     try {
@@ -280,6 +291,7 @@ export function ArticleComments({ articleId }: ArticleCommentsProps) {
           {replyingTo === comment.id && user && (
             <div className="mt-4">
               <Textarea
+                ref={replyTextareaRef}
                 value={replyContent}
                 onChange={(e) => setReplyContent(e.target.value)}
                 placeholder="Schrijf je antwoord..."
