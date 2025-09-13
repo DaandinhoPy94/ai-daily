@@ -22,6 +22,8 @@ import AiJobs from "./pages/AiJobs";
 import LmArena from "./pages/LmArena";
 
 import Topic from "./pages/Topic";
+import TopicPage from "./pages/TopicPage";
+import TopicsRedirect from "./pages/TopicsRedirect";
 import RSSFeeds from "./pages/RSSFeeds";
 import Meer from "./pages/Meer";
 import Search from "./pages/Search";
@@ -131,6 +133,13 @@ const App = () => (
               
               {/* Topics Overview */}
               <Route path="/topic" element={<TopicsOverview />} />
+              
+              {/* New topic page route */}
+              <Route path="/topic/:slug" element={<TopicPage />} />
+              
+              {/* Redirect old topics routes */}
+              <Route path="/topics/:slug" element={<TopicsRedirect />} />
+              <Route path="/topics" element={<TopicsRedirect />} />
               
               <Route path="/:slug" element={<Topic />} />
               <Route path="/rss-feeds" element={<RSSFeeds />} />

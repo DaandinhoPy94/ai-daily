@@ -11,37 +11,37 @@ const topicColumns = [
     title: 'Technologie & Modellen',
     href: '/technologie-modellen',
     items: [
-      { title: 'Text-to-Text (LLMs)', href: '/topics/text-to-text-llms' },
-      { title: 'Text-to-Image', href: '/topics/text-to-image' },
-      { title: 'Text-to-Speech / Speech-to-Text', href: '/topics/text-to-speech-speech-to-text' },
-      { title: 'Text-to-Video / 3D', href: '/topics/text-to-video-3d' },
-      { title: 'Robotics & Embodied AI', href: '/topics/robotics-embodied-ai' }
+      { title: 'Text-to-Text (LLMs)', href: '/topic/text-to-text-llms' },
+      { title: 'Text-to-Image', href: '/topic/text-to-image' },
+      { title: 'Text-to-Speech / Speech-to-Text', href: '/topic/text-to-speech-speech-to-text' },
+      { title: 'Text-to-Video / 3D', href: '/topic/text-to-video-3d' },
+      { title: 'Robotics & Embodied AI', href: '/topic/robotics-embodied-ai' }
     ]
   },
   {
     title: 'Toepassingen',
     href: '/toepassingen',
     items: [
-      { title: 'Gezondheidszorg', href: '/topics/gezondheidszorg' },
-      { title: 'Financiën & Business', href: '/topics/financien-business' },
-      { title: 'Creatieve industrie', href: '/topics/creatieve-industrie' },
-      { title: 'Onderwijs & Training', href: '/topics/onderwijs-training' },
-      { title: 'Overheid & Publieke sector', href: '/topics/overheid-publieke-sector' }
+      { title: 'Gezondheidszorg', href: '/topic/gezondheidszorg' },
+      { title: 'Financiën & Business', href: '/topic/financien-business' },
+      { title: 'Creatieve industrie', href: '/topic/creatieve-industrie' },
+      { title: 'Onderwijs & Training', href: '/topic/onderwijs-training' },
+      { title: 'Overheid & Publieke sector', href: '/topic/overheid-publieke-sector' }
     ]
   },
   {
     title: 'Onderzoek & Ontwikkeling',
     href: '/onderzoek-ontwikkeling',
     items: [
-      { title: 'AI-onderzoekslabs', href: '/topics/ai-onderzoekslabs' },
-      { title: 'Academische publicaties', href: '/topics/academische-publicaties' },
-      { title: 'Modeldoorbraken', href: '/topics/modeldoorbraken' }
+      { title: 'AI-onderzoekslabs', href: '/topic/ai-onderzoekslabs' },
+      { title: 'Academische publicaties', href: '/topic/academische-publicaties' },
+      { title: 'Modeldoorbraken', href: '/topic/modeldoorbraken' }
     ],
     secondarySection: {
       title: 'Cultuur & Samenleving',
       href: '/cultuur-samenleving',
       items: [
-        { title: 'Publiek debat & cultuur', href: '/topics/publiek-debat-cultuur' }
+        { title: 'Publiek debat & cultuur', href: '/topic/publiek-debat-cultuur' }
       ]
     }
   },
@@ -49,16 +49,16 @@ const topicColumns = [
     title: 'Bedrijven & Markt',
     href: '/bedrijven-markt',
     items: [
-      { title: 'Big Tech', href: '/topics/big-tech' },
-      { title: 'Startups & Scale-ups', href: '/topics/startups-scale-ups' },
-      { title: 'Chipmakers & Infrastructuur', href: '/topics/chipmakers-infrastructuur' }
+      { title: 'Big Tech', href: '/topic/big-tech' },
+      { title: 'Startups & Scale-ups', href: '/topic/startups-scale-ups' },
+      { title: 'Chipmakers & Infrastructuur', href: '/topic/chipmakers-infrastructuur' }
     ],
     secondarySection: {
       title: 'Economie & Werk',
       href: '/economie-werk',
       items: [
-        { title: 'Arbeidsmarkt & Skills', href: '/topics/arbeidsmarkt-skills' },
-        { title: 'Productiviteit & Automatisering', href: '/topics/productiviteit-automatisering' }
+        { title: 'Arbeidsmarkt & Skills', href: '/topic/arbeidsmarkt-skills' },
+        { title: 'Productiviteit & Automatisering', href: '/topic/productiviteit-automatisering' }
       ]
     }
   },
@@ -66,17 +66,17 @@ const topicColumns = [
     title: 'Geografie & Politiek',
     href: '/geografie-politiek',
     items: [
-      { title: 'Verenigde Staten', href: '/topics/verenigde-staten' },
-      { title: 'Europa', href: '/topics/europa' },
-      { title: 'Azië', href: '/topics/azie' }
+      { title: 'Verenigde Staten', href: '/topic/verenigde-staten' },
+      { title: 'Europa', href: '/topic/europa' },
+      { title: 'Azië', href: '/topic/azie' }
     ],
     secondarySection: {
       title: 'Veiligheid & Regelgeving',
       href: '/veiligheid-regelgeving',
       items: [
-        { title: 'AI Safety & Alignment', href: '/topics/ai-safety-alignment' },
-        { title: 'Ethiek & Bias', href: '/topics/ethiek-bias' },
-        { title: 'Militair & Cyber', href: '/topics/militair-cyber' }
+        { title: 'AI Safety & Alignment', href: '/topic/ai-safety-alignment' },
+        { title: 'Ethiek & Bias', href: '/topic/ethiek-bias' },
+        { title: 'Militair & Cyber', href: '/topic/militair-cyber' }
       ]
     }
   },
