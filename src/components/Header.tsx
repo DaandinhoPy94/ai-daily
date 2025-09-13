@@ -36,8 +36,19 @@ export function Header() {
     }
   }, [searchParams, user]);
 
-  // Create navigation items from main topics
-  const navigationItems = [
+  // Desktop navigation items (fixed structure)
+  const desktopNavigationItems = [
+    { name: 'Mijn nieuws', path: '/mijn-nieuws' },
+    { name: 'Net binnen', path: '/net-binnen' },
+    { name: 'Topics', path: '/topic' },
+    { name: 'Nieuwsbrief', path: '/nieuwsbrief' },
+    { name: 'AI Cursussen', path: '/ai-cursussen' },
+    { name: 'Geabonneerd', path: '/geabonneerd' },
+    { name: 'Profiel', path: '/profiel' }
+  ];
+
+  // Mobile navigation items (using main topics from database)
+  const mobileNavigationItems = [
     { name: 'Mijn nieuws', path: '/mijn-nieuws' },
     { name: 'Net binnen', path: '/net-binnen' },
     ...mainTopics.map(topic => ({ 
@@ -71,8 +82,11 @@ export function Header() {
 
             {/* Center: Navigation (hidden on mobile) */}
             <nav className="hidden md:flex items-center space-x-1">
-              {navigationItems.map((item) => {
-                const isActive = location.pathname === item.path;
+              {desktopNavigationItems.map((item) => {
+                const isActive = location.pathname === item.path || 
+                  (item.path === '/topic' && location.pathname.startsWith('/topic/')) ||
+                  (item.path === '/nieuwsbrief' && location.pathname === '/nieuwsbrief') ||
+                  (item.path === '/ai-cursussen' && location.pathname === '/ai-cursussen');
                 return (
                   <Link
                     key={item.path}
@@ -183,7 +197,7 @@ export function Header() {
             </div>
             
             <nav className="p-4">
-              {navigationItems.map((item) => {
+              {mobileNavigationItems.map((item) => {
                 const isActive = location.pathname === item.path;
                 return (
                   <Link
