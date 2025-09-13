@@ -33,7 +33,7 @@ export function RightRailLatest({ articles }: RightRailLatestProps) {
                 <span className="text-xs text-muted-foreground font-mono flex-shrink-0 mt-0.5">
                   {formatTime(article.published_at)}
                 </span>
-                <h3 className="text-sm leading-snug group-hover:underline">
+                <h3 className="text-sm leading-snug font-sans group-hover:underline">
                   {article.title}
                 </h3>
               </div>
