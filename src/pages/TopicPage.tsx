@@ -258,15 +258,8 @@ export default function TopicPage() {
     </div>
   );
 
-  if (viewType === 'tablet') {
-    return (
-      <TabletAppShell viewType="tablet">
-        {content}
-      </TabletAppShell>
-    );
-  }
-
-  if (viewType === 'mobile') {
+  // Mobile & Tablet: Use MobileHeader + BottomTabBar
+  if (viewType === 'mobile' || viewType === 'tablet') {
     return (
       <>
         <div className="min-h-screen bg-background" style={{ paddingBottom: 'calc(64px + env(safe-area-inset-bottom))' }}>
@@ -275,7 +268,7 @@ export default function TopicPage() {
             {content}
           </main>
         </div>
-        <BottomTabBar viewType="mobile" />
+        <BottomTabBar viewType={viewType} />
       </>
     );
   }
