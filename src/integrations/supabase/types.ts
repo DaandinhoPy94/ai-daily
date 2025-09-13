@@ -1058,6 +1058,39 @@ export type Database = {
         }
         Relationships: []
       }
+      topic_aliases: {
+        Row: {
+          created_at: string
+          from_slug: string
+          to_slug: string
+        }
+        Insert: {
+          created_at?: string
+          from_slug: string
+          to_slug: string
+        }
+        Update: {
+          created_at?: string
+          from_slug?: string
+          to_slug?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "topic_aliases_to_slug_fkey"
+            columns: ["to_slug"]
+            isOneToOne: false
+            referencedRelation: "topics"
+            referencedColumns: ["slug"]
+          },
+          {
+            foreignKeyName: "topic_aliases_to_slug_fkey"
+            columns: ["to_slug"]
+            isOneToOne: false
+            referencedRelation: "v_topic_sections_cards"
+            referencedColumns: ["topic_slug"]
+          },
+        ]
+      }
       topic_section_pins: {
         Row: {
           article_id: string
@@ -1159,7 +1192,9 @@ export type Database = {
           id: string
           is_active: boolean
           name: string
+          parent_slug: string | null
           slug: string
+          type: Database["public"]["Enums"]["topic_type"] | null
           updated_at: string
         }
         Insert: {
@@ -1169,7 +1204,9 @@ export type Database = {
           id?: string
           is_active?: boolean
           name: string
+          parent_slug?: string | null
           slug: string
+          type?: Database["public"]["Enums"]["topic_type"] | null
           updated_at?: string
         }
         Update: {
@@ -1179,10 +1216,27 @@ export type Database = {
           id?: string
           is_active?: boolean
           name?: string
+          parent_slug?: string | null
           slug?: string
+          type?: Database["public"]["Enums"]["topic_type"] | null
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "topics_parent_slug_fkey"
+            columns: ["parent_slug"]
+            isOneToOne: false
+            referencedRelation: "topics"
+            referencedColumns: ["slug"]
+          },
+          {
+            foreignKeyName: "topics_parent_slug_fkey"
+            columns: ["parent_slug"]
+            isOneToOne: false
+            referencedRelation: "v_topic_sections_cards"
+            referencedColumns: ["topic_slug"]
+          },
+        ]
       }
       user_preferences: {
         Row: {
@@ -1218,6 +1272,21 @@ export type Database = {
       }
     }
     Views: {
+      topics_resolved: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          display_order: number | null
+          id: string | null
+          is_active: boolean | null
+          name: string | null
+          parent_slug: string | null
+          slug: string | null
+          type: Database["public"]["Enums"]["topic_type"] | null
+          updated_at: string | null
+        }
+        Relationships: []
+      }
       v_article_views_24h: {
         Row: {
           article_id: string | null
@@ -1274,30 +1343,14 @@ export type Database = {
       v_latest_published: {
         Row: {
           id: string | null
+          image_alt: string | null
+          image_path: string | null
           published_at: string | null
           read_time_minutes: number | null
           slug: string | null
           summary: string | null
           title: string | null
           topic_id: string | null
-        }
-        Insert: {
-          id?: string | null
-          published_at?: string | null
-          read_time_minutes?: number | null
-          slug?: string | null
-          summary?: string | null
-          title?: string | null
-          topic_id?: string | null
-        }
-        Update: {
-          id?: string | null
-          published_at?: string | null
-          read_time_minutes?: number | null
-          slug?: string | null
-          summary?: string | null
-          title?: string | null
-          topic_id?: string | null
         }
         Relationships: [
           {
@@ -1312,6 +1365,8 @@ export type Database = {
       v_most_read_24h: {
         Row: {
           id: string | null
+          image_alt: string | null
+          image_path: string | null
           published_at: string | null
           slug: string | null
           summary: string | null
@@ -1479,6 +1534,10 @@ export type Database = {
         }
         Returns: number
       }
+      resolve_topic_slug: {
+        Args: { p_slug: string }
+        Returns: string
+      }
       schema_overview: {
         Args: { schema_name?: string }
         Returns: Json
@@ -1592,6 +1651,7 @@ export type Database = {
         | "future"
         | "ai_lab"
         | "public_company"
+      topic_type: "main" | "sub"
       user_role: "reader" | "contributor" | "editor" | "admin"
     }
     CompositeTypes: {
@@ -1733,6 +1793,7 @@ export const Constants = {
         "ai_lab",
         "public_company",
       ],
+      topic_type: ["main", "sub"],
       user_role: ["reader", "contributor", "editor", "admin"],
     },
   },
