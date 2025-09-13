@@ -19,17 +19,32 @@ export function StockProvider({ children }: StockProviderProps) {
 
   // Transform database ticker data to component format
   const transformTicker = (dbTicker: any): Ticker => {
-    const value = parseFloat(dbTicker.last_value?.toString() || '0');
-    const pctChange = parseFloat(dbTicker.pct_change?.toString() || '0');
+    const latestValue = parseFloat(dbTicker.latest_value?.toString() || '0');
+    const prevValue = parseFloat(dbTicker.prev_value?.toString() || '0');
     
     let direction: 'up' | 'down' | 'flat' = 'flat';
-    if (pctChange > 0) direction = 'up';
-    else if (pctChange < 0) direction = 'down';
+    let delta = '-';
+    
+    if (prevValue && prevValue > 0) {
+      const absoluteChange = latestValue - prevValue;
+      const percentChange = (absoluteChange / prevValue) * 100;
+      
+      if (absoluteChange > 0) {
+        direction = 'up';
+        delta = `+${absoluteChange.toFixed(2)} (+${percentChange.toFixed(2)}%)`;
+      } else if (absoluteChange < 0) {
+        direction = 'down';
+        delta = `${absoluteChange.toFixed(2)} (${percentChange.toFixed(2)}%)`;
+      } else {
+        direction = 'flat';
+        delta = '0.00 (0.00%)';
+      }
+    }
 
     return {
       symbol: dbTicker.symbol,
-      value: `$${value.toFixed(2)}`,
-      delta: pctChange !== 0 ? `${pctChange > 0 ? '+' : ''}${pctChange.toFixed(2)}%` : '0.00%',
+      value: `$${latestValue.toFixed(2)}`,
+      delta,
       direction
     };
   };
@@ -38,9 +53,9 @@ export function StockProvider({ children }: StockProviderProps) {
   const fetchTickers = async () => {
     try {
       const { data, error } = await supabase
-        .from('v_ticker_latest')
+        .from('ticker_with_prev' as any)
         .select('*')
-        .order('display_order', { ascending: true });
+        .order('symbol', { ascending: true });
 
       if (error) throw error;
       
@@ -56,6 +71,11 @@ export function StockProvider({ children }: StockProviderProps) {
   useEffect(() => {
     // Fetch initial data
     fetchTickers();
+
+    // Set up periodic updates every minute
+    const intervalId = setInterval(() => {
+      fetchTickers();
+    }, 60000); // 60 seconds
 
     // Subscribe to real-time updates on ticker_quotes table
     const channel = supabase
@@ -77,6 +97,7 @@ export function StockProvider({ children }: StockProviderProps) {
       .subscribe();
 
     return () => {
+      clearInterval(intervalId);
       supabase.removeChannel(channel);
     };
   }, []);

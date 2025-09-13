@@ -7,7 +7,8 @@ import { TopicBlock } from '../components/TopicBlock';
 import { BottomTabBar } from '../components/BottomTabBar';
 import { SectionSpacer } from '../components/SectionSpacer';
 import { Skeleton } from '../components/ui/skeleton';
-import { getMostRead, getLatest, getTopicSections, getLabsBar } from '../lib/supabase';
+import { getMostRead, getLatest, getTopicSections } from '../lib/supabase';
+import { useStocks } from '../contexts/StockProvider';
 
 interface Article {
   id: string;
@@ -35,9 +36,9 @@ export default function MobileIndex({ isWrappedInAppShell = false }: MobileIndex
   const [latest, setLatest] = useState<Article[]>([]);
   const [topicHeading, setTopicHeading] = useState('');
   const [topicCards, setTopicCards] = useState<Article[]>([]);
-  const [tickers, setTickers] = useState<Ticker[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { tickers } = useStocks();
 
   useEffect(() => {
     async function fetchData() {
@@ -45,11 +46,10 @@ export default function MobileIndex({ isWrappedInAppShell = false }: MobileIndex
         setLoading(true);
 
         // Fetch all data in parallel
-        const [mostReadData, latestData, topicSectionsData, tickersData] = await Promise.all([
+        const [mostReadData, latestData, topicSectionsData] = await Promise.all([
           getMostRead(2),
           getLatest(11), // Get 11 to exclude 2 used in mostRead
-          getTopicSections(),
-          getLabsBar()
+          getTopicSections()
         ]);
 
         // Transform most read data
@@ -97,19 +97,10 @@ export default function MobileIndex({ isWrappedInAppShell = false }: MobileIndex
           }));
         }
 
-        // Transform ticker data
-        const tickerItems: Ticker[] = (tickersData || []).slice(0, 5).map((item: any) => ({
-          symbol: item.symbol,
-          value: item.last_value?.toString() || '0',
-          delta: item.pct_change ? `${item.pct_change > 0 ? '+' : ''}${item.pct_change.toFixed(2)}%` : '0%',
-          direction: item.pct_change > 0 ? 'up' : item.pct_change < 0 ? 'down' : 'flat'
-        }));
-
         setMostRead(mostReadArticles);
         setLatest(latestArticles);
         setTopicHeading(heading);
         setTopicCards(topicArticles);
-        setTickers(tickerItems);
 
       } catch (err) {
         console.error('Error fetching mobile homepage data:', err);

@@ -7,9 +7,10 @@ import { LargeNewsCard } from '../components/LargeNewsCard';
 import { StocksBar } from '../components/StocksBar';
 import { RightRail } from '../components/RightRail';
 import { TopicSection } from '../components/TopicSection';
-import { getHomepageSlots, getTopicSections, getLatest, getMostRead, getLabsBar } from '../lib/supabase';
-import { NewsArticle, RightRailItem, TopicSection as TopicSectionType, Ticker } from '../types';
+import { getHomepageSlots, getTopicSections, getLatest, getMostRead } from '../lib/supabase';
+import { NewsArticle, RightRailItem, TopicSection as TopicSectionType } from '../types';
 import { getDefaultSEO, buildCanonical } from '../lib/seo';
+import { useStocks } from '../contexts/StockProvider';
 
 interface HomepageSlot {
   article_id: string;
@@ -31,9 +32,9 @@ export default function Index() {
   const [topicSections, setTopicSections] = useState<any[]>([]);
   const [netBinnenItems, setNetBinnenItems] = useState<RightRailItem[]>([]);
   const [meestGelezenItems, setMeestGelezenItems] = useState<RightRailItem[]>([]);
-  const [tickers, setTickers] = useState<Ticker[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { tickers } = useStocks();
 
   useEffect(() => {
     async function fetchData() {
@@ -41,12 +42,11 @@ export default function Index() {
         setLoading(true);
         
         // Fetch all data in parallel
-        const [slotsData, sectionsData, latestData, mostReadData, tickersData] = await Promise.all([
+        const [slotsData, sectionsData, latestData, mostReadData] = await Promise.all([
           getHomepageSlots(),
           getTopicSections(),
           getLatest(20),
-          getMostRead(20),
-          getLabsBar()
+          getMostRead(20)
         ]);
 
         console.log('Homepage slots data:', slotsData);
@@ -77,17 +77,6 @@ export default function Index() {
 
         setNetBinnenItems(latestItems);
         setMeestGelezenItems(mostReadItems);
-
-        // Transform ticker data
-        const tickerItems: Ticker[] = (tickersData || []).map((item: any) => ({
-          symbol: item.symbol,
-          value: item.last_value?.toString() || '0',
-          delta: item.pct_change ? `${item.pct_change > 0 ? '+' : ''}${item.pct_change.toFixed(2)}%` : '0%',
-          isUp: item.pct_change > 0,
-          isDown: item.pct_change < 0
-        }));
-        
-        setTickers(tickerItems);
         
       } catch (err) {
         console.error('Error fetching homepage data:', err);
