@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, startTransition } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { searchArticles, SearchResult, formatSearchDate } from '@/lib/search';
 import { Clock, ExternalLink } from 'lucide-react';
@@ -19,31 +19,81 @@ export function SearchSuggestions({
 }: SearchSuggestionsProps) {
   const [suggestions, setSuggestions] = useState<SearchResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [showMinimalLoader, setShowMinimalLoader] = useState(false);
   const navigate = useNavigate();
+  const abortControllerRef = useRef<AbortController | null>(null);
+  const timeoutRef = useRef<NodeJS.Timeout>();
 
   useEffect(() => {
+    // Clear timeouts
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+
+    // Abort previous request
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+
     if (!query.trim()) {
-      setSuggestions([]);
+      startTransition(() => {
+        setSuggestions([]);
+        setIsLoading(false);
+        setShowMinimalLoader(false);
+      });
       return;
     }
 
     const searchForSuggestions = async () => {
-      setIsLoading(true);
+      // Create new abort controller for this search
+      const abortController = new AbortController();
+      abortControllerRef.current = abortController;
+
       try {
+        // Show minimal loader only if we don't have existing results or after a delay
+        if (suggestions.length === 0) {
+          setIsLoading(true);
+        } else {
+          // For subsequent searches, show subtle indicator
+          timeoutRef.current = setTimeout(() => {
+            if (!abortController.signal.aborted) {
+              setShowMinimalLoader(true);
+            }
+          }, 150);
+        }
+
         const { data } = await searchArticles(query, { limit: maxResults });
-        setSuggestions(data);
+        
+        if (!abortController.signal.aborted) {
+          startTransition(() => {
+            setSuggestions(data);
+            setIsLoading(false);
+            setShowMinimalLoader(false);
+          });
+        }
       } catch (error) {
-        console.error('Search suggestions error:', error);
-        setSuggestions([]);
-      } finally {
-        setIsLoading(false);
+        if (!abortController.signal.aborted) {
+          console.error('Search suggestions error:', error);
+          // Don't clear suggestions on error - keep previous results
+          startTransition(() => {
+            setIsLoading(false);
+            setShowMinimalLoader(false);
+          });
+        }
       }
     };
 
-    // Debounce search
-    const timeoutId = setTimeout(searchForSuggestions, 200);
-    return () => clearTimeout(timeoutId);
-  }, [query, maxResults]);
+    // Debounce search with shorter delay for mobile
+    const timeoutId = setTimeout(searchForSuggestions, 250);
+    timeoutRef.current = timeoutId;
+
+    return () => {
+      clearTimeout(timeoutId);
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
+  }, [query, maxResults, suggestions.length]);
 
   const handleSuggestionClick = (suggestion: SearchResult) => {
     navigate(`/artikel/${suggestion.slug}`);
@@ -57,7 +107,15 @@ export function SearchSuggestions({
   return (
     <div className={`absolute top-full left-0 right-0 z-50 mt-2 ${className}`}>
       <Card className="max-h-96 overflow-y-auto shadow-lg border-border bg-background">
-        {isLoading ? (
+        {/* Minimal loading indicator */}
+        {(showMinimalLoader || (isLoading && suggestions.length === 0)) && (
+          <div className="absolute top-2 right-2 z-10">
+            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
+          </div>
+        )}
+        
+        {/* Show results or empty state - never completely hide content */}
+        {isLoading && suggestions.length === 0 ? (
           <div className="p-4 text-center">
             <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary mx-auto"></div>
             <p className="text-sm text-muted-foreground mt-2">Zoeken...</p>

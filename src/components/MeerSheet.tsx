@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import { useState, useRef, startTransition } from 'react';
 import { X, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { SearchBar } from '@/components/SearchBar';
 import { SearchResults } from '@/components/SearchResults';
 import { useNavigate } from 'react-router-dom';
-import { searchArticles } from '@/lib/supabase';
+import { searchArticles } from '@/lib/search';
 
 interface MeerSheetProps {
   isOpen: boolean;
@@ -29,34 +29,77 @@ export function MeerSheet({ isOpen, onClose, viewType }: MeerSheetProps) {
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [searchError, setSearchError] = useState<any>(null);
+  const [showMinimalLoader, setShowMinimalLoader] = useState(false);
   const navigate = useNavigate();
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   const handleSearch = async (query: string) => {
-    setSearchQuery(query);
+    // Abort previous search
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+
+    startTransition(() => {
+      setSearchQuery(query);
+    });
+
     if (!query.trim()) {
-      setSearchResults([]);
-      setSearchError(null);
+      startTransition(() => {
+        setSearchResults([]);
+        setSearchError(null);
+        setIsSearching(false);
+        setShowMinimalLoader(false);
+      });
       return;
     }
 
-    setIsSearching(true);
-    setSearchError(null);
+    // Create new abort controller
+    const abortController = new AbortController();
+    abortControllerRef.current = abortController;
+
     try {
-      const results = await searchArticles(query);
-      setSearchResults(results.data || []);
+      // For mobile, show minimal loader to avoid flicker
+      if (searchResults.length === 0) {
+        setIsSearching(true);
+      } else {
+        setShowMinimalLoader(true);
+      }
+      
+      setSearchError(null);
+
+      const results = await searchArticles(query, { limit: 20 });
+      
+      if (!abortController.signal.aborted) {
+        startTransition(() => {
+          setSearchResults(results.data || []);
+          setIsSearching(false);
+          setShowMinimalLoader(false);
+        });
+      }
     } catch (error) {
-      console.error('Search error:', error);
-      setSearchResults([]);
-      setSearchError(error);
-    } finally {
-      setIsSearching(false);
+      if (!abortController.signal.aborted) {
+        console.error('Search error:', error);
+        // Don't clear results on error to prevent flicker
+        startTransition(() => {
+          setSearchError(error);
+          setIsSearching(false);
+          setShowMinimalLoader(false);
+        });
+      }
     }
   };
 
   const handleClearSearch = () => {
-    setSearchQuery('');
-    setSearchResults([]);
-    setSearchError(null);
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    startTransition(() => {
+      setSearchQuery('');
+      setSearchResults([]);
+      setSearchError(null);
+      setIsSearching(false);
+      setShowMinimalLoader(false);
+    });
   };
 
   const handleTopicClick = (topicSlug: string) => {
@@ -105,12 +148,19 @@ export function MeerSheet({ isOpen, onClose, viewType }: MeerSheetProps) {
           <div className="flex-1 overflow-y-auto">
             {searchQuery.trim() ? (
               /* Search Results */
-              <div className="p-4">
+              <div className="p-4 relative">
+                {/* Minimal loading indicator */}
+                {showMinimalLoader && (
+                  <div className="absolute top-2 right-2 z-10">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
+                  </div>
+                )}
                 <SearchResults
                   results={searchResults}
                   isLoading={isSearching}
                   error={searchError}
                   query={searchQuery}
+                  searchType="text"
                   onResultClick={handleSearchResultClick}
                 />
               </div>
