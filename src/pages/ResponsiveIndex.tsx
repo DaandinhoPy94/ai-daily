@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import Index from './Index';
 import MobileIndex from './MobileIndex';
 import { TabletAppShell } from '@/components/TabletAppShell';
-import { StocksTickerProvider } from '@/components/StocksTickerProvider';
 
 export default function ResponsiveIndex() {
   const [viewType, setViewType] = useState<'mobile' | 'tablet' | 'desktop'>('desktop');
@@ -30,24 +29,14 @@ export default function ResponsiveIndex() {
 
   // Render based on screen size
   if (viewType === 'mobile') {
-    return (
-      <StocksTickerProvider viewType="mobile">
-        <MobileIndex />
-      </StocksTickerProvider>
-    );
+    return <MobileIndex />;
   } else if (viewType === 'tablet') {
     return (
       <TabletAppShell viewType="tablet" activeTab="Voorpagina">
-        <StocksTickerProvider viewType="mobile">
-          <MobileIndex isWrappedInAppShell={true} />
-        </StocksTickerProvider>
+        <MobileIndex isWrappedInAppShell={true} />
       </TabletAppShell>
     );
   } else {
-    return (
-      <StocksTickerProvider viewType="desktop">
-        <Index />
-      </StocksTickerProvider>
-    );
+    return <Index />;
   }
 }
