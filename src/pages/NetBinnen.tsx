@@ -23,7 +23,7 @@ interface Article {
   title: string;
   published_at: string;
   readTimeMinutes: number;
-  imagePath?: string;
+  media_asset_url?: string;
 }
 
 const ARTICLES_PER_PAGE = 30;
@@ -94,7 +94,7 @@ export default function NetBinnen() {
         title: article.title,
         published_at: article.published_at,
         readTimeMinutes: article.read_time_minutes,
-        imagePath: article.media_assets?.path,
+        media_asset_url: article.media_assets?.path,
       })) || [];
 
       setArticles(formattedArticles);

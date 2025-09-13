@@ -6,7 +6,7 @@ interface Article {
   title: string;
   readTimeMinutes: number;
   topicName?: string;
-  imagePath?: string;
+  media_asset_url?: string;
 }
 
 interface TopicBlockProps {

@@ -391,8 +391,8 @@ export default function ArticleDetail() {
 
           <ArticleImage article={{
             title: article.title,
-            image_path: article.hero_image?.path,
-            image_alt: article.hero_image?.alt,
+            media_asset_url: article.hero_image?.path,
+            media_asset_alt: article.hero_image?.alt,
             image_large: article.image_large,
             image_standard: article.image_standard,
             image_mobile: article.image_mobile,

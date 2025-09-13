@@ -6,8 +6,8 @@ interface Article {
   title: string;
   readTimeMinutes: number;
   topicName?: string;
-  image_path?: string; // Media asset image URL from hero_image_id join
-  imagePath?: string; // Alternative field name used by some data sources
+  media_asset_url?: string; // Media asset image URL from media_asset table
+  media_asset_alt?: string; // Media asset alt text from media_asset table
 }
 
 interface ArticleListRowProps {
@@ -16,10 +16,8 @@ interface ArticleListRowProps {
 }
 
 export function ArticleListRow({ article, showDivider = true }: ArticleListRowProps) {
-  const imagePath = article.image_path || article.imagePath;
-  const imageUrl = !imagePath || imagePath === 'placeholder' ? 
-    'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=144&h=144&fit=crop' : 
-    imagePath;
+  const imageUrl = article.media_asset_url || 
+    'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=144&h=144&fit=crop';
   
   return (
     <>
@@ -32,7 +30,7 @@ export function ArticleListRow({ article, showDivider = true }: ArticleListRowPr
           <div className="flex-shrink-0">
             <img
               src={imageUrl}
-              alt={article.title}
+              alt={article.media_asset_alt || article.title}
               className="w-[72px] h-[72px] object-cover rounded-md"
               loading="lazy"
               decoding="async"
