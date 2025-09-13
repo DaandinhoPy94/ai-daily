@@ -16,6 +16,11 @@ interface LargeNewsCardProps {
   article: Article;
   className?: string;
 }
+
+export function LargeNewsCard({ article, className = '' }: LargeNewsCardProps) {
+  const imageUrl = !article.image_path ? 
+    'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&h=450&fit=crop' : 
+    article.image_path;
   
   return (
     <Link 
