@@ -12,6 +12,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Upload } from 'lucide-react';
+import { Switch } from '@/components/ui/switch';
 import { toast } from '@/hooks/use-toast';
 
 export default function Profile() {
@@ -42,6 +43,8 @@ export default function Profile() {
     display_name: profile?.display_name || '',
     avatar_url: profile?.avatar_url || '',
   });
+  
+  const [newsletterEnabled, setNewsletterEnabled] = useState(false);
 
   if (!user || !profile) {
     return (
@@ -122,33 +125,46 @@ export default function Profile() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            <div className="flex items-center space-x-4">
-              <Avatar className="h-20 w-20">
-                <AvatarImage src={formData.avatar_url} alt={formData.display_name} />
-                <AvatarFallback className="text-lg">{initials}</AvatarFallback>
-              </Avatar>
-              <div className="space-y-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => fileInputRef.current?.click()}
-                  disabled={uploading}
-                >
-                  <Upload className="mr-2 h-4 w-4" />
-                  {uploading ? 'Uploaden...' : 'Foto wijzigen'}
-                </Button>
-                <p className="text-xs text-muted-foreground">
-                  PNG, JPG tot 5MB
-                </p>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    if (file) handleAvatarUpload(file);
-                  }}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-4">
+                <Avatar className="h-20 w-20">
+                  <AvatarImage src={formData.avatar_url} alt={formData.display_name} />
+                  <AvatarFallback className="text-lg">{initials}</AvatarFallback>
+                </Avatar>
+                <div className="space-y-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={uploading}
+                  >
+                    <Upload className="mr-2 h-4 w-4" />
+                    {uploading ? 'Uploaden...' : 'Foto wijzigen'}
+                  </Button>
+                  <p className="text-xs text-muted-foreground">
+                    PNG, JPG tot 5MB
+                  </p>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) handleAvatarUpload(file);
+                    }}
+                  />
+                </div>
+              </div>
+              
+              <div className="flex items-center space-x-3">
+                <Label htmlFor="newsletter" className="text-sm font-medium">
+                  Nieuwsbrief
+                </Label>
+                <Switch
+                  id="newsletter"
+                  checked={newsletterEnabled}
+                  onCheckedChange={setNewsletterEnabled}
                 />
               </div>
             </div>
