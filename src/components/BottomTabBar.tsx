@@ -58,7 +58,7 @@ export function BottomTabBar({ activeTab = 'Voorpagina', viewType = 'mobile' }: 
   return (
     <>
       <nav 
-        className={`${shouldBeFixed ? 'fixed' : 'sticky'} bottom-0 bg-background border-t border-border px-2 z-40`}
+        className={`fixed bottom-0 left-0 right-0 w-screen bg-background border-t border-border px-2 z-50`}
         style={{
           paddingBottom: 'env(safe-area-inset-bottom)',
           height: 'calc(64px + env(safe-area-inset-bottom))'

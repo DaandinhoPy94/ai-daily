@@ -267,11 +267,23 @@ export default function ArticleDetail() {
       );
     }
 
+    if (viewType === 'mobile') {
+      return (
+        <>
+          <div className="min-h-screen bg-background" style={{ paddingBottom: 'calc(64px + env(safe-area-inset-bottom))' }}>
+            <MobileHeader />
+            <main>{loadingContent}</main>
+          </div>
+          <BottomTabBar viewType="mobile" />
+        </>
+      );
+    }
+
     return (
       <div className="min-h-screen bg-background">
-        {viewType === 'mobile' ? <MobileHeader /> : <Header />}
+        <Header />
         <main>{loadingContent}</main>
-        {viewType === 'mobile' ? <BottomTabBar viewType="mobile" /> : <Footer />}
+        <Footer />
       </div>
     );
   }
@@ -302,11 +314,23 @@ export default function ArticleDetail() {
       );
     }
 
+    if (viewType === 'mobile') {
+      return (
+        <>
+          <div className="min-h-screen bg-background" style={{ paddingBottom: 'calc(64px + env(safe-area-inset-bottom))' }}>
+            <MobileHeader />
+            <main>{errorContent}</main>
+          </div>
+          <BottomTabBar viewType="mobile" />
+        </>
+      );
+    }
+
     return (
       <div className="min-h-screen bg-background">
-        {viewType === 'mobile' ? <MobileHeader /> : <Header />}
+        <Header />
         <main>{errorContent}</main>
-        {viewType === 'mobile' ? <BottomTabBar viewType="mobile" /> : <Footer />}
+        <Footer />
       </div>
     );
   }
@@ -437,15 +461,30 @@ export default function ArticleDetail() {
     );
   }
 
+  if (viewType === 'mobile') {
+    return (
+      <>
+        <div className="min-h-screen bg-background" style={{ paddingBottom: 'calc(64px + env(safe-area-inset-bottom))' }}>
+          <MobileHeader />
+          <main>
+            {articleContent}
+          </main>
+        </div>
+        <BottomTabBar viewType="mobile" />
+        <Toaster />
+      </>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background">
-      {viewType === 'mobile' ? <MobileHeader /> : <Header />}
+      <Header />
       
       <main>
         {articleContent}
       </main>
 
-      {viewType === 'mobile' ? <BottomTabBar viewType="mobile" /> : <Footer />}
+      <Footer />
       <Toaster />
     </div>
   );

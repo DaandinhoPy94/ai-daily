@@ -266,15 +266,29 @@ export default function TopicPage() {
     );
   }
 
+  if (viewType === 'mobile') {
+    return (
+      <>
+        <div className="min-h-screen bg-background" style={{ paddingBottom: 'calc(64px + env(safe-area-inset-bottom))' }}>
+          <MobileHeader />
+          <main>
+            {content}
+          </main>
+        </div>
+        <BottomTabBar viewType="mobile" />
+      </>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background">
-      {viewType === 'mobile' ? <MobileHeader /> : <Header />}
+      <Header />
       
       <main>
         {content}
       </main>
 
-      {viewType === 'mobile' ? <BottomTabBar viewType="mobile" /> : <Footer />}
+      <Footer />
     </div>
   );
 }
