@@ -36,6 +36,10 @@ interface Article {
   image_standard?: string;
   image_mobile?: string;
   image_tablet?: string;
+  media_assets?: {
+    path: string;
+    alt?: string;
+  };
   hero_image?: {
     path: string;
     alt?: string;
@@ -152,6 +156,7 @@ export default function ArticleDetail() {
         // Construct full article object
         const fullArticle: Article = {
           ...articleData,
+          hero_image: articleData.media_assets,
           author: authorData,
           topic: topicData || { id: '', name: 'Algemeen', slug: 'algemeen' },
           tags: tags
@@ -384,7 +389,15 @@ export default function ArticleDetail() {
             <ShareBar article={article} mobile />
           </div>
 
-          <ArticleImage article={article} viewType={viewType} />
+          <ArticleImage article={{
+            title: article.title,
+            image_path: article.hero_image?.path,
+            image_alt: article.hero_image?.alt,
+            image_large: article.image_large,
+            image_standard: article.image_standard,
+            image_mobile: article.image_mobile,
+            image_tablet: article.image_tablet
+          }} viewType={viewType} />
           
           <TripleDivider />
 
