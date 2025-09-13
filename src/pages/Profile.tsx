@@ -34,7 +34,7 @@ export default function Profile() {
     window.addEventListener('resize', checkScreenSize);
     return () => window.removeEventListener('resize', checkScreenSize);
   }, []);
-  const { user, profile, updateProfile, uploadAvatar } = useAuth();
+  const { user, profile, updateProfile, uploadAvatar, preferences, updatePreferences } = useAuth();
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -43,8 +43,6 @@ export default function Profile() {
     display_name: profile?.display_name || '',
     avatar_url: profile?.avatar_url || '',
   });
-  
-  const [newsletterEnabled, setNewsletterEnabled] = useState(false);
 
   if (!user || !profile) {
     return (
@@ -163,8 +161,8 @@ export default function Profile() {
                 </Label>
                 <Switch
                   id="newsletter"
-                  checked={newsletterEnabled}
-                  onCheckedChange={setNewsletterEnabled}
+                  checked={preferences?.email_opt_in || false}
+                  onCheckedChange={(checked) => updatePreferences({ email_opt_in: checked })}
                 />
               </div>
             </div>

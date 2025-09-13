@@ -14,7 +14,7 @@ export function Header() {
   const [mainTopics, setMainTopics] = useState<any[]>([]);
   const [searchParams] = useSearchParams();
   const location = useLocation();
-  const { user } = useAuth();
+  const { user, preferences } = useAuth();
 
   // Load main topics
   useEffect(() => {
@@ -96,11 +96,21 @@ export function Header() {
 
             {/* Right: Subscribe + Profile + Search */}
             <div className="flex items-center gap-3">
-              <Link to="/nieuwsbrief">
-                <Button className="btn-subscribe hidden sm:inline-flex">
-                  Abonneren
+              {preferences?.email_opt_in ? (
+                <Button 
+                  variant="secondary" 
+                  size="sm"
+                  className="btn-subscribe hidden sm:inline-flex opacity-70"
+                >
+                  Geabonneerd
                 </Button>
-              </Link>
+              ) : (
+                <Link to="/nieuwsbrief">
+                  <Button className="btn-subscribe hidden sm:inline-flex">
+                    Abonneren
+                  </Button>
+                </Link>
+              )}
               
               {user ? (
                 <AccountMenu />
@@ -193,11 +203,21 @@ export function Header() {
               })}
               
               <div className="mt-6 pt-6 border-t border-border">
-                <Link to="/nieuwsbrief">
-                  <Button className="btn-subscribe w-full">
-                    Abonneren
+                {preferences?.email_opt_in ? (
+                  <Button 
+                    variant="secondary" 
+                    size="sm"
+                    className="btn-subscribe w-full opacity-70"
+                  >
+                    Geabonneerd
                   </Button>
-                </Link>
+                ) : (
+                  <Link to="/nieuwsbrief">
+                    <Button className="btn-subscribe w-full">
+                      Abonneren
+                    </Button>
+                  </Link>
+                )}
               </div>
             </nav>
           </div>
