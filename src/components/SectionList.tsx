@@ -278,7 +278,7 @@ export function SectionList({ title, topicSlug, isWrappedInAppShell = false }: S
         {content}
       </main>
 
-      {viewType === 'mobile' ? <BottomTabBar /> : <Footer />}
+      {viewType === 'mobile' ? <BottomTabBar viewType="mobile" /> : <Footer />}
     </div>
   );
 }

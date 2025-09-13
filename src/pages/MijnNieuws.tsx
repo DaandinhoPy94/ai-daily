@@ -88,7 +88,7 @@ export default function MijnNieuws() {
         {content}
       </main>
 
-      {viewType === 'mobile' ? <BottomTabBar activeTab="MijnNieuws" /> : <Footer />}
+      {viewType === 'mobile' ? <BottomTabBar activeTab="MijnNieuws" viewType="mobile" /> : <Footer />}
     </div>
   );
 }

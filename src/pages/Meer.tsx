@@ -90,7 +90,7 @@ export default function Meer() {
         {content}
       </main>
 
-      {viewType === 'mobile' ? <BottomTabBar activeTab="Meer" /> : <Footer />}
+      {viewType === 'mobile' ? <BottomTabBar activeTab="Meer" viewType="mobile" /> : <Footer />}
     </div>
   );
 }

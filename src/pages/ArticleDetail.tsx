@@ -266,7 +266,7 @@ export default function ArticleDetail() {
       <div className="min-h-screen bg-background">
         {viewType === 'mobile' ? <MobileHeader /> : <Header />}
         <main>{loadingContent}</main>
-        {viewType === 'mobile' ? <BottomTabBar /> : <Footer />}
+        {viewType === 'mobile' ? <BottomTabBar viewType="mobile" /> : <Footer />}
       </div>
     );
   }
@@ -301,7 +301,7 @@ export default function ArticleDetail() {
       <div className="min-h-screen bg-background">
         {viewType === 'mobile' ? <MobileHeader /> : <Header />}
         <main>{errorContent}</main>
-        {viewType === 'mobile' ? <BottomTabBar /> : <Footer />}
+        {viewType === 'mobile' ? <BottomTabBar viewType="mobile" /> : <Footer />}
       </div>
     );
   }
@@ -432,7 +432,7 @@ export default function ArticleDetail() {
         {articleContent}
       </main>
 
-      {viewType === 'mobile' ? <BottomTabBar /> : <Footer />}
+      {viewType === 'mobile' ? <BottomTabBar viewType="mobile" /> : <Footer />}
       <Toaster />
     </div>
   );

@@ -226,7 +226,7 @@ export default function Profile() {
         {content}
       </main>
 
-      {viewType === 'mobile' ? <BottomTabBar /> : <Footer />}
+      {viewType === 'mobile' ? <BottomTabBar viewType="mobile" /> : <Footer />}
     </div>
   );
 }

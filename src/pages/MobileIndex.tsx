@@ -161,7 +161,7 @@ export default function MobileIndex({ isWrappedInAppShell = false }: MobileIndex
           </div>
         </main>
 
-        {!isWrappedInAppShell && <BottomTabBar />}
+        {!isWrappedInAppShell && <BottomTabBar viewType="mobile" />}
       </div>
     );
   }
@@ -232,7 +232,7 @@ export default function MobileIndex({ isWrappedInAppShell = false }: MobileIndex
       </main>
 
       {/* Bottom Navigation */}
-      {!isWrappedInAppShell && <BottomTabBar />}
+      {!isWrappedInAppShell && <BottomTabBar viewType="mobile" />}
     </div>
   );
 }

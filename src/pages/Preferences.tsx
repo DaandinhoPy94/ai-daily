@@ -180,7 +180,7 @@ export default function Preferences() {
         {content}
       </main>
 
-      {viewType === 'mobile' ? <BottomTabBar /> : <Footer />}
+      {viewType === 'mobile' ? <BottomTabBar viewType="mobile" /> : <Footer />}
     </div>
   );
 }

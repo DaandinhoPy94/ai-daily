@@ -24,7 +24,7 @@ export function TabletAppShell({ children, activeTab, viewType }: TabletAppShell
       }}>
         {children}
       </main>
-      <BottomTabBar activeTab={activeTab} />
+      <BottomTabBar activeTab={activeTab} viewType="tablet" />
     </div>
   );
 }
