@@ -117,12 +117,12 @@ export function Footer() {
                   {column.href ? (
                     <Link
                       to={column.href}
-                      className="font-semibold text-sm mb-4 block hover:text-foreground hover:underline"
+                      className="font-serif font-semibold text-sm mb-4 block hover:text-foreground hover:underline"
                     >
                       {column.title}
                     </Link>
                   ) : (
-                    <h3 className="font-semibold text-sm mb-4 block">{column.title}</h3>
+                    <h3 className="font-serif font-semibold text-sm mb-4 block">{column.title}</h3>
                   )}
                   
                   {/* Main topic items */}
@@ -144,7 +144,7 @@ export function Footer() {
                     <>
                       <Link
                         to={column.secondarySection.href}
-                        className="font-semibold text-sm mb-4 block hover:text-foreground hover:underline"
+                        className="font-serif font-semibold text-sm mb-4 block hover:text-foreground hover:underline"
                       >
                         {column.secondarySection.title}
                       </Link>
