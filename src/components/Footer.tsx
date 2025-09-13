@@ -122,7 +122,7 @@ export function Footer() {
                       {column.title}
                     </Link>
                   ) : (
-                    <h3 className="font-semibold text-sm mb-4">{column.title}</h3>
+                    <h3 className="font-semibold text-sm mb-4 block">{column.title}</h3>
                   )}
                   
                   {/* Main topic items */}
