@@ -3,6 +3,53 @@ import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
 
+const USE_MOCK_AUTH = import.meta.env.VITE_USE_MOCK_AUTH === 'true';
+
+// Mock data for development
+const MOCK_USER: User = {
+  id: 'mock-user-123',
+  email: 'test@aidagelijks.nl',
+  aud: 'authenticated',
+  role: 'authenticated',
+  email_confirmed_at: '2024-01-01T00:00:00Z',
+  phone: '',
+  confirmation_sent_at: '2024-01-01T00:00:00Z',
+  confirmed_at: '2024-01-01T00:00:00Z',
+  last_sign_in_at: '2024-01-01T00:00:00Z',
+  app_metadata: {},
+  user_metadata: {},
+  identities: [],
+  created_at: '2024-01-01T00:00:00Z',
+  updated_at: '2024-01-01T00:00:00Z',
+  is_anonymous: false,
+};
+
+const MOCK_SESSION: Session = {
+  access_token: 'mock-access-token',
+  refresh_token: 'mock-refresh-token',
+  expires_in: 3600,
+  expires_at: Date.now() / 1000 + 3600,
+  token_type: 'bearer',
+  user: MOCK_USER,
+};
+
+const MOCK_PROFILE: Profile = {
+  user_id: 'mock-user-123',
+  display_name: 'Test Gebruiker',
+  role: 'reader',
+  avatar_url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=mock',
+  created_at: '2024-01-01T00:00:00Z',
+  updated_at: '2024-01-01T00:00:00Z',
+};
+
+const MOCK_PREFERENCES: UserPreferences = {
+  user_id: 'mock-user-123',
+  theme: 'system',
+  locale: 'nl',
+  email_opt_in: true,
+  updated_at: '2024-01-01T00:00:00Z',
+};
+
 interface Profile {
   user_id: string;
   display_name: string;
@@ -48,11 +95,11 @@ export function useAuth() {
 }
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
-  const [profile, setProfile] = useState<Profile | null>(null);
-  const [preferences, setPreferences] = useState<UserPreferences | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<User | null>(USE_MOCK_AUTH ? MOCK_USER : null);
+  const [session, setSession] = useState<Session | null>(USE_MOCK_AUTH ? MOCK_SESSION : null);
+  const [profile, setProfile] = useState<Profile | null>(USE_MOCK_AUTH ? MOCK_PROFILE : null);
+  const [preferences, setPreferences] = useState<UserPreferences | null>(USE_MOCK_AUTH ? MOCK_PREFERENCES : null);
+  const [loading, setLoading] = useState(!USE_MOCK_AUTH);
 
   const fetchProfile = async (userId: string) => {
     try {
@@ -99,6 +146,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   useEffect(() => {
+    if (USE_MOCK_AUTH) {
+      // Skip real authentication in mock mode
+      setLoading(false);
+      return;
+    }
+
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
@@ -137,6 +190,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const signIn = async (email: string, password: string) => {
+    if (USE_MOCK_AUTH) {
+      toast({
+        title: "Succesvol ingelogd (Mock)",
+        description: "Je bent ingelogd met mock authentication.",
+      });
+      return { error: null };
+    }
+
     const { error } = await supabase.auth.signInWithPassword({ 
       email, 
       password 
@@ -154,6 +215,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const signUp = async (email: string, password: string) => {
+    if (USE_MOCK_AUTH) {
+      toast({
+        title: "Account aangemaakt (Mock)",
+        description: "Je account is aangemaakt met mock authentication.",
+      });
+      return { error: null };
+    }
+
     const { error } = await supabase.auth.signUp({
       email,
       password,
@@ -179,6 +248,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const signInWithProvider = async (provider: 'google' | 'github' | 'apple') => {
+    if (USE_MOCK_AUTH) {
+      toast({
+        title: `Ingelogd met ${provider} (Mock)`,
+        description: "Je bent ingelogd met mock authentication.",
+      });
+      return { error: null };
+    }
+
     const { error } = await supabase.auth.signInWithOAuth({
       provider,
       options: {
@@ -198,6 +275,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const sendMagicLink = async (email: string) => {
+    if (USE_MOCK_AUTH) {
+      toast({
+        title: "Magic link verzonden (Mock)",
+        description: "Je bent automatisch ingelogd met mock authentication.",
+      });
+      return { error: null };
+    }
+
     const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
@@ -222,6 +307,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const signOut = async () => {
+    if (USE_MOCK_AUTH) {
+      toast({
+        title: "Uitgelogd (Mock)",
+        description: "Je blijft ingelogd vanwege mock authentication.",
+      });
+      return;
+    }
+
     const { error } = await supabase.auth.signOut();
     if (error) {
       toast({
@@ -233,6 +326,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const resetPassword = async (email: string) => {
+    if (USE_MOCK_AUTH) {
+      toast({
+        title: "Reset link verzonden (Mock)",
+        description: "Mock authentication gebruikt geen echte wachtwoorden.",
+      });
+      return { error: null };
+    }
+
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: `${window.location.origin}/auth/reset-password`
     });
@@ -255,6 +356,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const updateProfile = async (updates: Partial<Profile>) => {
     if (!user) return { error: new Error('Not authenticated') };
+    
+    if (USE_MOCK_AUTH) {
+      setProfile(prev => prev ? { ...prev, ...updates, updated_at: new Date().toISOString() } : null);
+      toast({
+        title: "Profiel bijgewerkt (Mock)",
+        description: "Je profiel is bijgewerkt in mock mode.",
+      });
+      return { error: null };
+    }
     
     const { error } = await supabase
       .from('profiles')
@@ -281,6 +391,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const updatePreferences = async (updates: Partial<UserPreferences>) => {
     if (!user) return { error: new Error('Not authenticated') };
     
+    if (USE_MOCK_AUTH) {
+      setPreferences(prev => prev ? { ...prev, ...updates, updated_at: new Date().toISOString() } : null);
+      toast({
+        title: "Voorkeuren bijgewerkt (Mock)",
+        description: "Je voorkeuren zijn bijgewerkt in mock mode.",
+      });
+      return { error: null };
+    }
+    
     const { error } = await supabase
       .from('user_preferences')
       .upsert({ user_id: user.id, ...updates });
@@ -304,6 +423,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const uploadAvatar = async (file: File) => {
     if (!user) return { error: new Error('Not authenticated') };
+    
+    if (USE_MOCK_AUTH) {
+      const mockUrl = `https://api.dicebear.com/7.x/avataaars/svg?seed=${Date.now()}`;
+      toast({
+        title: "Avatar geüpload (Mock)",
+        description: "Avatar is bijgewerkt in mock mode.",
+      });
+      return { url: mockUrl, error: null };
+    }
     
     const fileExt = file.name.split('.').pop();
     const fileName = `${user.id}/${Date.now()}.${fileExt}`;

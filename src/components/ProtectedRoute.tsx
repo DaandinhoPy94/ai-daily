@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { AuthModal } from '@/components/auth/AuthModal';
 
+const USE_MOCK_AUTH = import.meta.env.VITE_USE_MOCK_AUTH === 'true';
+
 interface ProtectedRouteProps {
   children: React.ReactNode;
 }
@@ -11,12 +13,22 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
   const [showAuthModal, setShowAuthModal] = useState(false);
 
   useEffect(() => {
+    if (USE_MOCK_AUTH) {
+      // Skip authentication checks in mock mode
+      return;
+    }
+    
     if (!loading && !user) {
       // Store the current path for redirect after login
       sessionStorage.setItem('auth_redirect_to', window.location.pathname);
       setShowAuthModal(true);
     }
   }, [user, loading]);
+
+  // In mock mode, always allow access
+  if (USE_MOCK_AUTH) {
+    return <>{children}</>;
+  }
 
   if (loading) {
     return (

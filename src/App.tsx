@@ -8,6 +8,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { StockProvider } from "@/contexts/StockProvider";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { DevModeIndicator } from "@/components/DevModeIndicator";
 import ResponsiveIndex from "./pages/ResponsiveIndex";
 import ArticleDetail from "./pages/ArticleDetail";
 import NetBinnen from "./pages/NetBinnen";
@@ -38,6 +39,7 @@ const App = () => (
             <TooltipProvider>
               <Toaster />
               <Sonner />
+              <DevModeIndicator />
             <BrowserRouter>
             <Routes>
               <Route path="/" element={<ResponsiveIndex />} />
