@@ -26,7 +26,7 @@ export function RightRailLatest({ articles }: RightRailLatestProps) {
           <div key={article.id}>
             <a 
               href={`/artikel/${article.slug}`}
-              className="block py-2 transition-all duration-150 hover:bg-accent hover:bg-opacity-40 -mx-2 px-2 rounded group"
+              className="block py-2 font-sans transition-all duration-150 hover:bg-accent hover:bg-opacity-40 -mx-2 px-2 rounded group"
             >
               <div className="flex items-start gap-3">
                 <span className="text-xs text-muted-foreground font-mono flex-shrink-0 mt-0.5">
