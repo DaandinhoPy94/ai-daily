@@ -42,9 +42,7 @@ export function Header() {
     { name: 'Net binnen', path: '/net-binnen' },
     { name: 'Topics', path: '/topic' },
     { name: 'Nieuwsbrief', path: '/nieuwsbrief' },
-    { name: 'AI Cursussen', path: '/ai-cursussen' },
-    { name: 'Geabonneerd', path: '/geabonneerd' },
-    { name: 'Profiel', path: '/profiel' }
+    { name: 'AI Cursussen', path: '/ai-cursussen' }
   ];
 
   // Mobile navigation items (using main topics from database)
