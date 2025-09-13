@@ -23,6 +23,18 @@ import Search from "./pages/Search";
 import AuthCallback from "./pages/AuthCallback";
 import NotFound from "./pages/NotFound";
 
+// Topic pages
+import TechnologieModellen from "./pages/topics/TechnologieModellen";
+import TextToTextLlms from "./pages/topics/TextToTextLlms";
+import TextToImage from "./pages/topics/TextToImage";
+import TextToSpeechSpeechToText from "./pages/topics/TextToSpeechSpeechToText";
+import Gezondheidszorg from "./pages/topics/Gezondheidszorg";
+import CreatieveIndustrie from "./pages/topics/CreatieveIndustrie";
+import BigTech from "./pages/topics/BigTech";
+import StartupsScaleUps from "./pages/topics/StartupsScaleUps";
+import AiSafetyAlignment from "./pages/topics/AiSafetyAlignment";
+import EthiekBias from "./pages/topics/EthiekBias";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -61,6 +73,18 @@ const App = () => (
                   <MijnNieuws />
                 </ProtectedRoute>
               } />
+              
+              {/* Topic pages */}
+              <Route path="/topics/technologie-modellen" element={<TechnologieModellen />} />
+              <Route path="/topics/text-to-text-llms" element={<TextToTextLlms />} />
+              <Route path="/topics/text-to-image" element={<TextToImage />} />
+              <Route path="/topics/text-to-speech-speech-to-text" element={<TextToSpeechSpeechToText />} />
+              <Route path="/topics/gezondheidszorg" element={<Gezondheidszorg />} />
+              <Route path="/topics/creatieve-industrie" element={<CreatieveIndustrie />} />
+              <Route path="/topics/big-tech" element={<BigTech />} />
+              <Route path="/topics/startups-scale-ups" element={<StartupsScaleUps />} />
+              <Route path="/topics/ai-safety-alignment" element={<AiSafetyAlignment />} />
+              <Route path="/topics/ethiek-bias" element={<EthiekBias />} />
               
               <Route path="/:slug" element={<Topic />} />
               <Route path="/rss-feeds" element={<RSSFeeds />} />
