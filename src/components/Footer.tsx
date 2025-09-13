@@ -9,7 +9,7 @@ import { Link } from 'react-router-dom';
 const topicColumns = [
   {
     title: 'Technologie & Modellen',
-    href: '/topics/technologie-modellen',
+    href: '/technologie-modellen',
     items: [
       { title: 'Text-to-Text (LLMs)', href: '/topics/text-to-text-llms' },
       { title: 'Text-to-Image', href: '/topics/text-to-image' },
@@ -20,7 +20,7 @@ const topicColumns = [
   },
   {
     title: 'Toepassingen',
-    href: '/topics/toepassingen',
+    href: '/toepassingen',
     items: [
       { title: 'Gezondheidszorg', href: '/topics/gezondheidszorg' },
       { title: 'Financiën & Business', href: '/topics/financien-business' },
@@ -31,7 +31,7 @@ const topicColumns = [
   },
   {
     title: 'Onderzoek & Ontwikkeling',
-    href: '/topics/onderzoek-ontwikkeling',
+    href: '/onderzoek-ontwikkeling',
     items: [
       { title: 'AI-onderzoekslabs', href: '/topics/ai-onderzoekslabs' },
       { title: 'Academische publicaties', href: '/topics/academische-publicaties' },
@@ -39,7 +39,7 @@ const topicColumns = [
     ],
     secondarySection: {
       title: 'Cultuur & Samenleving',
-      href: '/topics/cultuur-samenleving',
+      href: '/cultuur-samenleving',
       items: [
         { title: 'Publiek debat & cultuur', href: '/topics/publiek-debat-cultuur' }
       ]
@@ -47,7 +47,7 @@ const topicColumns = [
   },
   {
     title: 'Bedrijven & Markt',
-    href: '/topics/bedrijven-markt',
+    href: '/bedrijven-markt',
     items: [
       { title: 'Big Tech', href: '/topics/big-tech' },
       { title: 'Startups & Scale-ups', href: '/topics/startups-scale-ups' },
@@ -55,7 +55,7 @@ const topicColumns = [
     ],
     secondarySection: {
       title: 'Economie & Werk',
-      href: '/topics/economie-werk',
+      href: '/economie-werk',
       items: [
         { title: 'Arbeidsmarkt & Skills', href: '/topics/arbeidsmarkt-skills' },
         { title: 'Productiviteit & Automatisering', href: '/topics/productiviteit-automatisering' }
@@ -64,7 +64,7 @@ const topicColumns = [
   },
   {
     title: 'Geografie & Politiek',
-    href: '/topics/geografie-politiek',
+    href: '/geografie-politiek',
     items: [
       { title: 'Verenigde Staten', href: '/topics/verenigde-staten' },
       { title: 'Europa', href: '/topics/europa' },
@@ -72,7 +72,7 @@ const topicColumns = [
     ],
     secondarySection: {
       title: 'Veiligheid & Regelgeving',
-      href: '/topics/veiligheid-regelgeving',
+      href: '/veiligheid-regelgeving',
       items: [
         { title: 'AI Safety & Alignment', href: '/topics/ai-safety-alignment' },
         { title: 'Ethiek & Bias', href: '/topics/ethiek-bias' },
