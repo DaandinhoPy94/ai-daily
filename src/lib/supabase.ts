@@ -284,3 +284,32 @@ export async function signUp(email: string, password: string) {
 export async function signOut() {
   await supabase.auth.signOut();
 }
+
+// Create article with linked media asset
+export async function createArticleWithMedia(articleData: {
+  title: string;
+  summary?: string;
+  body?: string;
+  subtitle?: string;
+  topic_id?: string;
+  author_id?: string;
+  seo_title?: string;
+  seo_description?: string;
+  is_featured?: boolean;
+  read_time_minutes?: number;
+  status?: 'draft' | 'published' | 'scheduled';
+  published_at?: string;
+  scheduled_at?: string;
+}) {
+  try {
+    const { data, error } = await supabase.functions.invoke('create-article-with-media', {
+      body: articleData
+    });
+    
+    if (error) throw error;
+    return data;
+  } catch (error) {
+    console.error('Error creating article with media:', error);
+    throw error;
+  }
+}

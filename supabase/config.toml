@@ -1,1 +1,4 @@
 project_id = "ykfiubiogxetbgdkavep"
+
+[functions.create-article-with-media]
+verify_jwt = false
