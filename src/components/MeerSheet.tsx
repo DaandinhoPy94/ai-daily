@@ -59,8 +59,9 @@ export function MeerSheet({ isOpen, onClose, viewType }: MeerSheetProps) {
     setSearchError(null);
   };
 
-  const handleTopicClick = (slug: string) => {
-    navigate(`/${slug}`);
+  const handleTopicClick = (topicSlug: string) => {
+    const path = topicSlug.startsWith('/') ? topicSlug : `/${topicSlug}`;
+    navigate(path);
     onClose();
   };
 
@@ -114,23 +115,34 @@ export function MeerSheet({ isOpen, onClose, viewType }: MeerSheetProps) {
                 />
               </div>
             ) : (
-              /* Topics List */
-              <div className="p-4">
-                <div className="space-y-1">
-                  {mainTopics.map((topic) => (
-                    <button
-                      key={topic.slug}
-                      onClick={() => handleTopicClick(topic.slug)}
-                      className="flex items-center justify-between w-full p-4 hover:bg-muted/50 rounded-lg transition-colors text-left"
-                    >
-                      <div>
-                        <span className="text-foreground font-medium">{topic.name}</span>
-                      </div>
-                      <ChevronRight className="h-5 w-5 text-muted-foreground" />
-                    </button>
-                  ))}
-                </div>
-              </div>
+               /* Topics List */
+               <div className="p-4">
+                 <div className="space-y-1">
+                   {/* Alle onderwerpen link */}
+                   <button
+                     onClick={() => handleTopicClick('/topic')}
+                     className="flex items-center justify-between w-full p-4 hover:bg-muted/50 rounded-lg transition-colors text-left"
+                   >
+                     <div>
+                       <span className="text-foreground font-medium">Alle onderwerpen</span>
+                     </div>
+                     <ChevronRight className="h-5 w-5 text-muted-foreground" />
+                   </button>
+                   
+                   {mainTopics.map((topic) => (
+                     <button
+                       key={topic.slug}
+                       onClick={() => handleTopicClick(topic.slug)}
+                       className="flex items-center justify-between w-full p-4 hover:bg-muted/50 rounded-lg transition-colors text-left"
+                     >
+                       <div>
+                         <span className="text-foreground font-medium">{topic.name}</span>
+                       </div>
+                       <ChevronRight className="h-5 w-5 text-muted-foreground" />
+                     </button>
+                   ))}
+                 </div>
+               </div>
             )}
           </div>
         </div>

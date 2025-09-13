@@ -150,6 +150,68 @@ export async function getSubTopics(parentSlug: string) {
   }
 }
 
+// Get followed topics for user
+export async function getFollowedTopics(userId: string) {
+  try {
+    const { data, error } = await supabase
+      .from('follows_topics')
+      .select('topic_id')
+      .eq('user_id', userId);
+    if (error) throw error;
+    return data?.map(item => item.topic_id) || [];
+  } catch (error) {
+    console.error('Error fetching followed topics:', error);
+    return [];
+  }
+}
+
+// Follow a topic
+export async function followTopic(topicId: string, userId: string) {
+  try {
+    const { error } = await supabase
+      .from('follows_topics')
+      .insert({ topic_id: topicId, user_id: userId });
+    if (error) throw error;
+    return { success: true };
+  } catch (error) {
+    console.error('Error following topic:', error);
+    return { success: false, error };
+  }
+}
+
+// Unfollow a topic
+export async function unfollowTopic(topicId: string, userId: string) {
+  try {
+    const { error } = await supabase
+      .from('follows_topics')
+      .delete()
+      .eq('topic_id', topicId)
+      .eq('user_id', userId);
+    if (error) throw error;
+    return { success: true };
+  } catch (error) {
+    console.error('Error unfollowing topic:', error);
+    return { success: false, error };
+  }
+}
+
+// Check if user follows a topic
+export async function isFollowingTopic(topicId: string, userId: string) {
+  try {
+    const { data, error } = await supabase
+      .from('follows_topics')
+      .select('topic_id')
+      .eq('topic_id', topicId)
+      .eq('user_id', userId)
+      .single();
+    if (error && error.code !== 'PGRST116') throw error;
+    return !!data;
+  } catch (error) {
+    console.error('Error checking follow status:', error);
+    return false;
+  }
+}
+
 // Resolve topic slug using backend function
 export async function resolveTopicSlug(slug: string) {
   try {

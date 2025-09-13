@@ -54,6 +54,7 @@ import MilitairCyber from "./pages/topics/MilitairCyber";
 import ArbeidsmarktSkills from "./pages/topics/ArbeidsmarktSkills";
 import ProductiviteitAutomatisering from "./pages/topics/ProductiviteitAutomatisering";
 import PubliekDebatCultuur from "./pages/topics/PubliekDebatCultuur";
+import TopicsOverview from "./pages/TopicsOverview";
 
 const queryClient = new QueryClient();
 
@@ -127,6 +128,9 @@ const App = () => (
               <Route path="/ai-cursussen" element={<AiCursussen />} />
               <Route path="/ai-jobs" element={<AiJobs />} />
               <Route path="/lm-arena" element={<LmArena />} />
+              
+              {/* Topics Overview */}
+              <Route path="/topic" element={<TopicsOverview />} />
               
               <Route path="/:slug" element={<Topic />} />
               <Route path="/rss-feeds" element={<RSSFeeds />} />
