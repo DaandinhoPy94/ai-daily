@@ -227,7 +227,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       email,
       password,
       options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback`
+        emailRedirectTo: `${window.location.origin}/auth/callback`,
+        data: {
+          avatar_url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=mock'
+        }
       }
     });
     
