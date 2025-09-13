@@ -15,6 +15,11 @@ import NetBinnen from "./pages/NetBinnen";
 import Profile from "./pages/Profile";
 import Preferences from "./pages/Preferences";
 import MijnNieuws from "./pages/MijnNieuws";
+import OverOns from "./pages/OverOns";
+import Nieuwsbrief from "./pages/Nieuwsbrief";
+import AiCursussen from "./pages/AiCursussen";
+import AiJobs from "./pages/AiJobs";
+import LmArena from "./pages/LmArena";
 
 import Topic from "./pages/Topic";
 import RSSFeeds from "./pages/RSSFeeds";
@@ -131,6 +136,13 @@ const App = () => (
               <Route path="/topics/productiviteit-automatisering" element={<ProductiviteitAutomatisering />} />
               <Route path="/topics/cultuur-samenleving" element={<CultuurSamenleving />} />
               <Route path="/topics/publiek-debat-cultuur" element={<PubliekDebatCultuur />} />
+              
+              {/* Additional pages */}
+              <Route path="/over-ons" element={<OverOns />} />
+              <Route path="/nieuwsbrief" element={<Nieuwsbrief />} />
+              <Route path="/ai-cursussen" element={<AiCursussen />} />
+              <Route path="/ai-jobs" element={<AiJobs />} />
+              <Route path="/lm-arena" element={<LmArena />} />
               
               <Route path="/:slug" element={<Topic />} />
               <Route path="/rss-feeds" element={<RSSFeeds />} />
