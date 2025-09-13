@@ -52,7 +52,7 @@ export function LargeNewsCard({ article, className = '' }: LargeNewsCardProps) {
 
           {/* Third Line: Subtitle */}
           {article.subtitle && (
-            <p className="text-muted-foreground text-base leading-relaxed">
+            <p className="text-muted-foreground text-base leading-relaxed line-clamp-3">
               {article.subtitle}
             </p>
           )}
