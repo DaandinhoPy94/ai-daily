@@ -50,10 +50,10 @@ export function LargeNewsCard({ article, className = '' }: LargeNewsCardProps) {
             {article.title}
           </h2>
 
-          {/* Third Line: Subtitle */}
-          {article.subtitle && (
+          {/* Third Line: Subtitle with fallback to summary */}
+          {(article.subtitle || article.summary) && (
             <p className="text-muted-foreground text-base leading-relaxed line-clamp-3">
-              {article.subtitle}
+              {article.subtitle || article.summary}
             </p>
           )}
         </div>
