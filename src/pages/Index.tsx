@@ -4,13 +4,11 @@ import { Header } from '../components/Header';
 import { Footer } from '../components/Footer';
 import { NewsCard } from '../components/NewsCard';
 import { LargeNewsCard } from '../components/LargeNewsCard';
-import { StocksBar } from '../components/StocksBar';
 import { RightRail } from '../components/RightRail';
 import { TopicSection } from '../components/TopicSection';
 import { getHomepageSlots, getTopicSections, getLatest, getMostRead } from '../lib/supabase';
 import { NewsArticle, RightRailItem, TopicSection as TopicSectionType } from '../types';
 import { getDefaultSEO, buildCanonical } from '../lib/seo';
-import { useStocks } from '../contexts/StockProvider';
 
 interface HomepageSlot {
   article_id: string;
@@ -34,7 +32,6 @@ export default function Index() {
   const [meestGelezenItems, setMeestGelezenItems] = useState<RightRailItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { tickers } = useStocks();
 
   useEffect(() => {
     async function fetchData() {
@@ -133,7 +130,6 @@ export default function Index() {
     return (
       <div className="min-h-screen bg-background">
         <Header />
-        <StocksBar tickers={tickers} />
         <main className="container mx-auto px-4 py-8">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
@@ -149,7 +145,6 @@ export default function Index() {
     return (
       <div className="min-h-screen bg-background">
         <Header />
-        <StocksBar tickers={tickers} />
         <main className="container mx-auto px-4 py-8">
           <div className="text-center">
             <p className="text-destructive">{error}</p>
@@ -188,7 +183,6 @@ export default function Index() {
         <meta name="twitter:image" content={defaults.defaultImage} />
       </Helmet>
       <Header />
-        <StocksBar tickers={tickers} />
 
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-8">
         {/* Hero Section */}

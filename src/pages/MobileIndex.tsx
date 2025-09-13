@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { MobileHeader } from '../components/MobileHeader';
-import { MobileStocksStrip } from '../components/MobileStocksStrip';
 import { LargeNewsCard } from '../components/LargeNewsCard';
 import { ArticleListRow } from '../components/ArticleListRow';
 import { TopicBlock } from '../components/TopicBlock';
@@ -8,7 +7,6 @@ import { BottomTabBar } from '../components/BottomTabBar';
 import { SectionSpacer } from '../components/SectionSpacer';
 import { Skeleton } from '../components/ui/skeleton';
 import { getMostRead, getLatest, getTopicSections } from '../lib/supabase';
-import { useStocks } from '../contexts/StockProvider';
 
 interface Article {
   id: string;
@@ -19,13 +17,6 @@ interface Article {
   topicName?: string;
   media_asset_url?: string;
   media_asset_alt?: string;
-}
-
-interface Ticker {
-  symbol: string;
-  value: string;
-  delta: string;
-  direction: 'up' | 'down' | 'flat';
 }
 
 interface MobileIndexProps {
@@ -39,7 +30,6 @@ export default function MobileIndex({ isWrappedInAppShell = false }: MobileIndex
   const [topicCards, setTopicCards] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { tickers } = useStocks();
 
   useEffect(() => {
     async function fetchData() {
@@ -181,9 +171,6 @@ export default function MobileIndex({ isWrappedInAppShell = false }: MobileIndex
     <div className="min-h-screen bg-background" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
       {/* Header */}
       {!isWrappedInAppShell && <MobileHeader />}
-
-      {/* Stocks Strip */}
-      <MobileStocksStrip tickers={tickers} />
 
       <main className="pb-20">
         {/* Top Two - Most Read */}
