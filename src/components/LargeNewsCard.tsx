@@ -5,11 +5,11 @@ interface Article {
   slug: string;
   title: string;
   summary?: string;
-  subtitle?: string;
+  subtitle?: string; // New subtitle field from Supabase
   readTimeMinutes: number;
-  category?: string;
-  media_asset_url?: string;
-  media_asset_alt?: string;
+  category?: string; // Topic name
+  media_asset_url?: string; // Media asset image URL from media_asset table
+  media_asset_alt?: string; // Media asset alt text from media_asset table
 }
 
 interface LargeNewsCardProps {
