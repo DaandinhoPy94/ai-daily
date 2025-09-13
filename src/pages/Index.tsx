@@ -22,8 +22,8 @@ interface HomepageSlot {
   name: string;
   display_order: number;
   item_order: number;
-  image_path?: string;
-  image_alt?: string;
+  media_asset_url?: string;
+  media_asset_alt?: string;
 }
 
 export default function Index() {
@@ -49,6 +49,7 @@ export default function Index() {
           getLabsBar()
         ]);
 
+        console.log('Homepage slots data:', slotsData);
         setHomepageSlots(slotsData || []);
         setTopicSections(sectionsData || []);
         
@@ -108,9 +109,9 @@ export default function Index() {
     subtitle: slot.summary, // Using summary as subtitle for now
     readTimeMinutes: slot.read_time_minutes,
     category: slot.name, // Use the slot name as category
-    imageUrl: slot.image_path || 'placeholder',
-    image_large: slot.image_path || 'placeholder',
-    image_standard: slot.image_path || 'placeholder'
+    imageUrl: slot.media_asset_url || 'placeholder',
+    image_large: slot.media_asset_url || 'placeholder',
+    image_standard: slot.media_asset_url || 'placeholder'
   });
 
   // Helper function to convert homepage slot for LargeNewsCard
@@ -122,7 +123,8 @@ export default function Index() {
     subtitle: slot.summary, // Using summary as subtitle for now
     readTimeMinutes: slot.read_time_minutes,
     category: slot.name, // Use the slot name as category
-    imageUrl: slot.image_path || 'placeholder'
+    media_asset_url: slot.media_asset_url,
+    media_asset_alt: slot.media_asset_alt
   });
 
   // Group homepage slots by code
