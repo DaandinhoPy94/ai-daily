@@ -96,9 +96,11 @@ export function Header() {
 
             {/* Right: Subscribe + Profile + Search */}
             <div className="flex items-center gap-3">
-              <Button className="btn-subscribe hidden sm:inline-flex">
-                Abonneren
-              </Button>
+              <Link to="/nieuwsbrief">
+                <Button className="btn-subscribe hidden sm:inline-flex">
+                  Abonneren
+                </Button>
+              </Link>
               
               {user ? (
                 <AccountMenu />
@@ -191,9 +193,11 @@ export function Header() {
               })}
               
               <div className="mt-6 pt-6 border-t border-border">
-                <Button className="btn-subscribe w-full">
-                  Abonneren
-                </Button>
+                <Link to="/nieuwsbrief">
+                  <Button className="btn-subscribe w-full">
+                    Abonneren
+                  </Button>
+                </Link>
               </div>
             </nav>
           </div>
