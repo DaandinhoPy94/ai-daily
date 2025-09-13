@@ -18,7 +18,8 @@ export const tickers: Ticker[] = [
 export const heroArticles: NewsArticle[] = [
   {
     id: "1",
-    imageUrl: heroDatacenter,
+    media_asset_url: heroDatacenter,
+    media_asset_alt: "AI datacenter met servers en blauwe verlichting",
     readTimeMinutes: 9,
     category: "Reportage",
     title: "OpenAI lanceert revolutionaire AGI-architectuur: 'Dit verandert alles voor de AI-industrie'",
@@ -26,7 +27,8 @@ export const heroArticles: NewsArticle[] = [
   },
   {
     id: "2",
-    imageUrl: heroTeam,
+    media_asset_url: heroTeam,
+    media_asset_alt: "Team van AI-onderzoekers in een modern kantoor",
     readTimeMinutes: 6,
     category: "Analyse",
     title: "De AI-race tussen big tech en startups: wie wint uiteindelijk?",
@@ -37,7 +39,8 @@ export const heroArticles: NewsArticle[] = [
 export const gridArticles: NewsArticle[] = [
   {
     id: "3",
-    imageUrl: neuralNetwork,
+    media_asset_url: neuralNetwork,
+    media_asset_alt: "Visualisatie van een neuraal netwerk met verbonden nodes",
     readTimeMinutes: 5,
     category: "Wetgeving",
     title: "EU AI Act treedt vandaag officieel in werking",
@@ -45,7 +48,8 @@ export const gridArticles: NewsArticle[] = [
   },
   {
     id: "4",
-    imageUrl: robotInterface,
+    media_asset_url: robotInterface,
+    media_asset_alt: "Futuristische robot interface met hologrammen",
     readTimeMinutes: 3,
     category: "Startup",
     title: "Nederlandse AI-startup haalt €50M op voor medische diagnostiek",
@@ -53,7 +57,8 @@ export const gridArticles: NewsArticle[] = [
   },
   {
     id: "5",
-    imageUrl: chipMacro,
+    media_asset_url: chipMacro,
+    media_asset_alt: "Macro opname van een AI-chip met circuitpatronen",
     readTimeMinutes: 7,
     category: "Onderzoek",
     title: "MIT-onderzoekers doorbreken barrière in quantumcomputing voor AI",
@@ -61,7 +66,8 @@ export const gridArticles: NewsArticle[] = [
   },
   {
     id: "6",
-    imageUrl: controlRoom,
+    media_asset_url: controlRoom,
+    media_asset_alt: "Controleruimte vol met monitors en AI-systemen",
     readTimeMinutes: 4,
     category: "Privacy",
     title: "Apple kondigt on-device AI aan zonder cloudverwerking",
@@ -69,7 +75,8 @@ export const gridArticles: NewsArticle[] = [
   },
   {
     id: "7",
-    imageUrl: neuralNetwork,
+    media_asset_url: neuralNetwork,
+    media_asset_alt: "Visualisatie van een neuraal netwerk met verbonden nodes",
     readTimeMinutes: 8,
     category: "Ethiek",
     title: "AI-experts waarschuwen voor nieuwe deepfake-technologie",
@@ -77,7 +84,8 @@ export const gridArticles: NewsArticle[] = [
   },
   {
     id: "8",
-    imageUrl: heroDatacenter,
+    media_asset_url: heroDatacenter,
+    media_asset_alt: "AI datacenter met servers en blauwe verlichting",
     readTimeMinutes: 6,
     category: "Business",
     title: "Microsoft investeert $10 miljard extra in AI-infrastructuur",
@@ -152,7 +160,8 @@ export const topicSections: TopicSection[] = [
     articles: [
       {
         id: "9",
-        imageUrl: robotInterface,
+        media_asset_url: robotInterface,
+        media_asset_alt: "Futuristische robot interface met hologrammen",
         readTimeMinutes: 5,
         category: "Startup",
         title: "Anthropic haalt $4 miljard op van Amazon",
@@ -160,7 +169,8 @@ export const topicSections: TopicSection[] = [
       },
       {
         id: "10",
-        imageUrl: chipMacro,
+        media_asset_url: chipMacro,
+        media_asset_alt: "Macro opname van een AI-chip met circuitpatronen",
         readTimeMinutes: 4,
         category: "Startup",
         title: "Perplexity AI wordt uitgedaagd door Google in rechtszaak",
@@ -168,7 +178,8 @@ export const topicSections: TopicSection[] = [
       },
       {
         id: "11",
-        imageUrl: neuralNetwork,
+        media_asset_url: neuralNetwork,
+        media_asset_alt: "Visualisatie van een neuraal netwerk met verbonden nodes",
         readTimeMinutes: 6,
         category: "Startup",
         title: "Hugging Face lanceert open-source alternatief voor ChatGPT",
@@ -176,7 +187,8 @@ export const topicSections: TopicSection[] = [
       },
       {
         id: "12",
-        imageUrl: controlRoom,
+        media_asset_url: controlRoom,
+        media_asset_alt: "Controleruimte vol met monitors en AI-systemen",
         readTimeMinutes: 3,
         category: "Startup",
         title: "Stability AI krijgt nieuwe CEO na turbulente periode",
@@ -189,7 +201,8 @@ export const topicSections: TopicSection[] = [
     articles: [
       {
         id: "13",
-        imageUrl: heroDatacenter,
+        media_asset_url: heroDatacenter,
+        media_asset_alt: "AI datacenter met servers en blauwe verlichting",
         readTimeMinutes: 7,
         category: "Research",
         title: "Meta lanceert Llama 3: claims beter dan GPT-4",
@@ -197,7 +210,8 @@ export const topicSections: TopicSection[] = [
       },
       {
         id: "14",
-        imageUrl: heroTeam,
+        media_asset_url: heroTeam,
+        media_asset_alt: "Team van AI-onderzoekers in een modern kantoor",
         readTimeMinutes: 5,
         category: "Research",
         title: "OpenAI kondigt GPT-5 aan voor begin 2025",
@@ -205,7 +219,8 @@ export const topicSections: TopicSection[] = [
       },
       {
         id: "15",
-        imageUrl: neuralNetwork,
+        media_asset_url: neuralNetwork,
+        media_asset_alt: "Visualisatie van een neuraal netwerk met verbonden nodes",
         readTimeMinutes: 4,
         category: "Research",
         title: "Google Gemini krijgt nieuwe videoverwerkingscapaciteiten",
@@ -213,7 +228,8 @@ export const topicSections: TopicSection[] = [
       },
       {
         id: "16",
-        imageUrl: robotInterface,
+        media_asset_url: robotInterface,
+        media_asset_alt: "Futuristische robot interface met hologrammen",
         readTimeMinutes: 6,
         category: "Research",
         title: "Anthropic's Claude krijgt computervisiefuncties",
@@ -226,7 +242,8 @@ export const topicSections: TopicSection[] = [
     articles: [
       {
         id: "17",
-        imageUrl: controlRoom,
+        media_asset_url: controlRoom,
+        media_asset_alt: "Controleruimte vol met monitors en AI-systemen",
         readTimeMinutes: 8,
         category: "Beleid",
         title: "Biden ondertekent executive order voor AI-veiligheid",
@@ -234,7 +251,8 @@ export const topicSections: TopicSection[] = [
       },
       {
         id: "18",
-        imageUrl: chipMacro,
+        media_asset_url: chipMacro,
+        media_asset_alt: "Macro opname van een AI-chip met circuitpatronen",
         readTimeMinutes: 5,
         category: "Beleid",
         title: "China verscherpt controle op AI-modellen voor consumenten",
@@ -242,7 +260,8 @@ export const topicSections: TopicSection[] = [
       },
       {
         id: "19",
-        imageUrl: neuralNetwork,
+        media_asset_url: neuralNetwork,
+        media_asset_alt: "Visualisatie van een neuraal netwerk met verbonden nodes",
         readTimeMinutes: 6,
         category: "Beleid",
         title: "VK lanceert AI Safety Institute met £100M budget",
@@ -250,7 +269,8 @@ export const topicSections: TopicSection[] = [
       },
       {
         id: "20",
-        imageUrl: robotInterface,
+        media_asset_url: robotInterface,
+        media_asset_alt: "Futuristische robot interface met hologrammen",
         readTimeMinutes: 4,
         category: "Beleid",
         title: "UNESCO publiceert ethische richtlijnen voor AI in onderwijs",
@@ -263,7 +283,8 @@ export const topicSections: TopicSection[] = [
     articles: [
       {
         id: "21",
-        imageUrl: chipMacro,
+        media_asset_url: chipMacro,
+        media_asset_alt: "Macro opname van een AI-chip met circuitpatronen",
         readTimeMinutes: 9,
         category: "Analyse",
         title: "De AI-chip oorlog: NVIDIA vs de concurrentie",
@@ -271,7 +292,8 @@ export const topicSections: TopicSection[] = [
       },
       {
         id: "22",
-        imageUrl: heroTeam,
+        media_asset_url: heroTeam,
+        media_asset_alt: "Team van AI-onderzoekers in een modern kantoor",
         readTimeMinutes: 7,
         category: "Analyse",
         title: "AI in de gezondheidszorg: hype of revolutie?",
@@ -279,7 +301,8 @@ export const topicSections: TopicSection[] = [
       },
       {
         id: "23",
-        imageUrl: controlRoom,
+        media_asset_url: controlRoom,
+        media_asset_alt: "Controleruimte vol met monitors en AI-systemen",
         readTimeMinutes: 5,
         category: "Analyse",
         title: "Waarom AI-bedrijven worstelen met winstgevendheid",
@@ -287,7 +310,8 @@ export const topicSections: TopicSection[] = [
       },
       {
         id: "24",
-        imageUrl: neuralNetwork,
+        media_asset_url: neuralNetwork,
+        media_asset_alt: "Visualisatie van een neuraal netwerk met verbonden nodes",
         readTimeMinutes: 6,
         category: "Analyse",
         title: "De toekomst van werk in het AI-tijdperk",
