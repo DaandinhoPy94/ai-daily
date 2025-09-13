@@ -57,7 +57,8 @@ export default function OverOns() {
                 Deze pagina wordt binnenkort gelanceerd.
               </p>
               <p className="text-sm text-muted-foreground">
-                In de tussentijd kun je alle AI-nieuws vinden op onze homepage.
+                In de tussentijd kun je alle AI-nieuws vinden op onze{' '}
+                <a href="/" className="text-primary hover:underline">homepage</a>.
               </p>
             </CardContent>
           </Card>

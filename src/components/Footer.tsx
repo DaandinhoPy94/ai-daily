@@ -84,11 +84,11 @@ const topicColumns = [
     title: 'Over AI Dagelijks',
     href: null,
     items: [
-      { title: 'Over ons', href: '/topics/over-ons' },
-      { title: 'Nieuwsbrief', href: '/topics/nieuwsbrief' },
-      { title: 'AI Cursussen', href: '/topics/ai-cursussen' },
-      { title: 'AI Jobs', href: '/topics/ai-jobs' },
-      { title: 'LM Arena', href: '/topics/lm-arena' }
+      { title: 'Over ons', href: '/over-ons' },
+      { title: 'Nieuwsbrief', href: '/nieuwsbrief' },
+      { title: 'AI Cursussen', href: '/ai-cursussen' },
+      { title: 'AI Jobs', href: '/ai-jobs' },
+      { title: 'LM Arena', href: '/lm-arena' }
     ]
   }
 ];
