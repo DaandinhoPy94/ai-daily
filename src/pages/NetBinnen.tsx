@@ -63,7 +63,7 @@ export default function NetBinnen() {
         .from('articles')
         .select('*', { count: 'exact', head: true })
         .eq('status', 'published')
-        .lte('published_at', new Date());
+        .lte('published_at', new Date().toISOString());
 
       const { data, error } = await supabase
         .from('articles')
@@ -79,7 +79,7 @@ export default function NetBinnen() {
           )
         `)
         .eq('status', 'published')
-        .lte('published_at', new Date())
+        .lte('published_at', new Date().toISOString())
         .order('published_at', { ascending: false })
         .range(offset, offset + ARTICLES_PER_PAGE - 1);
 
