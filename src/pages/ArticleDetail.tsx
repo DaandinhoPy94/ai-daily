@@ -80,6 +80,7 @@ interface RelatedArticle {
     name: string;
   };
   published_at: string;
+  read_time_minutes?: number;
 }
 
 export default function ArticleDetail() {
@@ -177,38 +178,65 @@ export default function ArticleDetail() {
 
         setArticle(fullArticle);
 
-        // Fetch related articles
-        const { data: relatedData } = await (supabase as any)
-          .from('article_relations')
-          .select(`
-            related_article_id,
-            relation_order,
-            articles!article_relations_related_article_id_fkey (
-              id,
-              slug,
-              title,
-              published_at,
-              primary_topic_id,
-              topics (
-                name
-              )
-            )
-          `)
-          .eq('article_id', articleData.id)
-          .order('relation_order');
-
+        // Fetch related articles based on matching topics
         let related: RelatedArticle[] = [];
-        if (relatedData && relatedData.length > 0) {
-          related = relatedData.map((rel: any) => ({
-            id: rel.articles.id,
-            slug: rel.articles.slug,
-            title: rel.articles.title,
-            imageUrl: 'placeholder',
-            topic: { name: rel.articles.topics?.name || 'Algemeen' },
-            published_at: rel.articles.published_at
-          }));
-        } else {
-          // Fallback to same topic articles
+        if (articleData.topics && articleData.topics.length > 0) {
+          // Extract topic IDs from the current article's topics
+          const topicIds = articleData.topics.map((topic: any) => topic.id);
+          
+          // Find articles that share at least one topic with the current article
+          const { data: topicArticles } = await (supabase as any)
+            .from('article_topics')
+            .select(`
+              article_id,
+              articles!inner (
+                id,
+                slug,
+                title,
+                published_at,
+                read_time_minutes,
+                primary_topic_id,
+                hero_image_id,
+                media_assets (
+                  path,
+                  alt
+                ),
+                topics (
+                  name
+                )
+              )
+            `)
+            .in('topic_id', topicIds)
+            .neq('article_id', articleData.id)
+            .eq('articles.status', 'published')
+            .lte('articles.published_at', new Date().toISOString())
+            .order('articles.published_at', { ascending: false })
+            .limit(3);
+
+          if (topicArticles && topicArticles.length > 0) {
+            // Remove duplicates and map to RelatedArticle format
+            const uniqueArticles = topicArticles.reduce((acc: any[], current: any) => {
+              const exists = acc.find(item => item.articles.id === current.articles.id);
+              if (!exists) {
+                acc.push(current);
+              }
+              return acc;
+            }, []);
+
+            related = uniqueArticles.slice(0, 3).map((item: any) => ({
+              id: item.articles.id,
+              slug: item.articles.slug,
+              title: item.articles.title,
+              imageUrl: item.articles.media_assets?.path || 'placeholder',
+              topic: { name: item.articles.topics?.name || 'Algemeen' },
+              published_at: item.articles.published_at,
+              read_time_minutes: item.articles.read_time_minutes
+            }));
+          }
+        }
+
+        // Fallback to recent articles if no topic matches found
+        if (related.length === 0) {
           const { data: fallbackData } = await (supabase as any)
             .from('articles')
             .select(`
@@ -216,23 +244,29 @@ export default function ArticleDetail() {
               slug,
               title,
               published_at,
+              read_time_minutes,
+              media_assets (
+                path,
+                alt
+              ),
               topics (
                 name
               )
             `)
-            .eq('primary_topic_id', articleData.primary_topic_id)
             .neq('id', articleData.id)
             .eq('status', 'published')
+            .lte('published_at', new Date().toISOString())
             .order('published_at', { ascending: false })
-            .limit(4);
+            .limit(3);
 
           related = (fallbackData || []).map((art: any) => ({
             id: art.id,
             slug: art.slug,
             title: art.title,
-            imageUrl: 'placeholder',
+            imageUrl: art.media_assets?.path || 'placeholder',
             topic: { name: art.topics?.name || 'Algemeen' },
-            published_at: art.published_at
+            published_at: art.published_at,
+            read_time_minutes: art.read_time_minutes
           }));
         }
 
