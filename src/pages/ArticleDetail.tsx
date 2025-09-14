@@ -131,11 +131,11 @@ export default function ArticleDetail() {
 
         // Fetch topic data
         let topicData = null;
-        if (articleData.topic_id) {
+        if (articleData.primary_topic_id) {
           const { data: topic } = await (supabase as any)
             .from('topics')
             .select('id, name, slug')
-            .eq('id', articleData.topic_id)
+            .eq('id', articleData.primary_topic_id)
             .maybeSingle();
           topicData = topic;
         }
@@ -175,7 +175,7 @@ export default function ArticleDetail() {
               slug,
               title,
               published_at,
-              topic_id,
+              primary_topic_id,
               topics (
                 name
               )
@@ -207,7 +207,7 @@ export default function ArticleDetail() {
                 name
               )
             `)
-            .eq('topic_id', articleData.topic_id)
+            .eq('primary_topic_id', articleData.primary_topic_id)
             .neq('id', articleData.id)
             .eq('status', 'published')
             .order('published_at', { ascending: false })

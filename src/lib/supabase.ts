@@ -252,7 +252,7 @@ export async function getArticleBySlug(slug: string) {
       .from('articles')
       .select(`
         id, slug, title, summary, subtitle, body, read_time_minutes, 
-        published_at, topic_id, author_id, hero_image_id, status, 
+        published_at, primary_topic_id, author_id, hero_image_id, status, 
         image_large, image_standard, image_mobile, image_tablet, image_list,
         media_assets!articles_hero_image_id_fkey(path, alt)
       `)
