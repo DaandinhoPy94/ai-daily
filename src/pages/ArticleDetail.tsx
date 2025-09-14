@@ -57,6 +57,11 @@ interface Article {
     name: string;
     slug: string;
   }>;
+  topics?: Array<{
+    id: string;
+    name: string;
+    slug: string;
+  }>;
 }
 
 interface LatestArticle {
@@ -111,12 +116,19 @@ export default function ArticleDetail() {
         setLoading(true);
         setError(null);
 
-        // Fetch article data
-        const articleData = await getArticleBySlug(slug);
-        if (!articleData) {
+        // Fetch article data from articles_with_topics to get topics
+        const { data: articleWithTopics, error: articleError } = await (supabase as any)
+          .from('articles_with_topics')
+          .select('*')
+          .eq('slug', slug)
+          .maybeSingle();
+
+        if (articleError || !articleWithTopics) {
           setError('Artikel niet gevonden');
           return;
         }
+
+        const articleData = articleWithTopics;
 
         // Fetch author data if author_id exists
         let authorData = null;
@@ -159,7 +171,8 @@ export default function ArticleDetail() {
           hero_image: articleData.media_assets,
           author: authorData,
           topic: topicData || { id: '', name: 'Algemeen', slug: 'algemeen' },
-          tags: tags
+          tags: tags,
+          topics: articleData.topics || [] // Add topics from articles_with_topics
         };
 
         setArticle(fullArticle);
@@ -442,7 +455,7 @@ export default function ArticleDetail() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 mt-12">
         <div className="lg:col-start-2 lg:col-span-8">
           <RelatedList articles={relatedArticles} />
-          <RelatedTopics tags={article.tags} />
+          <RelatedTopics topics={article.topics} />
           <div className="mt-12">
             <ArticleComments articleId={article.id} />
           </div>
