@@ -131,6 +131,17 @@ export default function ArticleDetail() {
 
         const articleData = articleWithTopics;
 
+        // Fetch hero image data if hero_image_id exists
+        let heroImageData = null;
+        if (articleData.hero_image_id) {
+          const { data: heroImage } = await (supabase as any)
+            .from('media_assets')
+            .select('path, alt')
+            .eq('id', articleData.hero_image_id)
+            .maybeSingle();
+          heroImageData = heroImage;
+        }
+
         // Fetch author data if author_id exists
         let authorData = null;
         if (articleData.author_id) {
@@ -169,7 +180,7 @@ export default function ArticleDetail() {
         // Construct full article object
         const fullArticle: Article = {
           ...articleData,
-          hero_image: articleData.media_assets,
+          hero_image: heroImageData,
           author: authorData,
           topic: topicData || { id: '', name: 'Algemeen', slug: 'algemeen' },
           tags: tags,
@@ -197,10 +208,6 @@ export default function ArticleDetail() {
                 read_time_minutes,
                 primary_topic_id,
                 hero_image_id,
-                media_assets (
-                  path,
-                  alt
-                ),
                 topics (
                   name
                 )
@@ -211,7 +218,7 @@ export default function ArticleDetail() {
             .eq('articles.status', 'published')
             .lte('articles.published_at', new Date().toISOString())
             .order('articles.published_at', { ascending: false })
-            .limit(3);
+            .limit(6);
 
           if (topicArticles && topicArticles.length > 0) {
             // Remove duplicates and map to RelatedArticle format
@@ -223,15 +230,30 @@ export default function ArticleDetail() {
               return acc;
             }, []);
 
-            related = uniqueArticles.slice(0, 3).map((item: any) => ({
-              id: item.articles.id,
-              slug: item.articles.slug,
-              title: item.articles.title,
-              imageUrl: item.articles.media_assets?.path || 'placeholder',
-              topic: { name: item.articles.topics?.name || 'Algemeen' },
-              published_at: item.articles.published_at,
-              read_time_minutes: item.articles.read_time_minutes
-            }));
+            // Fetch media assets for the articles
+            const articleIds = uniqueArticles.slice(0, 3).map(item => item.articles.id);
+            const { data: mediaAssets } = await (supabase as any)
+              .from('media_assets')
+              .select('id, path, alt')
+              .in('id', uniqueArticles.slice(0, 3).map(item => item.articles.hero_image_id).filter(Boolean));
+
+            const mediaAssetsMap = (mediaAssets || []).reduce((acc: any, asset: any) => {
+              acc[asset.id] = asset;
+              return acc;
+            }, {});
+
+            related = uniqueArticles.slice(0, 3).map((item: any) => {
+              const heroImage = mediaAssetsMap[item.articles.hero_image_id];
+              return {
+                id: item.articles.id,
+                slug: item.articles.slug,
+                title: item.articles.title,
+                imageUrl: heroImage?.path || null,
+                topic: { name: item.articles.topics?.name || 'Algemeen' },
+                published_at: item.articles.published_at,
+                read_time_minutes: item.articles.read_time_minutes
+              };
+            });
           }
         }
 
@@ -245,10 +267,7 @@ export default function ArticleDetail() {
               title,
               published_at,
               read_time_minutes,
-              media_assets (
-                path,
-                alt
-              ),
+              hero_image_id,
               topics (
                 name
               )
@@ -259,15 +278,31 @@ export default function ArticleDetail() {
             .order('published_at', { ascending: false })
             .limit(3);
 
-          related = (fallbackData || []).map((art: any) => ({
-            id: art.id,
-            slug: art.slug,
-            title: art.title,
-            imageUrl: art.media_assets?.path || 'placeholder',
-            topic: { name: art.topics?.name || 'Algemeen' },
-            published_at: art.published_at,
-            read_time_minutes: art.read_time_minutes
-          }));
+          if (fallbackData && fallbackData.length > 0) {
+            // Fetch media assets for fallback articles
+            const { data: fallbackMediaAssets } = await (supabase as any)
+              .from('media_assets')
+              .select('id, path, alt')
+              .in('id', fallbackData.map(item => item.hero_image_id).filter(Boolean));
+
+            const fallbackMediaMap = (fallbackMediaAssets || []).reduce((acc: any, asset: any) => {
+              acc[asset.id] = asset;
+              return acc;
+            }, {});
+
+            related = fallbackData.map((art: any) => {
+              const heroImage = fallbackMediaMap[art.hero_image_id];
+              return {
+                id: art.id,
+                slug: art.slug,
+                title: art.title,
+                imageUrl: heroImage?.path || null,
+                topic: { name: art.topics?.name || 'Algemeen' },
+                published_at: art.published_at,
+                read_time_minutes: art.read_time_minutes
+              };
+            });
+          }
         }
 
         setRelatedArticles(related);
