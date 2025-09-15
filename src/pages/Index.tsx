@@ -128,6 +128,7 @@ export default function Index() {
   const heroSlots = homepageSlots.filter(slot => slot.code === 'hero').sort((a, b) => a.item_order - b.item_order);
   const row2Slots = homepageSlots.filter(slot => slot.code === 'row2').sort((a, b) => a.item_order - b.item_order);
   const row3Slots = homepageSlots.filter(slot => slot.code === 'row3').sort((a, b) => a.item_order - b.item_order);
+  const row4Slots = homepageSlots.filter(slot => slot.code === 'row4').sort((a, b) => a.item_order - b.item_order);
 
   if (loading) {
     return (
@@ -241,6 +242,19 @@ export default function Index() {
         {row3Slots.length > 0 && (
           <section className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             {row3Slots.slice(0, 3).map((slot) => (
+              <NewsCard
+                key={slot.article_id}
+                article={slotToNewsArticle(slot)}
+                variant="standard"
+              />
+            ))}
+          </section>
+        )}
+
+        {/* Fourth Row - 3 columns */}
+        {row4Slots.length > 0 && (
+          <section className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            {row4Slots.slice(0, 3).map((slot) => (
               <NewsCard
                 key={slot.article_id}
                 article={slotToNewsArticle(slot)}
