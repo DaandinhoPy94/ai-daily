@@ -59,11 +59,16 @@ export default function NetBinnen() {
     setLoading(true);
     try {
       const offset = (currentPage - 1) * ARTICLES_PER_PAGE;
-      const { count } = await supabase
+      const nowIso = new Date().toISOString();
+      console.log('[Net-binnen] nowIso:', nowIso, 'tz:', Intl.DateTimeFormat().resolvedOptions().timeZone);
+
+      const { count, error: countError } = await supabase
         .from('articles')
         .select('*', { count: 'exact', head: true })
         .eq('status', 'published')
-        .lte('published_at', new Date());
+        .lte('published_at', nowIso);
+
+      console.log('[Net-binnen] count/countError:', count, countError);
 
       const { data, error } = await supabase
         .from('articles')
@@ -79,9 +84,11 @@ export default function NetBinnen() {
           )
         `)
         .eq('status', 'published')
-        .lte('published_at', new Date())
+        .lte('published_at', nowIso)
         .order('published_at', { ascending: false })
         .range(offset, offset + ARTICLES_PER_PAGE - 1);
+
+      console.log('[Net-binnen] data/error:', data?.length, error);
 
       if (error) {
         console.error('Error fetching articles:', error);
