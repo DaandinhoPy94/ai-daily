@@ -7,6 +7,8 @@ import { LargeNewsCard } from '../components/LargeNewsCard';
 import { StocksBar } from '../components/StocksBar';
 import { RightRail } from '../components/RightRail';
 import { TopicSection } from '../components/TopicSection';
+import { NewsPaperCard } from '../components/NewsPaperCard';
+import { JobCard } from '../components/JobCard';
 import { getHomepageSlots, getTopicSections, getLatest, getMostRead } from '../lib/supabase';
 import { NewsArticle, RightRailItem, TopicSection as TopicSectionType } from '../types';
 import { getDefaultSEO, buildCanonical } from '../lib/seo';
@@ -263,6 +265,103 @@ export default function Index() {
             ))}
           </section>
         )}
+
+        {/* Newsletter Section */}
+        <section className="space-y-6 mb-8">
+          {/* Section Divider */}
+          <hr className="border-border" />
+          
+          {/* Section Heading */}
+          <h2 className="text-lg font-bold font-serif uppercase tracking-wide text-foreground">
+            Nieuwsbrief
+          </h2>
+
+          {/* 3-Card Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* TODO: Replace with actual newsletter data from Supabase newsletters table */}
+            {[
+              {
+                id: '1',
+                title: 'Wekelijkse AI Update',
+                description: 'De belangrijkste ontwikkelingen in AI van afgelopen week samengevat.',
+                imageUrl: 'https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=400&h=225&fit=crop',
+                publishedAt: new Date().toISOString(),
+                readTimeMinutes: 5
+              },
+              {
+                id: '2',
+                title: 'Maandelijkse Marktanalyse',
+                description: 'Diepgaande analyse van AI-investeringen en markttrends.',
+                imageUrl: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=225&fit=crop',
+                publishedAt: new Date().toISOString(),
+                readTimeMinutes: 8
+              },
+              {
+                id: '3',
+                title: 'Research Highlights',
+                description: 'Nieuwste doorbraken uit de academische AI-wereld.',
+                imageUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=225&fit=crop',
+                publishedAt: new Date().toISOString(),
+                readTimeMinutes: 6
+              }
+            ].map((newsletter) => (
+              <NewsPaperCard
+                key={newsletter.id}
+                newsletter={newsletter}
+              />
+            ))}
+          </div>
+        </section>
+
+        {/* Jobs Section */}
+        <section className="space-y-6 mb-8">
+          {/* Section Divider */}
+          <hr className="border-border" />
+          
+          {/* Section Heading */}
+          <h2 className="text-lg font-bold font-serif uppercase tracking-wide text-foreground">
+            Banen
+          </h2>
+
+          {/* 3-Card Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* TODO: Replace with actual job data from Supabase job_listings table */}
+            {[
+              {
+                id: '1',
+                title: 'Senior AI Engineer',
+                company: 'TechCorp Nederland',
+                location: 'Amsterdam',
+                imageUrl: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=400&h=225&fit=crop',
+                postedAt: new Date().toISOString(),
+                salaryRange: '€80.000 - €120.000'
+              },
+              {
+                id: '2',
+                title: 'Machine Learning Specialist',
+                company: 'DataFlow BV',
+                location: 'Utrecht',
+                imageUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=225&fit=crop',
+                postedAt: new Date().toISOString(),
+                salaryRange: '€70.000 - €100.000'
+              },
+              {
+                id: '3',
+                title: 'AI Product Manager',
+                company: 'Innovation Labs',
+                location: 'Rotterdam',
+                imageUrl: 'https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=400&h=225&fit=crop',
+                postedAt: new Date().toISOString(),
+                salaryRange: '€90.000 - €130.000'
+              }
+            ].map((job) => (
+              <JobCard
+                key={job.id}
+                job={job}
+              />
+            ))}
+          </div>
+        </section>
 
         {/* Topic Sections */}
         {topicSections.map((section) => {
