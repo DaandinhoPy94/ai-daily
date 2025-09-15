@@ -7,40 +7,35 @@ export default function AuthCallback() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const handleAuthCallback = async () => {
+    (async () => {
       try {
-        const { data, error } = await supabase.auth.getSession();
-        
-        if (error) {
-          console.error('Auth callback error:', error);
-          toast({
-            title: "Authenticatie mislukt",
-            description: error.message,
-            variant: "destructive",
-          });
-          navigate('/', { replace: true });
-          return;
+        const url = new URL(window.location.href);
+        const code = url.searchParams.get('code');
+
+        if (code) {
+          // Finalize PKCE and create a real session
+          await supabase.auth.exchangeCodeForSession(code);
+        } else {
+          // Fallback for hash-based provider responses
+          await supabase.auth.getSession();
         }
 
+        // Optional: small delay so onAuthStateChange can run and ensureProfile fires
+        await new Promise(r => setTimeout(r, 50));
+
+        const { data } = await supabase.auth.getSession();
         if (data.session) {
-          toast({
-            title: "Succesvol ingelogd",
-            description: "Welkom bij AI Dagelijks!",
-          });
+          toast({ title: 'Succesvol ingelogd', description: 'Welkom bij AI Dagelijks!' });
         }
-
-        // Redirect to the original page or home
+      } catch (err: any) {
+        console.error('Auth callback error:', err);
+        toast({ title: 'Authenticatie mislukt', description: String(err?.message ?? err), variant: 'destructive' });
+      } finally {
         const redirectTo = sessionStorage.getItem('auth_redirect_to') || '/';
         sessionStorage.removeItem('auth_redirect_to');
         navigate(redirectTo, { replace: true });
-        
-      } catch (error) {
-        console.error('Unexpected auth callback error:', error);
-        navigate('/', { replace: true });
       }
-    };
-
-    handleAuthCallback();
+    })();
   }, [navigate]);
 
   return (

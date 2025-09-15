@@ -34,8 +34,8 @@ export default function Profile() {
     window.addEventListener('resize', checkScreenSize);
     return () => window.removeEventListener('resize', checkScreenSize);
   }, []);
-  const { user, profile, updateProfile, uploadAvatar, preferences, updatePreferences } = useAuth();
-  const [loading, setLoading] = useState(false);
+  const { user, profile, loading, updateProfile, uploadAvatar, preferences, updatePreferences } = useAuth();
+  const [formLoading, setFormLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   
@@ -44,22 +44,24 @@ export default function Profile() {
     avatar_url: profile?.avatar_url || '',
   });
 
-  if (!user || !profile) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p>Je moet ingelogd zijn om je profiel te bekijken.</p>
-      </div>
-    );
+  if (loading) {
+    return <div className="min-h-screen flex items-center justify-center"><p>Bezig met laden…</p></div>;
+  }
+  if (!user) {
+    return <div className="min-h-screen flex items-center justify-center"><p>Je moet ingelogd zijn om je profiel te bekijken.</p></div>;
+  }
+  if (!profile) {
+    return <div className="min-h-screen flex items-center justify-center"><p>Je profiel wordt ingesteld…</p></div>;
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
+    setFormLoading(true);
     
     try {
       await updateProfile(formData);
     } finally {
-      setLoading(false);
+      setFormLoading(false);
     }
   };
 
@@ -213,8 +215,8 @@ export default function Profile() {
               </div>
 
               <div className="flex justify-end">
-                <Button type="submit" disabled={loading}>
-                  {loading ? 'Opslaan...' : 'Profiel opslaan'}
+                <Button type="submit" disabled={formLoading}>
+                  {formLoading ? 'Opslaan...' : 'Profiel opslaan'}
                 </Button>
               </div>
             </form>

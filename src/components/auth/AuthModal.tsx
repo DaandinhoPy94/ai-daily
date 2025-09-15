@@ -31,6 +31,9 @@ export function AuthModal({ open, onOpenChange, defaultTab = 'signin' }: AuthMod
     setLoading(true);
     
     try {
+      // Remember where to go back to after login
+      sessionStorage.setItem('auth_redirect_to', window.location.pathname);
+
       if (useMagicLink) {
         const { error } = await sendMagicLink(email);
         if (!error) {
@@ -58,6 +61,9 @@ export function AuthModal({ open, onOpenChange, defaultTab = 'signin' }: AuthMod
   const handleSocialLogin = async (provider: 'google' | 'github' | 'apple') => {
     setLoading(true);
     try {
+      // Remember where to go back to after login
+      sessionStorage.setItem('auth_redirect_to', window.location.pathname);
+      
       const { error } = await signInWithProvider(provider);
       if (!error) {
         onOpenChange(false);

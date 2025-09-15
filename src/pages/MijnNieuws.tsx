@@ -10,7 +10,7 @@ import { useEffect, useState } from 'react';
 
 export default function MijnNieuws() {
   const [viewType, setViewType] = useState<'mobile' | 'tablet' | 'desktop'>('desktop');
-  const { user, profile } = useAuth();
+  const { user, profile, loading } = useAuth();
 
   useEffect(() => {
     const checkScreenSize = () => {
@@ -29,12 +29,14 @@ export default function MijnNieuws() {
     return () => window.removeEventListener('resize', checkScreenSize);
   }, []);
 
-  if (!user || !profile) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p>Je moet ingelogd zijn om je gepersonaliseerde nieuws te bekijken.</p>
-      </div>
-    );
+  if (loading) {
+    return <div className="min-h-screen flex items-center justify-center"><p>Bezig met laden…</p></div>;
+  }
+  if (!user) {
+    return <div className="min-h-screen flex items-center justify-center"><p>Je moet ingelogd zijn om je mijn nieuws te bekijken.</p></div>;
+  }
+  if (!profile) {
+    return <div className="min-h-screen flex items-center justify-center"><p>Je profiel wordt ingesteld…</p></div>;
   }
 
   const content = (
