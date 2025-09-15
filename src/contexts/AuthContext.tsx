@@ -101,6 +101,53 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [preferences, setPreferences] = useState<UserPreferences | null>(USE_MOCK_AUTH ? MOCK_PREFERENCES : null);
   const [loading, setLoading] = useState(!USE_MOCK_AUTH);
 
+  const ensureProfile = async (user: User) => {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      if (error) throw error;
+      
+      if (data) {
+        setProfile(data);
+      } else {
+        // Profile doesn't exist, create one
+        const displayName = user.user_metadata?.full_name || 
+                           user.user_metadata?.name ||
+                           user.email?.split('@')[0] || 
+                           'Gebruiker';
+        
+        const avatarUrl = user.user_metadata?.avatar_url || 
+                         `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.id}`;
+        
+        const { data: newProfile, error: insertError } = await supabase
+          .from('profiles')
+          .insert([{
+            user_id: user.id,
+            display_name: displayName,
+            role: 'reader',
+            avatar_url: avatarUrl
+          }])
+          .select()
+          .single();
+        
+        if (insertError) {
+          console.error('Error creating profile:', insertError);
+          // Set profile to null if creation fails
+          setProfile(null);
+        } else {
+          setProfile(newProfile);
+        }
+      }
+    } catch (error) {
+      console.error('Error ensuring profile:', error);
+      setProfile(null);
+    }
+  };
+
   const fetchProfile = async (userId: string) => {
     try {
       const { data, error } = await supabase
@@ -159,9 +206,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setUser(session?.user ?? null);
         
         if (session?.user) {
-          // Defer profile and preferences fetching
+          // Defer profile and preferences fetching/ensuring
           setTimeout(() => {
-            fetchProfile(session.user.id);
+            ensureProfile(session.user);
             fetchPreferences(session.user.id);
           }, 0);
         } else {
@@ -179,7 +226,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(session?.user ?? null);
       
       if (session?.user) {
-        fetchProfile(session.user.id);
+        ensureProfile(session.user);
         fetchPreferences(session.user.id);
       }
       
