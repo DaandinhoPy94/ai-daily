@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
+import { Link } from 'react-router-dom';
+import { ChevronRight } from 'lucide-react';
 import { Header } from '../components/Header';
 import { Footer } from '../components/Footer';
 import { NewsCard } from '../components/NewsCard';
@@ -272,9 +274,18 @@ export default function Index() {
           <hr className="border-border" />
           
           {/* Section Heading */}
-          <h2 className="text-lg font-bold font-serif uppercase tracking-wide text-foreground">
-            Nieuwsbrief
-          </h2>
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-bold font-serif uppercase tracking-wide text-foreground">
+              Nieuwsbrief
+            </h2>
+            <Link 
+              to="/nieuwsbrief" 
+              className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors group"
+            >
+              <span>Alles weergeven</span>
+              <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </Link>
+          </div>
 
           {/* 3-Card Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -319,9 +330,18 @@ export default function Index() {
           <hr className="border-border" />
           
           {/* Section Heading */}
-          <h2 className="text-lg font-bold font-serif uppercase tracking-wide text-foreground">
-            Banen
-          </h2>
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-bold font-serif uppercase tracking-wide text-foreground">
+              Banen
+            </h2>
+            <Link 
+              to="/ai-jobs" 
+              className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors group"
+            >
+              <span>Alles weergeven</span>
+              <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </Link>
+          </div>
 
           {/* 3-Card Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
