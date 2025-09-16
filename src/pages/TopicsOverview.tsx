@@ -304,7 +304,7 @@ export default function TopicsOverview() {
                 <CardHeader>
                   <h2 className="text-2xl font-semibold leading-none tracking-tight">
                     <Link 
-                      to={`/${mainTopic.slug}`}
+                      to={`/topic/${mainTopic.slug}`}
                       className="text-foreground hover:text-primary transition-colors"
                     >
                       {mainTopic.name}
@@ -322,7 +322,7 @@ export default function TopicsOverview() {
                         return (
                           <div key={subtopic.id} className="flex items-center justify-between py-2 px-3 rounded-md hover:bg-muted/50 transition-colors">
                             <Link
-                              to={`/${subtopic.slug}`}
+                              to={`/topic/${subtopic.slug}`}
                               className="flex-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
                             >
                               {subtopic.name}
