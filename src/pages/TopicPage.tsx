@@ -2,9 +2,8 @@ import { Helmet } from 'react-helmet-async';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { ArticleListRow } from '@/components/ArticleListRow';
+import { TopicSectionList } from '@/components/TopicSectionList';
 import { getTopicBySlug, followTopic, unfollowTopic, isFollowingTopic } from '@/lib/supabase';
-import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { getTopicSEO, buildCanonical } from '@/lib/seo';
 import NotFound from '@/pages/NotFound';
@@ -15,23 +14,12 @@ import { MobileHeader } from '@/components/MobileHeader';
 import { BottomTabBar } from '@/components/BottomTabBar';
 import { TabletAppShell } from '@/components/TabletAppShell';
 
-interface Article {
-  id: string;
-  slug: string;
-  title: string;
-  published_at: string;
-  readTimeMinutes: number;
-  media_asset_url?: string;
-  media_asset_alt?: string;
-}
-
 export default function TopicPage() {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
   
   const [topic, setTopic] = useState<any>(null);
-  const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
   const [followLoading, setFollowLoading] = useState(false);
   const [isFollowing, setIsFollowing] = useState(false);
@@ -55,7 +43,7 @@ export default function TopicPage() {
   }, []);
 
   useEffect(() => {
-    const fetchTopicAndArticles = async () => {
+    const fetchTopic = async () => {
       if (!slug) {
         setLoading(false);
         return;
@@ -77,9 +65,6 @@ export default function TopicPage() {
           const following = await isFollowingTopic(topicData.id, user.id);
           setIsFollowing(following);
         }
-
-        // Fetch articles for this topic
-        await fetchArticles(topicData);
       } catch (error) {
         console.error('Error fetching topic:', error);
         setTopic(null);
@@ -88,65 +73,9 @@ export default function TopicPage() {
       }
     };
 
-    fetchTopicAndArticles();
+    fetchTopic();
   }, [slug, user]);
 
-  const fetchArticles = async (topicData: any) => {
-    try {
-      let articlesQuery = supabase
-        .from('articles')
-        .select(`
-          id,
-          slug,
-          title,
-          published_at,
-          read_time_minutes,
-          topic_id,
-          media_assets!articles_hero_image_id_fkey (
-            path,
-            alt
-          )
-        `)
-        .eq('status', 'published')
-        .lte('published_at', new Date().toISOString())
-        .order('published_at', { ascending: false });
-
-      // If main topic, include articles from subcategories
-      if (topicData.type === 'main') {
-        // Get all subtopic IDs for this main topic
-        const { data: subTopics } = await supabase
-          .from('topics')
-          .select('id')
-          .eq('parent_slug', topicData.slug)
-          .eq('is_active', true);
-
-        const subTopicIds = subTopics?.map(t => t.id) || [];
-        const allTopicIds = [topicData.id, ...subTopicIds];
-        
-        articlesQuery = articlesQuery.in('topic_id', allTopicIds);
-      } else {
-        // Sub topic - only articles for this specific topic
-        articlesQuery = articlesQuery.eq('topic_id', topicData.id);
-      }
-
-      const { data: articlesData } = await articlesQuery.limit(50);
-
-      const formattedArticles: Article[] = (articlesData || []).map(article => ({
-        id: article.id,
-        slug: article.slug,
-        title: article.title,
-        published_at: article.published_at,
-        readTimeMinutes: article.read_time_minutes,
-        media_asset_url: article.media_assets?.path,
-        media_asset_alt: article.media_assets?.alt
-      }));
-
-      setArticles(formattedArticles);
-    } catch (error) {
-      console.error('Error fetching articles:', error);
-      setArticles([]);
-    }
-  };
 
   const handleFollowToggle = async () => {
     if (!user || !topic) {
@@ -238,23 +167,7 @@ export default function TopicPage() {
       </div>
 
       {/* Articles List */}
-      <section className="bg-card rounded-lg border border-border">
-        {articles.length === 0 ? (
-          <div className="p-8 text-center text-muted-foreground">
-            Nog geen artikelen voor dit onderwerp.
-          </div>
-        ) : (
-          <div role="list">
-            {articles.map((article, index) => (
-              <ArticleListRow
-                key={article.id}
-                article={article}
-                showDivider={index < articles.length - 1}
-              />
-            ))}
-          </div>
-        )}
-      </section>
+      <TopicSectionList topic={topic} />
     </div>
   );
 
