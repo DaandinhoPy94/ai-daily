@@ -15,6 +15,7 @@ import { getHomepageSlots, getTopicSections, getLatest, getMostRead } from '../l
 import { NewsArticle, RightRailItem, TopicSection as TopicSectionType } from '../types';
 import { getDefaultSEO, buildCanonical } from '../lib/seo';
 import { useStocks } from '../contexts/StockProvider';
+import { supabase } from '../integrations/supabase/client';
 
 interface HomepageSlot {
   article_id: string;
@@ -29,6 +30,218 @@ interface HomepageSlot {
   item_order: number;
   media_asset_url?: string;
   media_asset_alt?: string;
+}
+
+interface DayArticle {
+  id: string;
+  slug: string;
+  title: string;
+  published_at: string;
+}
+
+// Categories for Dagoverzicht section
+const DAY_OVERVIEW_CATEGORIES = [
+  {"slug":"onderzoek-ontwikkeling","name":"Onderzoek & Ontwikkeling","display_order":10},
+  {"slug":"technologie-modellen","name":"Technologie & Modellen","display_order":20},
+  {"slug":"toepassingen","name":"Toepassingen","display_order":30},
+  {"slug":"bedrijven-markt","name":"Bedrijven & Markt","display_order":40},
+  {"slug":"geografie-politiek","name":"Geografie & Politiek","display_order":50},
+  {"slug":"veiligheid-regelgeving","name":"Veiligheid & Regelgeving","display_order":60},
+  {"slug":"economie-werk","name":"Economie & Werk","display_order":70},
+  {"slug":"cultuur-samenleving","name":"Cultuur & Samenleving","display_order":80}
+];
+
+// Helper function to get day ranges for Europe/Amsterdam timezone
+function getDayRange(offsetDays: number): { start: Date; end: Date } {
+  const now = new Date();
+  const targetDate = new Date(now);
+  targetDate.setDate(now.getDate() + offsetDays);
+  
+  // Create start of day in Europe/Amsterdam timezone
+  const start = new Date(targetDate.toLocaleString("en-US", {timeZone: "Europe/Amsterdam"}));
+  start.setHours(0, 0, 0, 0);
+  
+  // Create end of day in Europe/Amsterdam timezone
+  const end = new Date(start);
+  end.setHours(23, 59, 59, 999);
+  
+  return { start, end };
+}
+
+// CategoryDayList component
+function CategoryDayList({ categorySlug, categoryName }: { categorySlug: string; categoryName: string }) {
+  const [todayArticles, setTodayArticles] = useState<DayArticle[]>([]);
+  const [yesterdayArticles, setYesterdayArticles] = useState<DayArticle[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+
+  useEffect(() => {
+    async function fetchCategoryArticles() {
+      try {
+        setLoading(true);
+        setError(false);
+
+        const today = getDayRange(0);
+        const yesterday = getDayRange(-1);
+
+        // Fetch articles for today and yesterday in parallel
+        const [todayData, yesterdayData] = await Promise.all([
+          supabase
+            .from('articles')
+            .select(`
+              id,
+              slug,
+              title,
+              published_at,
+              article_topics!inner(topic_id),
+              topics!inner(slug)
+            `)
+            .eq('status', 'published')
+            .eq('topics.slug', categorySlug)
+            .gte('published_at', today.start.toISOString())
+            .lte('published_at', today.end.toISOString())
+            .order('published_at', { ascending: false }),
+          
+          supabase
+            .from('articles')
+            .select(`
+              id,
+              slug,
+              title,
+              published_at,
+              article_topics!inner(topic_id),
+              topics!inner(slug)
+            `)
+            .eq('status', 'published')
+            .eq('topics.slug', categorySlug)
+            .gte('published_at', yesterday.start.toISOString())
+            .lte('published_at', yesterday.end.toISOString())
+            .order('published_at', { ascending: false })
+        ]);
+
+        setTodayArticles(todayData.data || []);
+        setYesterdayArticles(yesterdayData.data || []);
+      } catch (err) {
+        console.error(`Error fetching articles for ${categorySlug}:`, err);
+        setError(true);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchCategoryArticles();
+  }, [categorySlug]);
+
+  const formatTime = (dateString: string) => {
+    return new Date(dateString).toLocaleTimeString('nl-NL', {
+      hour: '2-digit',
+      minute: '2-digit',
+      timeZone: 'Europe/Amsterdam'
+    });
+  };
+
+  if (loading) {
+    return (
+      <div className="space-y-3">
+        <h3 className="font-semibold text-sm uppercase tracking-wide text-foreground">
+          {categoryName}
+        </h3>
+        {/* Skeleton for today */}
+        {[1, 2, 3].map((i) => (
+          <div key={`today-${i}`} className="flex gap-3">
+            <div className="w-12 h-4 bg-muted rounded animate-pulse"></div>
+            <div className="flex-1 h-4 bg-muted rounded animate-pulse"></div>
+          </div>
+        ))}
+        {/* Skeleton divider */}
+        <div className="flex items-center gap-2 my-4">
+          <div className="flex-1 h-px bg-border"></div>
+          <div className="w-16 h-3 bg-muted rounded animate-pulse"></div>
+          <div className="flex-1 h-px bg-border"></div>
+        </div>
+        {/* Skeleton for yesterday */}
+        {[1, 2].map((i) => (
+          <div key={`yesterday-${i}`} className="flex gap-3">
+            <div className="w-12 h-4 bg-muted rounded animate-pulse"></div>
+            <div className="flex-1 h-4 bg-muted rounded animate-pulse"></div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="space-y-3">
+        <h3 className="font-semibold text-sm uppercase tracking-wide text-foreground">
+          {categoryName}
+        </h3>
+        <p className="text-sm text-muted-foreground">Kon artikelen niet laden</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-3">
+      <h3 className="font-semibold text-sm uppercase tracking-wide text-foreground">
+        {categoryName}
+      </h3>
+      
+      {/* Today's articles */}
+      {todayArticles.length > 0 && (
+        <div className="space-y-2">
+          {todayArticles.map((article) => (
+            <div key={article.id} className="flex gap-3 text-sm group">
+              <span className="text-muted-foreground font-mono text-xs mt-0.5 w-12 flex-shrink-0">
+                {formatTime(article.published_at)}
+              </span>
+              <Link
+                to={`/artikel/${article.slug}`}
+                className="flex-1 text-foreground hover:text-primary transition-colors line-clamp-2 group-hover:underline"
+              >
+                {article.title}
+              </Link>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Divider */}
+      {(todayArticles.length > 0 || yesterdayArticles.length > 0) && (
+        <div className="flex items-center gap-2 my-4">
+          <div className="flex-1 h-px bg-border"></div>
+          <span className="text-xs text-muted-foreground uppercase tracking-wide px-2">
+            Gisteren
+          </span>
+          <div className="flex-1 h-px bg-border"></div>
+        </div>
+      )}
+
+      {/* Yesterday's articles */}
+      {yesterdayArticles.length > 0 && (
+        <div className="space-y-2">
+          {yesterdayArticles.map((article) => (
+            <div key={article.id} className="flex gap-3 text-sm group">
+              <span className="text-muted-foreground font-mono text-xs mt-0.5 w-12 flex-shrink-0">
+                {formatTime(article.published_at)}
+              </span>
+              <Link
+                to={`/artikel/${article.slug}`}
+                className="flex-1 text-foreground hover:text-primary transition-colors line-clamp-2 group-hover:underline"
+              >
+                {article.title}
+              </Link>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Empty state */}
+      {todayArticles.length === 0 && yesterdayArticles.length === 0 && (
+        <p className="text-sm text-muted-foreground">Nog geen artikelen.</p>
+      )}
+    </div>
+  );
 }
 
 export default function Index() {
@@ -378,6 +591,30 @@ export default function Index() {
               <JobCard
                 key={job.id}
                 job={job}
+              />
+            ))}
+          </div>
+        </section>
+
+        {/* Dagoverzicht Section */}
+        <section className="space-y-6 mb-8">
+          {/* Section Divider */}
+          <hr className="border-border" />
+          
+          {/* Section Heading */}
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-bold font-serif uppercase tracking-wide text-foreground">
+              Dagoverzicht
+            </h2>
+          </div>
+
+          {/* 8 Category Grid - 4x2 on desktop */}
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8">
+            {DAY_OVERVIEW_CATEGORIES.map((category) => (
+              <CategoryDayList
+                key={category.slug}
+                categorySlug={category.slug}
+                categoryName={category.name}
               />
             ))}
           </div>
