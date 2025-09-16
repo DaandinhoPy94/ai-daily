@@ -7,9 +7,13 @@ import { BottomTabBar } from '@/components/BottomTabBar';
 import { Footer } from '@/components/Footer';
 import { TabletAppShell } from '@/components/TabletAppShell';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { supabase } from '@/integrations/supabase/client';
 
 export default function LmArena() {
   const [viewType, setViewType] = useState<'mobile' | 'tablet' | 'desktop'>('mobile');
+  const [scraperData, setScraperData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const updateViewType = () => {
@@ -26,6 +30,28 @@ export default function LmArena() {
     updateViewType();
     window.addEventListener('resize', updateViewType);
     return () => window.removeEventListener('resize', updateViewType);
+  }, []);
+
+  useEffect(() => {
+    const fetchLeaderboard = async () => {
+      try {
+        const { data, error } = await supabase.functions.invoke('lm-arena-scraper', {
+          body: { name: 'Functions' },
+        });
+        
+        if (error) {
+          setError(error.message);
+        } else {
+          setScraperData(data);
+        }
+      } catch (err) {
+        setError('Fout bij laden van leaderboard');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchLeaderboard();
   }, []);
 
   const content = (
@@ -50,16 +76,23 @@ export default function LmArena() {
               <CardTitle className="text-xl">Binnenkort arena</CardTitle>
             </CardHeader>
             <CardContent className="text-center space-y-4">
-              <p className="text-muted-foreground">
-                We werken hard aan een platform waar je AI-modellen kunt vergelijken en hun prestaties kunt bekijken op verschillende taken.
-              </p>
-              <p className="text-muted-foreground">
-                Deze functie wordt binnenkort gelanceerd.
-              </p>
-              <p className="text-sm text-muted-foreground">
-                In de tussentijd kun je alle AI-nieuws vinden op onze{' '}
-                <a href="/" className="text-primary hover:underline">homepage</a>.
-              </p>
+              {loading && (
+                <p className="text-muted-foreground">
+                  Leaderboard wordt geladen...
+                </p>
+              )}
+              
+              {error && (
+                <p className="text-destructive">
+                  Fout bij laden: {error}
+                </p>
+              )}
+              
+              {scraperData && (
+                <pre className="text-left text-sm overflow-auto max-h-96 p-4 bg-muted rounded">
+                  {JSON.stringify(scraperData, null, 2)}
+                </pre>
+              )}
             </CardContent>
           </Card>
         </div>
