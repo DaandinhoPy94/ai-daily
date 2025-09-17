@@ -11,6 +11,7 @@ import { RightRail } from '../components/RightRail';
 import { TopicSection } from '../components/TopicSection';
 import { NewsPaperCard } from '../components/NewsPaperCard';
 import { JobCard } from '../components/JobCard';
+import { HomePapersRow } from '../components/HomePapersRow';
 import { getHomepageSlots, getTopicSections, getLatest, getMostRead } from '../lib/supabase';
 import { NewsArticle, RightRailItem, TopicSection as TopicSectionType } from '../types';
 import { getDefaultSEO, buildCanonical } from '../lib/seo';
@@ -595,6 +596,9 @@ export default function Index() {
             ))}
           </div>
         </section>
+
+        {/* AI Papers Section */}
+        <HomePapersRow />
 
         {/* Dagoverzicht Section */}
         <section className="space-y-6 mb-8">
