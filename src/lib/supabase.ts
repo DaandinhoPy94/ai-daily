@@ -375,3 +375,19 @@ export async function createArticleWithMedia(articleData: {
     throw error;
   }
 }
+
+// AI Papers functions
+export async function getLatestPapers(limit: number = 10) {
+  const { data, error } = await supabase
+    .from('ai_papers' as any)
+    .select('id, title, slug, summary, publication_date, cover_icon:media_assets(id, path, alt, title), authors')
+    .order('publication_date', { ascending: false, nullsFirst: false })
+    .limit(limit);
+
+  if (error) {
+    console.error('Error fetching papers:', error);
+    throw error;
+  }
+
+  return data || [];
+}
