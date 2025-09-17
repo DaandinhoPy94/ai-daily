@@ -11,6 +11,7 @@ import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { DevModeIndicator } from "@/components/DevModeIndicator";
 import ResponsiveIndex from "./pages/ResponsiveIndex";
 import ArticleDetail from "./pages/ArticleDetail";
+import PaperPage from "./pages/PaperPage";
 import NetBinnen from "./pages/NetBinnen";
 import Profile from "./pages/Profile";
 import Preferences from "./pages/Preferences";
@@ -79,6 +80,7 @@ const App = () => (
             <Routes>
               <Route path="/" element={<ResponsiveIndex />} />
               <Route path="/artikel/:slug" element={<ArticleDetail />} />
+              <Route path="/papers/:slug" element={<PaperPage />} />
               <Route path="/net-binnen" element={<NetBinnen />} />
               <Route path="/auth/callback" element={<AuthCallback />} />
               <Route path="/profile" element={
