@@ -12,3 +12,17 @@ Allow: /
 
 User-agent: *
 Allow: /
+
+# Sitemap
+Sitemap: https://www.aidagelijks.nl/sitemap.xml
+
+# Disallow admin areas
+Disallow: /admin/
+Disallow: /auth/
+Disallow: /api/admin/
+
+# Allow important directories
+Allow: /artikel/
+Allow: /papers/
+Allow: /topic/
+Allow: /topics/

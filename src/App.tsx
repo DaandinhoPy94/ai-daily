@@ -30,6 +30,7 @@ import Meer from "./pages/Meer";
 import Search from "./pages/Search";
 import AuthCallback from "./pages/AuthCallback";
 import NotFound from "./pages/NotFound";
+import SitemapXml from "./components/SitemapXml";
 
 // Topic pages
 import TextToTextLlms from "./pages/topics/TextToTextLlms";
@@ -147,6 +148,7 @@ const App = () => (
               <Route path="/rss-feeds" element={<RSSFeeds />} />
               <Route path="/search" element={<Search />} />
               <Route path="/meer" element={<Meer />} />
+              <Route path="/sitemap.xml" element={<SitemapXml />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
             </BrowserRouter>
