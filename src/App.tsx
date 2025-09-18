@@ -31,6 +31,11 @@ import Search from "./pages/Search";
 import AuthCallback from "./pages/AuthCallback";
 import NotFound from "./pages/NotFound";
 import SitemapXml from "./components/SitemapXml";
+import SitemapIndex from "./components/SitemapIndex";
+import SitemapStatic from "./components/SitemapStatic";
+import SitemapArticles from "./components/SitemapArticles";
+import SitemapTopics from "./components/SitemapTopics";
+import SitemapPapers from "./components/SitemapPapers";
 
 // Topic pages
 import TextToTextLlms from "./pages/topics/TextToTextLlms";
@@ -148,7 +153,12 @@ const App = () => (
               <Route path="/rss-feeds" element={<RSSFeeds />} />
               <Route path="/search" element={<Search />} />
               <Route path="/meer" element={<Meer />} />
-              <Route path="/sitemap.xml" element={<SitemapXml />} />
+            <Route path="/sitemap_index.xml" element={<SitemapIndex />} />
+            <Route path="/sitemap.xml" element={<SitemapXml />} />
+            <Route path="/sitemap-static.xml" element={<SitemapStatic />} />
+            <Route path="/sitemap-articles.xml" element={<SitemapArticles />} />
+            <Route path="/sitemap-topics.xml" element={<SitemapTopics />} />
+            <Route path="/sitemap-papers.xml" element={<SitemapPapers />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
             </BrowserRouter>
