@@ -49,7 +49,7 @@ export function NewsCard({ article, variant = 'standard', className = '', onBook
           </div>
           
           {/* Second Line: Title (big text) */}
-          <h2 className={`font-serif font-bold leading-tight mb-2 ${
+          <h2 className={`font-serif font-bold leading-tight mb-2 line-clamp-2 ${
             isHero ? 'text-xl md:text-2xl' : 'text-lg'
           }`}>
             {article.title}
@@ -57,7 +57,7 @@ export function NewsCard({ article, variant = 'standard', className = '', onBook
           
           {/* Third Line: Subtitle */}
           {article.subtitle && (
-            <p className="text-sm text-muted-foreground leading-relaxed">
+            <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2">
               {article.subtitle}
             </p>
           )}
@@ -123,7 +123,7 @@ export function NewsCard({ article, variant = 'standard', className = '', onBook
           </div>
           
           {/* Second Line: Title (big text) */}
-          <h2 className={`font-serif font-bold leading-tight mb-2 group-hover:underline ${
+          <h2 className={`font-serif font-bold leading-tight mb-2 group-hover:underline line-clamp-2 ${
             isHero ? 'text-xl md:text-2xl' : 'text-lg'
           } ${isRead(key) ? config.deemphasisClass : 'text-foreground'}`}>
             {article.title}
@@ -131,7 +131,7 @@ export function NewsCard({ article, variant = 'standard', className = '', onBook
           
           {/* Third Line: Subtitle */}
           {article.subtitle && (
-            <p className="text-sm text-muted-foreground leading-relaxed">
+            <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2">
               {article.subtitle}
             </p>
           )}

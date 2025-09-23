@@ -74,7 +74,7 @@ export function PaperCard({
           </div>
           
           {/* Second Line: Title (big text) */}
-          <h2 className={`font-serif font-bold leading-tight mb-2 group-hover:underline ${
+          <h2 className={`font-serif font-bold leading-tight mb-2 group-hover:underline line-clamp-2 ${
             isHero ? 'text-xl md:text-2xl' : 'text-lg'
           }`}>
             {title}
@@ -82,7 +82,7 @@ export function PaperCard({
           
           {/* Third Line: Summary */}
           {summary && (
-            <p className="text-sm text-muted-foreground leading-relaxed">
+            <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2">
               {summary}
             </p>
           )}
