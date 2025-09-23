@@ -49,7 +49,7 @@ export function JobCard({ job, className = '' }: JobCardProps) {
 
           {/* Company & Salary */}
           <div className="flex flex-col gap-1">
-            <p className="text-sm text-muted-foreground line-clamp-2">
+            <p className="text-sm text-muted-foreground line-clamp-4">
               {job.company}
             </p>
             {job.salaryRange && (

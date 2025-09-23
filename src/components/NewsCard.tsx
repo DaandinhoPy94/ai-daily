@@ -57,7 +57,7 @@ export function NewsCard({ article, variant = 'standard', className = '', onBook
           
           {/* Third Line: Subtitle */}
           {article.subtitle && (
-            <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2">
+            <p className="text-sm text-muted-foreground leading-relaxed line-clamp-4">
               {article.subtitle}
             </p>
           )}

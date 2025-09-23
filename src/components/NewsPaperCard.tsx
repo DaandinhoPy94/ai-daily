@@ -47,7 +47,7 @@ export function NewsPaperCard({ newsletter, className = '' }: NewsPaperCardProps
           </h3>
 
           {/* Description */}
-          <p className="text-sm text-muted-foreground line-clamp-2 flex-grow">
+          <p className="text-sm text-muted-foreground line-clamp-4 flex-grow">
             {newsletter.description}
           </p>
         </div>

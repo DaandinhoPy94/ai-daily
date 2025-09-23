@@ -82,7 +82,7 @@ export function PaperCard({
           
           {/* Third Line: Summary */}
           {summary && (
-            <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2">
+            <p className="text-sm text-muted-foreground leading-relaxed line-clamp-4">
               {summary}
             </p>
           )}
