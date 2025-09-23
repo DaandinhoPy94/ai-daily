@@ -30,10 +30,17 @@ export interface ArticleData {
   };
 }
 
-const SITE_NAME = "AI Nieuws";
-const SITE_URL = import.meta.env.VITE_SITE_URL || "https://aidagelijks.nl"; // TODO: Set VITE_SITE_URL
+const SITE_NAME = "AI Dagelijks";
+const SITE_URL = import.meta.env.VITE_SITE_URL || "https://aidagelijks.nl";
 const DEFAULT_DESCRIPTION = "Het laatste nieuws over kunstmatige intelligentie, AI-ontwikkelingen en technologie-innovaties uit Nederland en de wereld.";
-const DEFAULT_IMAGE = "/og-default.jpg"; // TODO: Add default OG image to public folder
+const DEFAULT_IMAGE = "/og-default.jpg"; // ensure this exists in /public
+const PUBLISHER_LOGO = "/logo.png"; // ensure this exists in /public
+const SOCIAL_SAME_AS = [
+  "https://x.com/AI_dagelijks",
+  "https://www.linkedin.com/company/ai-dagelijks/",
+  "https://www.instagram.com/ai.dagelijks/",
+  "https://www.facebook.com/aidagelijks"
+];
 
 export function getDefaultSEO() {
   return {
@@ -73,8 +80,9 @@ export function buildArticleJSONLD(article: ArticleData): string {
       "name": SITE_NAME,
       "logo": {
         "@type": "ImageObject",
-        "url": `${SITE_URL}/logo.png` // TODO: Add logo to public folder
-      }
+        "url": `${SITE_URL}${PUBLISHER_LOGO}`
+      },
+      "sameAs": SOCIAL_SAME_AS
     },
     "mainEntityOfPage": {
       "@type": "WebPage",
@@ -114,4 +122,46 @@ export function getTopicSEO(topicName: string): SEOData {
     description: `Blijf op de hoogte van het laatste nieuws over ${topicName.toLowerCase()}. Ontdek de nieuwste ontwikkelingen en inzichten.`,
     type: 'website',
   });
+}
+
+// JSON-LD helpers
+export function buildBreadcrumbJSONLD(items: Array<{ name: string; url: string }>): string {
+  const jsonLD = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": items.map((item, index) => ({
+      "@type": "ListItem",
+      "position": index + 1,
+      "name": item.name,
+      "item": item.url
+    }))
+  };
+  return JSON.stringify(jsonLD, null, 2);
+}
+
+export function buildOrganizationJSONLD(): string {
+  const defaults = getDefaultSEO();
+  return JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": defaults.siteName,
+    "url": defaults.siteUrl,
+    "logo": `${defaults.siteUrl}${PUBLISHER_LOGO}`,
+    "sameAs": SOCIAL_SAME_AS
+  }, null, 2);
+}
+
+export function buildWebsiteJSONLD(): string {
+  const defaults = getDefaultSEO();
+  return JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": defaults.siteName,
+    "url": defaults.siteUrl,
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": `${defaults.siteUrl}/search?q={search_term_string}`,
+      "query-input": "required name=search_term_string"
+    }
+  }, null, 2);
 }

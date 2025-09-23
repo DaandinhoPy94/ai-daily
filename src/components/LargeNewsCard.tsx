@@ -16,9 +16,10 @@ interface Article {
 interface LargeNewsCardProps {
   article: Article;
   className?: string;
+  priority?: boolean;
 }
 
-export function LargeNewsCard({ article, className = '' }: LargeNewsCardProps) {
+export function LargeNewsCard({ article, className = '', priority = false }: LargeNewsCardProps) {
   const { isRead, markRead, config } = useReadArticles();
   const key = getArticleKey({ slug: article.slug, id: article.id });
   const imageUrl = article.media_asset_url || 
@@ -44,8 +45,9 @@ export function LargeNewsCard({ article, className = '' }: LargeNewsCardProps) {
             src={imageUrl}
             alt={article.media_asset_alt || article.title}
             className="w-full h-full object-cover group-active:scale-[1.01] transition-transform duration-200"
-            loading="lazy"
+            loading={priority ? 'eager' : 'lazy'}
             decoding="async"
+            {...(priority ? { fetchpriority: 'high' as any } : {})}
           />
         </div>
 

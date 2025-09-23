@@ -35,6 +35,7 @@ import SitemapStatic from "./components/SitemapStatic";
 import SitemapArticles from "./components/SitemapArticles";
 import SitemapTopics from "./components/SitemapTopics";
 import SitemapPapers from "./components/SitemapPapers";
+import SitemapNews from "./components/SitemapNews";
 
 import TopicsOverview from "./pages/TopicsOverview";
 
@@ -103,6 +104,7 @@ const App = () => (
             <Route path="/sitemap-articles.xml" element={<SitemapArticles />} />
             <Route path="/sitemap-topics.xml" element={<SitemapTopics />} />
             <Route path="/sitemap-papers.xml" element={<SitemapPapers />} />
+            <Route path="/news-sitemap.xml" element={<SitemapNews />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
             </BrowserRouter>

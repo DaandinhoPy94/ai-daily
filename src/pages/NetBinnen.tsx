@@ -188,6 +188,18 @@ export default function NetBinnen() {
         <title>{pageTitle}</title>
         <meta name="description" content="Het nieuwste AI nieuws en laatste ontwikkelingen in kunstmatige intelligentie. Blijf op de hoogte van alle breaking news." />
         <link rel="canonical" href={canonical} />
+        {currentPage > 1 && (
+          <link
+            rel="prev"
+            href={buildCanonical(currentPage > 2 ? `/net-binnen?page=${currentPage - 1}` : '/net-binnen')}
+          />
+        )}
+        {currentPage < totalPages && (
+          <link
+            rel="next"
+            href={buildCanonical(`/net-binnen?page=${currentPage + 1}`)}
+          />
+        )}
         <meta property="og:type" content="website" />
         <meta property="og:title" content={pageTitle} />
         <meta property="og:description" content="Het nieuwste AI nieuws en laatste ontwikkelingen in kunstmatige intelligentie." />

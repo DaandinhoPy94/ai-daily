@@ -7,6 +7,8 @@ import { BottomTabBar } from '@/components/BottomTabBar';
 import { TabletAppShell } from '@/components/TabletAppShell';
 import { ArticleListRow } from '@/components/ArticleListRow';
 import { supabase } from '@/integrations/supabase/client';
+import { Helmet } from 'react-helmet-async';
+import { buildCanonical } from '@/lib/seo';
 import {
   Pagination,
   PaginationContent,
@@ -217,6 +219,15 @@ export function SectionList({ title, topicSlug, isWrappedInAppShell = false }: S
     <div className={`container mx-auto px-4 sm:px-6 lg:px-8 max-w-screen-xl ${isWrappedInAppShell ? 'py-4' : 'py-8'} ${
       isMainTopicSlug && viewType === 'mobile' ? 'pb-20' : ''
     }`}>
+      <Helmet>
+        <link rel="canonical" href={buildCanonical(location.pathname + (currentPage > 1 ? `?page=${currentPage}` : ''))} />
+        {currentPage > 1 && (
+          <link rel="prev" href={buildCanonical(location.pathname + (currentPage > 2 ? `?page=${currentPage - 1}` : ''))} />
+        )}
+        {currentPage < totalPages && (
+          <link rel="next" href={buildCanonical(location.pathname + `?page=${currentPage + 1}`)} />
+        )}
+      </Helmet>
       {/* Title Section */}
       <div className="mb-8">
         <h1 className="text-3xl sm:text-4xl font-bold font-serif text-foreground mb-4">

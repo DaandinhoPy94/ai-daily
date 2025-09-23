@@ -87,7 +87,7 @@ export default function Search() {
   const pageDescription = query 
     ? `Zoekresultaten voor "${query}" in AI nieuws artikelen.`
     : 'Zoek door alle AI nieuws artikelen en vind de informatie die je zoekt.';
-  const canonical = buildCanonical(query ? `/search?q=${encodeURIComponent(query)}` : '/search');
+  const canonical = buildCanonical('/search');
 
   const content = (
     <>

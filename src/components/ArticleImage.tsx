@@ -9,9 +9,10 @@ interface ArticleImageProps {
     image_tablet?: string;
   };
   viewType: 'mobile' | 'tablet' | 'desktop';
+  priority?: boolean;
 }
 
-export function ArticleImage({ article, viewType }: ArticleImageProps) {
+export function ArticleImage({ article, viewType, priority = false }: ArticleImageProps) {
   // Prioritize media_asset_url from media_assets, then fall back to article image fields
   let imageUrl: string;
   
@@ -44,8 +45,9 @@ export function ArticleImage({ article, viewType }: ArticleImageProps) {
         src={imageUrl}
         alt={alt}
         className="w-full h-auto rounded-lg"
-        loading="lazy"
+        loading={priority ? 'eager' : 'lazy'}
         decoding="async"
+        {...(priority ? { fetchpriority: 'high' as any } : {})}
       />
     </div>
   );

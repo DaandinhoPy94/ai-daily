@@ -14,7 +14,7 @@ import { JobCard } from '../components/JobCard';
 import { HomePapersRow } from '../components/HomePapersRow';
 import { getHomepageSlots, getTopicSections, getLatest, getMostRead } from '../lib/supabase';
 import { NewsArticle, RightRailItem, TopicSection as TopicSectionType } from '../types';
-import { getDefaultSEO, buildCanonical } from '../lib/seo';
+import { getDefaultSEO, buildCanonical, buildOrganizationJSONLD, buildWebsiteJSONLD } from '../lib/seo';
 import { useStocks } from '../contexts/StockProvider';
 import { supabase } from '../integrations/supabase/client';
 
@@ -402,9 +402,12 @@ export default function Index() {
         <meta property="og:site_name" content={defaults.siteName} />
         <meta property="og:image" content={defaults.defaultImage} />
         <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:site" content="@AI_dagelijks" />
         <meta name="twitter:title" content={defaults.defaultTitle} />
         <meta name="twitter:description" content={defaults.description} />
         <meta name="twitter:image" content={defaults.defaultImage} />
+        <script type="application/ld+json">{buildOrganizationJSONLD()}</script>
+        <script type="application/ld+json">{buildWebsiteJSONLD()}</script>
       </Helmet>
       <Header />
         <StocksBar tickers={tickers} />
@@ -418,6 +421,7 @@ export default function Index() {
               <div className="h-full">
                 <LargeNewsCard
                   article={slotToLargeNewsCard(heroSlots[0])}
+                  priority
                 />
               </div>
             )}
@@ -429,6 +433,7 @@ export default function Index() {
               <div className="h-full">
                 <LargeNewsCard
                   article={slotToLargeNewsCard(heroSlots[1])}
+                  priority
                 />
               </div>
             )}

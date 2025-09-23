@@ -19,7 +19,7 @@ import { ArticleComments } from '../components/ArticleComments';
 import { Toaster } from '@/components/ui/toaster';
 import { getArticleBySlug, getLatest, recordView } from '../lib/supabase';
 import { supabase } from '@/integrations/supabase/client';
-import { buildArticleJSONLD, buildCanonical, getDefaultSEO } from '../lib/seo';
+import { buildArticleJSONLD, buildCanonical, getDefaultSEO, buildBreadcrumbJSONLD } from '../lib/seo';
 
 interface Article {
   id: string;
@@ -503,7 +503,7 @@ export default function ArticleDetail() {
             image_standard: article.image_standard,
             image_mobile: article.image_mobile,
             image_tablet: article.image_tablet
-          }} viewType={viewType} />
+          }} viewType={viewType} priority />
           
           <TripleDivider />
 

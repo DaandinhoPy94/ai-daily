@@ -50,7 +50,7 @@ function getArticleChangefreq(publishedAt: string): string {
 }
 
 async function generateSitemapIndex(): Promise<string> {
-  const baseUrl = 'https://www.aidagelijks.nl'
+  const baseUrl = 'https://aidagelijks.nl'
   const now = new Date().toISOString().split('T')[0]
   
   return `<?xml version="1.0" encoding="UTF-8"?>
@@ -75,7 +75,7 @@ async function generateSitemapIndex(): Promise<string> {
 }
 
 async function generateStaticSitemap(): Promise<string> {
-  const baseUrl = 'https://www.aidagelijks.nl'
+  const baseUrl = 'https://aidagelijks.nl'
   const now = new Date().toISOString().split('T')[0]
   
   const staticPages = [
@@ -110,7 +110,7 @@ async function generateStaticSitemap(): Promise<string> {
 }
 
 async function generateArticlesSitemap(supabaseClient: any): Promise<string> {
-  const baseUrl = 'https://www.aidagelijks.nl'
+  const baseUrl = 'https://aidagelijks.nl'
   
   const { data: articles } = await supabaseClient
     .from('articles')
@@ -145,7 +145,7 @@ async function generateArticlesSitemap(supabaseClient: any): Promise<string> {
 }
 
 async function generateTopicsSitemap(supabaseClient: any): Promise<string> {
-  const baseUrl = 'https://www.aidagelijks.nl'
+  const baseUrl = 'https://aidagelijks.nl'
   
   const { data: topics } = await supabaseClient
     .from('topics')
@@ -175,7 +175,7 @@ async function generateTopicsSitemap(supabaseClient: any): Promise<string> {
 }
 
 async function generatePapersSitemap(supabaseClient: any): Promise<string> {
-  const baseUrl = 'https://www.aidagelijks.nl'
+  const baseUrl = 'https://aidagelijks.nl'
   
   const { data: papers } = await supabaseClient
     .from('ai_papers')
@@ -201,6 +201,43 @@ async function generatePapersSitemap(supabaseClient: any): Promise<string> {
 
   sitemap += `</urlset>`
   return sitemap
+}
+
+async function generateNewsSitemap(supabaseClient: any): Promise<string> {
+  const baseUrl = 'https://aidagelijks.nl'
+  const since = new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString()
+
+  const { data: articles } = await supabaseClient
+    .from('articles')
+    .select('slug, title, published_at, updated_at')
+    .eq('status', 'published')
+    .gte('published_at', since)
+    .lte('published_at', new Date().toISOString())
+    .order('published_at', { ascending: false })
+    .limit(1000)
+
+  let xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">
+`
+  ;(articles || []).forEach((a: any) => {
+    const title = (a.title || '').replace(/&/g, '&amp;')
+    xml += `  <url>
+    <loc>${baseUrl}/artikel/${a.slug}</loc>
+    <news:news>
+      <news:publication>
+        <news:name>AI Dagelijks</news:name>
+        <news:language>nl</news:language>
+      </news:publication>
+      <news:publication_date>${new Date(a.published_at).toISOString()}</news:publication_date>
+      <news:title>${title}</news:title>
+    </news:news>
+    <lastmod>${new Date(a.updated_at).toISOString().split('T')[0]}</lastmod>
+  </url>
+`
+  })
+  xml += `</urlset>`
+  return xml
 }
 
 Deno.serve(async (req) => {

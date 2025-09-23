@@ -1,0 +1,13 @@
+{
+  "name": "AI Dagelijks",
+  "short_name": "AI Dagelijks",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0B0B0C",
+  "theme_color": "#0B0B0C",
+  "icons": [
+    { "src": "/favicon.ico", "sizes": "any", "type": "image/x-icon" }
+  ]
+}
+
+

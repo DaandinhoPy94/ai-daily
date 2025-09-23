@@ -44,7 +44,7 @@ function getArticleChangefreq(publishedAt: string): string {
 }
 
 export async function generateSitemapIndex(): Promise<string> {
-  const baseUrl = 'https://www.aidagelijks.nl';
+  const baseUrl = 'https://aidagelijks.nl';
   const now = new Date().toISOString().split('T')[0];
   
   return `<?xml version="1.0" encoding="UTF-8"?>
@@ -69,7 +69,7 @@ export async function generateSitemapIndex(): Promise<string> {
 }
 
 export async function generateStaticSitemap(): Promise<string> {
-  const baseUrl = 'https://www.aidagelijks.nl';
+  const baseUrl = 'https://aidagelijks.nl';
   const now = new Date().toISOString().split('T')[0];
   
   const staticPages = [
@@ -96,7 +96,7 @@ export async function generateStaticSitemap(): Promise<string> {
 }
 
 export async function generateArticlesSitemap(): Promise<string> {
-  const baseUrl = 'https://www.aidagelijks.nl';
+  const baseUrl = 'https://aidagelijks.nl';
   
   const { data: articles } = await supabase
     .from('articles')
@@ -123,7 +123,7 @@ export async function generateArticlesSitemap(): Promise<string> {
 }
 
 export async function generateTopicsSitemap(): Promise<string> {
-  const baseUrl = 'https://www.aidagelijks.nl';
+  const baseUrl = 'https://aidagelijks.nl';
   
   const { data: topics } = await supabase
     .from('topics')
@@ -145,7 +145,7 @@ export async function generateTopicsSitemap(): Promise<string> {
 }
 
 export async function generatePapersSitemap(): Promise<string> {
-  const baseUrl = 'https://www.aidagelijks.nl';
+  const baseUrl = 'https://aidagelijks.nl';
   
   const { data: papers } = await supabase
     .from('ai_papers' as any)
@@ -162,6 +162,41 @@ export async function generatePapersSitemap(): Promise<string> {
       }
     });
   }
+
+  sitemap += `</urlset>`;
+  return sitemap;
+}
+
+export async function generateNewsSitemap(): Promise<string> {
+  const baseUrl = 'https://aidagelijks.nl';
+  const since = new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString();
+
+  const { data: articles } = await supabase
+    .from('articles')
+    .select('slug, title, published_at, updated_at')
+    .eq('status', 'published')
+    .gte('published_at', since)
+    .lte('published_at', new Date().toISOString())
+    .order('published_at', { ascending: false })
+    .limit(1000);
+
+  let sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"\n  xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">\n`;
+
+  (articles || []).forEach((a: any) => {
+    const title = (a.title || '').replace(/&/g, '&amp;');
+    sitemap += `  <url>\n` +
+               `    <loc>${baseUrl}/artikel/${a.slug}</loc>\n` +
+               `    <news:news>\n` +
+               `      <news:publication>\n` +
+               `        <news:name>AI Dagelijks</news:name>\n` +
+               `        <news:language>nl</news:language>\n` +
+               `      </news:publication>\n` +
+               `      <news:publication_date>${new Date(a.published_at).toISOString()}</news:publication_date>\n` +
+               `      <news:title>${title}</news:title>\n` +
+               `    </news:news>\n` +
+               `    <lastmod>${new Date(a.updated_at).toISOString().split('T')[0]}</lastmod>\n` +
+               `  </url>\n`;
+  });
 
   sitemap += `</urlset>`;
   return sitemap;

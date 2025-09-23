@@ -13,13 +13,18 @@ Allow: /
 User-agent: *
 Allow: /
 
-# Sitemap
-Sitemap: https://www.aidagelijks.nl/sitemap_index.xml
+# Sitemaps
+Sitemap: https://aidagelijks.nl/sitemap_index.xml
+Sitemap: https://aidagelijks.nl/news-sitemap.xml
 
 # Disallow admin areas
 Disallow: /admin/
 Disallow: /auth/
 Disallow: /api/admin/
+Disallow: /auth/callback
+Disallow: /profile
+Disallow: /preferences
+Disallow: /mijn-nieuws
 
 # Allow important directories
 Allow: /artikel/
