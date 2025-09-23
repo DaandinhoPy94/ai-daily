@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { getArticleKey, useReadArticles } from '../hooks/useReadArticles';
 
 interface Article {
   id: string;
@@ -16,6 +17,8 @@ interface ArticleListRowProps {
 }
 
 export function ArticleListRow({ article, showDivider = true }: ArticleListRowProps) {
+  const { isRead, markRead, config } = useReadArticles();
+  const key = getArticleKey({ slug: article.slug, id: article.id });
   const imageUrl = article.media_asset_url || 
     'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=144&h=144&fit=crop';
   
@@ -24,6 +27,14 @@ export function ArticleListRow({ article, showDivider = true }: ArticleListRowPr
       <Link 
         to={`/artikel/${article.slug}`}
         className="block group"
+        data-read={isRead(key) ? 'true' : 'false'}
+        onClick={() => markRead(key)}
+        onMouseDown={() => markRead(key)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            markRead(key);
+          }
+        }}
       >
         <article className="flex gap-3 py-3 px-4 min-h-[96px] active:bg-muted/60 active:scale-[0.998] transition-all duration-150">
           {/* Thumbnail */}
@@ -45,7 +56,7 @@ export function ArticleListRow({ article, showDivider = true }: ArticleListRowPr
             </div>
 
             {/* Title */}
-            <h3 className="font-medium text-foreground leading-tight line-clamp-2">
+            <h3 className={`font-medium leading-tight line-clamp-2 ${isRead(key) ? config.deemphasisClass : 'text-foreground'}`}>
               {article.title}
             </h3>
           </div>

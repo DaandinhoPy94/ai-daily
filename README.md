@@ -60,6 +60,27 @@ This project is built with:
 - shadcn-ui
 - Tailwind CSS
 
+## Read State ("already read")
+
+The app marks opened articles as read and subtly de-emphasizes their titles in lists.
+
+- Implementation: `src/hooks/useReadArticles.ts` stores a persistent set in `localStorage`.
+- Storage key: `ai-daily:read-articles:v1` (configurable via hook options).
+- Integration: `ArticleListRow`, `MiniNewsCard`, `LargeNewsCard`, and `NewsCard` add `data-read` and apply `text-foreground/80` to titles when read.
+- Styling: Uses Tailwind tokens; no hardcoded hex. Hover/focus states unchanged.
+- Fallback: Minimal `:visited` rule in `src/index.css` lightens headings inside visited links.
+- Accessibility: Links remain focusable/clickable; `NewsCard` adds `(gelezen)` in `aria-label` when read.
+- SSR safety: All storage access guarded with `typeof window !== 'undefined'`.
+- Routing: Marks read on click, mousedown, and Enter/Space to handle SPA transitions.
+
+Reset/clear read state:
+
+```js
+localStorage.removeItem('ai-daily:read-articles:v1')
+```
+
+Tests: `src/lib/__tests__/readState.test.tsx`.
+
 ## How can I deploy this project?
 
 Simply open [Lovable](https://lovable.dev/projects/8fa0b71c-8dc2-40ee-8f1f-ae423c2ae84c) and click on Share -> Publish.

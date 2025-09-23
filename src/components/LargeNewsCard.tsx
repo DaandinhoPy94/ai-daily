@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { getArticleKey, useReadArticles } from '../hooks/useReadArticles';
 
 interface Article {
   id: string;
@@ -18,6 +19,8 @@ interface LargeNewsCardProps {
 }
 
 export function LargeNewsCard({ article, className = '' }: LargeNewsCardProps) {
+  const { isRead, markRead, config } = useReadArticles();
+  const key = getArticleKey({ slug: article.slug, id: article.id });
   const imageUrl = article.media_asset_url || 
     'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&h=450&fit=crop';
   
@@ -25,6 +28,14 @@ export function LargeNewsCard({ article, className = '' }: LargeNewsCardProps) {
     <Link 
       to={`/artikel/${article.slug}`}
       className={`block group ${className}`}
+      data-read={isRead(key) ? 'true' : 'false'}
+      onClick={() => markRead(key)}
+      onMouseDown={() => markRead(key)}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          markRead(key);
+        }
+      }}
     >
       <article className="w-full active:scale-[0.995] transition-transform duration-150">
         {/* Image */}
@@ -46,7 +57,7 @@ export function LargeNewsCard({ article, className = '' }: LargeNewsCardProps) {
           </div>
 
           {/* Second Line: Title (big text) */}
-          <h2 className="font-serif font-bold text-foreground text-xl leading-tight mb-2">
+          <h2 className={`font-serif font-bold text-xl leading-tight mb-2 ${isRead(key) ? config.deemphasisClass : 'text-foreground'}`}>
             {article.title}
           </h2>
 

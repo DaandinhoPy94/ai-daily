@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { NewsArticle } from '../types';
+import { getArticleKey, useReadArticles } from '../hooks/useReadArticles';
 
 interface NewsCardProps {
   article: NewsArticle & { slug?: string; subtitle?: string; image_standard?: string };
@@ -10,6 +11,8 @@ interface NewsCardProps {
 
 export function NewsCard({ article, variant = 'standard', className = '', onBookmarkClick }: NewsCardProps) {
   const isHero = variant === 'hero';
+  const { isRead, markRead, config } = useReadArticles();
+  const key = getArticleKey({ slug: article.slug, id: article.id });
   
   // Generate slug from ID if not provided (fallback)
   const slug = article.slug || `artikel-${article.id}`;
@@ -67,7 +70,15 @@ export function NewsCard({ article, variant = 'standard', className = '', onBook
     <Link
       to={`/artikel/${slug}`}
       className={`news-card group block focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary focus-visible:ring-opacity-40 rounded-lg ${className}`}
-      aria-label={`${article.title} — open article`}
+      aria-label={`${article.title}${isRead(key) ? ' (gelezen)' : ''} — open article`}
+      data-read={isRead(key) ? 'true' : 'false'}
+      onClick={() => markRead(key)}
+      onMouseDown={() => markRead(key)}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          markRead(key);
+        }
+      }}
     >
       <article className="bg-card border border-border rounded-lg overflow-hidden transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5">
         <div className="relative overflow-hidden">
@@ -114,7 +125,7 @@ export function NewsCard({ article, variant = 'standard', className = '', onBook
           {/* Second Line: Title (big text) */}
           <h2 className={`font-serif font-bold leading-tight mb-2 group-hover:underline ${
             isHero ? 'text-xl md:text-2xl' : 'text-lg'
-          }`}>
+          } ${isRead(key) ? config.deemphasisClass : 'text-foreground'}`}>
             {article.title}
           </h2>
           

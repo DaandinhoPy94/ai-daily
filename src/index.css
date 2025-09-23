@@ -116,6 +116,14 @@
     @apply bg-background text-foreground font-sans;
   }
 
+  /* Visited link fallback: allow only color-like changes per browser privacy rules */
+  a:visited h1,
+  a:visited h2,
+  a:visited h3 {
+    /* subtle deemphasis, respects tokens */
+    color: hsl(var(--foreground) / 0.8);
+  }
+
   /* Typography hierarchy */
   h1, h2, h3, h4, h5, h6 {
     @apply font-serif font-bold leading-tight;
