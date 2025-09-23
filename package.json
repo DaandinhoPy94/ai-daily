@@ -4,6 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "policy:lint": "psql $DATABASE_URL -qAt -f scripts/policy_lint.sql | grep -q '^OK$' || (echo 'Policy lint failed:' && psql $DATABASE_URL -qAt -f scripts/policy_lint.sql && exit 1)",
     "dev": "vite",
     "build": "vite build",
     "build:dev": "vite build --mode development",

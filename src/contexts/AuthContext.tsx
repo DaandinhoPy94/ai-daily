@@ -380,9 +380,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return { error: null };
     }
     
+    // Sanitize updates: never allow client to write privileged fields like role
+    const { display_name, avatar_url } = updates;
+    const safeUpdates: Partial<Profile> = {
+      ...(display_name !== undefined ? { display_name } : {}),
+      ...(avatar_url !== undefined ? { avatar_url } : {}),
+    };
+
     const { error } = await supabase
       .from('profiles')
-      .update(updates)
+      .update(safeUpdates)
       .eq('user_id', user.id);
     
     if (error) {
