@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
+import { ensureProfile as ensureProfileRow } from '@/lib/ensureProfile';
 
 const USE_MOCK_AUTH = import.meta.env.VITE_USE_MOCK_AUTH === 'true';
 
@@ -103,68 +104,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const ensureProfile = async (user: User) => {
     try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('user_id', user.id)
-        .maybeSingle();
-
-      if (error) {
-        console.error('Error fetching profile:', error);
-        setProfile(null);
-        return;
-      }
-      
-      if (data) {
-        console.log('Profile found for user:', user.id);
-        setProfile(data);
-        return;
-      }
-
-      // Profile doesn't exist, create one
-      console.log('Creating new profile for user:', user.id);
-      
-      const displayName = user.user_metadata?.full_name || 
-                         user.user_metadata?.name ||
-                         user.user_metadata?.display_name ||
-                         user.email?.split('@')[0] || 
-                         'Gebruiker';
-      
-      const avatarUrl = user.user_metadata?.avatar_url || 
-                       user.user_metadata?.picture ||
-                       `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.id}`;
-      
-      const { data: newProfile, error: insertError } = await supabase
-        .from('profiles')
-        .insert([{
-          user_id: user.id,
-          display_name: displayName,
-          role: 'reader',
-          avatar_url: avatarUrl
-        }])
-        .select()
-        .single();
-      
-      if (insertError) {
-        console.error('Error creating profile:', insertError);
-        
-        // Handle race condition where profile was created by another request
-        if (insertError.code === '23505') { // unique_violation
-          console.log('Profile exists after race condition, retrying fetch...');
-          const { data: raceProfile } = await supabase
-            .from('profiles')
-            .select('*')
-            .eq('user_id', user.id)
-            .maybeSingle();
-          setProfile(raceProfile);
-          return;
-        }
-        
-        setProfile(null);
-      } else {
-        console.log('Profile created successfully for user:', user.id);
-        setProfile(newProfile);
-      }
+      const ensured = await ensureProfileRow(user);
+      setProfile(ensured);
     } catch (error) {
       console.error('Unexpected error ensuring profile:', error);
       setProfile(null);

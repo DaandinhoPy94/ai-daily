@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
+import { ensureUserProfile } from '@/lib/ensureProfile';
 
 export default function AuthCallback() {
   const navigate = useNavigate();
@@ -20,8 +21,8 @@ export default function AuthCallback() {
           await supabase.auth.getSession();
         }
 
-        // Optional: small delay so onAuthStateChange can run and ensureProfile fires
-        await new Promise(r => setTimeout(r, 50));
+        // Run ensure-profile here to cover timing edge cases
+        await ensureUserProfile();
 
         const { data } = await supabase.auth.getSession();
         if (data.session) {

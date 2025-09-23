@@ -1,3 +1,9 @@
+## Auth profiles
+
+On every successful sign-in (including session restore and OAuth callback), the app ensures a row exists in `public.profiles` keyed by `auth.users.id` as `user_id`. The logic lives in `src/lib/ensureProfile.ts` and is wired in `src/contexts/AuthContext.tsx` (auth listener and session restore) and `src/pages/AuthCallback.tsx` (post-exchange).
+
+The database enforces RLS such that a logged-in user can select/insert/update only their own row. The ensure step performs an idempotent `upsert` by `user_id`, updating basic fields (display name, avatar) without overwriting elevated roles.
+
 # Content Ingestion API Documentation
 
 This API endpoint allows you to create and update content programmatically from automation tools like Make.com and n8n.

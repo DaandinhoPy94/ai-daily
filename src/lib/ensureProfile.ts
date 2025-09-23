@@ -5,17 +5,18 @@ export interface Profile {
   user_id: string;
   display_name: string;
   role: 'reader' | 'contributor' | 'editor' | 'admin';
-  avatar_url?: string;
+  avatar_url?: string | null;
   created_at: string;
   updated_at: string;
 }
 
 /**
  * Ensures a user has a profile in the profiles table.
- * If the profile doesn't exist, creates one with default values.
+ * If the profile doesn't exist, creates or updates one with basic fields.
+ * Idempotent and safe to call multiple times.
  * 
  * @param user - The authenticated user from Supabase auth
- * @returns Promise<Profile | null> - The existing or newly created profile
+ * @returns Promise<Profile | null> - The existing or newly created/updated profile
  */
 export async function ensureProfile(user: User): Promise<Profile | null> {
   if (!user) {
@@ -24,76 +25,43 @@ export async function ensureProfile(user: User): Promise<Profile | null> {
   }
 
   try {
-    // First, try to get the existing profile
-    const { data: existingProfile, error: fetchError } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('user_id', user.id)
-      .maybeSingle();
-
-    // Handle fetch errors (but not "no rows found")
-    if (fetchError) {
-      console.error('Error fetching profile:', fetchError);
-      return null;
-    }
-
-    // If profile exists, return it
-    if (existingProfile) {
-      console.log('Profile found for user:', user.id);
-      return existingProfile as Profile;
-    }
-
-    // Profile doesn't exist, create one
-    console.log('Creating new profile for user:', user.id);
-    
-    // Extract display name from various possible sources
-    const displayName = 
-      user.user_metadata?.full_name || 
-      user.user_metadata?.name ||
-      user.user_metadata?.display_name ||
-      user.email?.split('@')[0] || 
+    const displayName =
+      (user.user_metadata as any)?.full_name ||
+      (user.user_metadata as any)?.name ||
+      (user.user_metadata as any)?.display_name ||
+      user.email?.split('@')[0] ||
       'Gebruiker';
-    
-    // Extract avatar URL from OAuth provider metadata
-    const avatarUrl = 
-      user.user_metadata?.avatar_url || 
-      user.user_metadata?.picture ||
-      `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.id}`;
-    
-    const newProfileData = {
+
+    const avatarUrl =
+      (user.user_metadata as any)?.avatar_url ||
+      (user.user_metadata as any)?.picture ||
+      null;
+
+    const upsertPayload = {
       user_id: user.id,
       display_name: displayName,
-      role: 'reader' as const,
-      avatar_url: avatarUrl
+      // do not include role to avoid overwriting elevated roles
+      avatar_url: avatarUrl as string | null,
     };
 
-    const { data: newProfile, error: insertError } = await supabase
+    const { data, error } = await supabase
       .from('profiles')
-      .insert([newProfileData])
+      .upsert(upsertPayload, { onConflict: 'user_id' })
       .select()
       .single();
-    
-    if (insertError) {
-      console.error('Error creating profile:', insertError);
-      
-      // Handle the case where the profile might have been created by another request
-      // (race condition in concurrent requests)
-      if (insertError.code === '23505') { // unique_violation
-        console.log('Profile exists after race condition, fetching...');
-        const { data: raceProfile } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('user_id', user.id)
-          .maybeSingle();
-        return raceProfile as Profile | null;
-      }
-      
-      return null;
+
+    if (error) {
+      console.error('ensureProfile upsert error:', error);
+      const { data: existing } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('user_id', user.id)
+        .maybeSingle();
+      return (existing as Profile) || null;
     }
-    
-    console.log('Profile created successfully for user:', user.id);
-    return newProfile as Profile;
-    
+
+    console.log('ensureProfile ensured row for user:', user.id);
+    return data as Profile;
   } catch (error) {
     console.error('Unexpected error in ensureProfile:', error);
     return null;
