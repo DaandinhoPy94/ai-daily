@@ -48,15 +48,15 @@ export async function ensureProfile(user: User): Promise<Profile | null> {
 
     dbg.log('upsert:payload', redactAuthContext({ user: { id: user.id, email: user.email }, upsertPayload }));
     await insertAuthDebugEvent({ context: 'ensure', event: 'upsert_attempt', payload: { user_id: user.id, has_display_name: !!displayName, has_avatar: !!avatarUrl } });
-    const { data, error } = await supabase
+    // Perform upsert without RETURNING to avoid RLS-blocked selects on returning rows
+    const { error: upsertError } = await supabase
       .from('profiles')
-      .upsert(upsertPayload, { onConflict: 'user_id' })
-      .select()
-      .single();
+      .upsert(upsertPayload, { onConflict: 'user_id' });
 
-    if (error) {
-      dbg.error('upsert:error', error);
-      await insertAuthDebugEvent({ context: 'ensure', event: 'upsert_error', payload: error, userId: user.id });
+    if (upsertError) {
+      dbg.error('upsert:error', upsertError);
+      await insertAuthDebugEvent({ context: 'ensure', event: 'upsert_error', payload: upsertError, userId: user.id });
+      // Best-effort read to determine if the row actually exists
       const { data: existing, error: selectErr } = await supabase
         .from('profiles')
         .select('*')
@@ -73,7 +73,20 @@ export async function ensureProfile(user: User): Promise<Profile | null> {
 
     dbg.log('upsert:success', { userId: user.id });
     await insertAuthDebugEvent({ context: 'ensure', event: 'upsert_success', payload: { user_id: user.id } });
-    return data as Profile;
+
+    // Follow-up SELECT to fetch the canonical row under normal SELECT policies
+    const { data: fetched, error: fetchErr } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('user_id', user.id)
+      .maybeSingle();
+    if (fetchErr) {
+      // If SELECT is still blocked, return null but do not treat as failure
+      dbg.error('post_upsert_select:error', fetchErr);
+      await insertAuthDebugEvent({ context: 'ensure', event: 'post_upsert_select_error', payload: fetchErr, userId: user.id });
+      return null;
+    }
+    return fetched as Profile;
   } catch (error) {
     const dbg = createAuthDebug('ensure');
     dbg.error('unexpected', error);

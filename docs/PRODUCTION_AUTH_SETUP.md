@@ -59,7 +59,7 @@ Verify these migrations are applied in production:
   - RLS policies for self-access
   - Auto-create trigger for new users
 
-### 4. Verification Steps
+### 4. Verification Steps (Production)
 
 #### A. Check Environment Variables
 ```javascript
@@ -78,8 +78,12 @@ localStorage.setItem('__auth_debug', 'true');
 #### C. Monitor Network Tab
 1. During OAuth flow, check:
    - `POST /auth/v1/token?grant_type=pkce` returns 200
-   - `POST /rest/v1/profiles` includes `Authorization: Bearer` header
+   - `POST /rest/v1/profiles` includes `Authorization: Bearer <jwt>` header
    - Domain in requests matches your production Supabase URL
+
+2. On `/auth/callback` flow order:
+   - `exchangeCodeForSession` occurs BEFORE any profile ensure call
+   - Profile ensure uses `UPSERT` without `.select()` followed by a separate `SELECT`
 
 #### D. Check Session Storage
 ```javascript
@@ -98,7 +102,7 @@ Object.keys(localStorage).filter(k => k.includes('supabase'))
 | RLS blocking | 403 on profile creation | Check migration applied |
 | No primary key | 409 "no matching constraint" | Apply profiles migration |
 
-### 6. Testing Production Fix
+### 6. Testing Production Fix (Fresh Google account)
 
 1. **Clear all data** for test account:
    ```sql
@@ -110,8 +114,15 @@ Object.keys(localStorage).filter(k => k.includes('supabase'))
 2. **Test fresh signup**:
    - Use incognito/private window
    - Sign in with Google
-   - Check Network tab for successful profile creation
-   - Verify profile exists in database
+   - Check Network tab for:
+     - 200 on `/auth/v1/token?grant_type=pkce`
+     - `Authorization: Bearer` present on `/rest/v1/profiles`
+   - Verify a row exists in `public.profiles` with `user_id = auth.users.id`
+   - In console (with `?debug=auth`), expect groups like:
+     - `[auth:callback][trace:xxxxxxxx] exchangeCodeForSession`
+     - `[auth:callback][trace:xxxxxxxx] ensureUserProfile`
+     - `[auth:ensure][trace:xxxxxxxx] upsert:payload`
+     - `[auth:ensure][trace:xxxxxxxx] upsert:success`
 
 ### 7. Rollback Plan
 
