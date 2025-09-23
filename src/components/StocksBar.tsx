@@ -41,7 +41,7 @@ export function StocksBar({ tickers, pxPerSecond = 80 }: StocksBarProps) {
   const renderTickers = (ariaHidden = false) => (
     <div
       data-marquee-copy={ariaHidden ? '2' : '1'}
-      className="flex items-center gap-8 shrink-0 pr-8"
+      className="flex items-center h-full gap-8 shrink-0 pr-8"
       aria-hidden={ariaHidden}
     >
       {items.map((ticker) => (
@@ -50,15 +50,15 @@ export function StocksBar({ tickers, pxPerSecond = 80 }: StocksBarProps) {
           className="flex items-center gap-2 text-sm hover:underline transition-all duration-150"
           aria-label={`${ticker.symbol}: ${ticker.value}, ${ticker.delta}`}
         >
-          <span className="font-semibold text-xs uppercase tracking-wide">
+          <span className="font-semibold text-xs uppercase tracking-wide leading-none">
             {ticker.symbol}
           </span>
-          <span className="font-mono text-sm">
+          <span className="font-mono text-sm leading-none">
             {ticker.value}
           </span>
           <div className={`flex items-center gap-1 ${getTrendColor(ticker)}`}>
             {getTrendIcon(ticker)}
-            <span className="font-mono text-xs">
+            <span className="font-mono text-xs leading-none">
               {ticker.delta}
             </span>
           </div>
@@ -72,10 +72,10 @@ export function StocksBar({ tickers, pxPerSecond = 80 }: StocksBarProps) {
   return (
     <div className="stocks-bar border-t border-b border-border">
       <div className="container mx-auto px-4 md:px-6 lg:px-8">
-        <div className="group relative h-12 overflow-hidden" aria-live="off">
+        <div className="group relative h-12 overflow-hidden flex items-center" aria-live="off">
           <div
             ref={trackRef}
-            className="flex items-center animate-marquee will-change-transform"
+            className="flex h-full items-center animate-marquee will-change-transform"
             style={{ animationDuration: `${duration}s` } as React.CSSProperties}
           >
             {renderTickers(false)}
