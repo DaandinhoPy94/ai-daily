@@ -31,7 +31,7 @@ export interface ArticleData {
 }
 
 const SITE_NAME = "AI Nieuws";
-const SITE_URL = import.meta.env.VITE_SITE_URL || "https://ai-nieuws.nl"; // TODO: Set VITE_SITE_URL
+const SITE_URL = import.meta.env.VITE_SITE_URL || "https://aidagelijks.nl"; // TODO: Set VITE_SITE_URL
 const DEFAULT_DESCRIPTION = "Het laatste nieuws over kunstmatige intelligentie, AI-ontwikkelingen en technologie-innovaties uit Nederland en de wereld.";
 const DEFAULT_IMAGE = "/og-default.jpg"; // TODO: Add default OG image to public folder
 

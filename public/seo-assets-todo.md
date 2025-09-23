@@ -11,7 +11,7 @@ Add these assets to the `/public` folder for complete SEO implementation:
 ## Environment Variables:
 
 Set in production environment:
-- `VITE_SITE_URL` - Full site URL (e.g., https://ai-nieuws.nl)
+- `VITE_SITE_URL` - Full site URL (e.g., https://aidagelijks.nl)
 
 ## Database Fields to Add:
 
