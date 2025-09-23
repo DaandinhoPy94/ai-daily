@@ -28,32 +28,13 @@ export default function AuthCallback() {
           throw err;
         }
 
-        let session = null;
-        
-        if (code) {
-          // Exchange OAuth code for session
-          const { data, error: exchangeError } = await dbg.time('exchangeCodeForSession', async () => {
-            return await supabase.auth.exchangeCodeForSession(code);
-          });
-          
-          if (exchangeError) {
-            dbg.error('Exchange code failed', exchangeError);
-            await insertAuthDebugEvent({ context: 'callback', event: 'exchange_error', payload: exchangeError });
-            throw exchangeError;
-          }
-          
-          session = data?.session;
-          dbg.log('session:exchanged', { hasSession: !!session, userId: session?.user?.id });
-          await insertAuthDebugEvent({ context: 'callback', event: 'exchange_success', payload: { has_session: !!session, user_id: session?.user?.id } });
-        } else {
-          // Try to get existing session (for magic link or refresh)
-          const { data } = await dbg.time('getSession(no-code)', async () => {
-            return await supabase.auth.getSession();
-          });
-          session = data?.session;
-          dbg.log('session:existing', { hasSession: !!session, userId: session?.user?.id });
-          await insertAuthDebugEvent({ context: 'callback', event: 'get_session_result', payload: { has_session: !!session, user_id: session?.user?.id } });
-        }
+        // With detectSessionInUrl=true and PKCE flow enabled, Supabase will
+        // automatically exchange the code and hydrate the session on load.
+        const { data: { session } } = await dbg.time('getSession(callback)', async () => {
+          return await supabase.auth.getSession();
+        });
+        dbg.log('session:loaded', { hasSession: !!session, userId: session?.user?.id });
+        await insertAuthDebugEvent({ context: 'callback', event: 'get_session_result', payload: { has_session: !!session, user_id: session?.user?.id } });
         
         // Only ensure profile if we have a valid session
         if (session?.user) {
