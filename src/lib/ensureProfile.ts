@@ -1,5 +1,6 @@
 import { User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
+import { createAuthDebug, redactAuthContext } from '@/lib/authDebug';
 
 export interface Profile {
   user_id: string;
@@ -25,6 +26,7 @@ export async function ensureProfile(user: User): Promise<Profile | null> {
   }
 
   try {
+    const dbg = createAuthDebug('ensure');
     const displayName =
       (user.user_metadata as any)?.full_name ||
       (user.user_metadata as any)?.name ||
@@ -44,6 +46,7 @@ export async function ensureProfile(user: User): Promise<Profile | null> {
       avatar_url: avatarUrl as string | null,
     };
 
+    dbg.log('upsert:payload', redactAuthContext({ user: { id: user.id, email: user.email }, upsertPayload }));
     const { data, error } = await supabase
       .from('profiles')
       .upsert(upsertPayload, { onConflict: 'user_id' })
@@ -51,19 +54,21 @@ export async function ensureProfile(user: User): Promise<Profile | null> {
       .single();
 
     if (error) {
-      console.error('ensureProfile upsert error:', error);
-      const { data: existing } = await supabase
+      dbg.error('upsert:error', error);
+      const { data: existing, error: selectErr } = await supabase
         .from('profiles')
         .select('*')
         .eq('user_id', user.id)
         .maybeSingle();
+      if (selectErr) dbg.error('fallback:select:error', selectErr);
       return (existing as Profile) || null;
     }
 
-    console.log('ensureProfile ensured row for user:', user.id);
+    dbg.log('upsert:success', { userId: user.id });
     return data as Profile;
   } catch (error) {
-    console.error('Unexpected error in ensureProfile:', error);
+    const dbg = createAuthDebug('ensure');
+    dbg.error('unexpected', error);
     return null;
   }
 }

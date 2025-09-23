@@ -3,6 +3,7 @@ import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
 import { ensureProfile as ensureProfileRow } from '@/lib/ensureProfile';
+import { createAuthDebug, redactAuthContext } from '@/lib/authDebug';
 
 const USE_MOCK_AUTH = import.meta.env.VITE_USE_MOCK_AUTH === 'true';
 
@@ -96,6 +97,7 @@ export function useAuth() {
 }
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const dbg = createAuthDebug('listener');
   const [user, setUser] = useState<User | null>(USE_MOCK_AUTH ? MOCK_USER : null);
   const [session, setSession] = useState<Session | null>(USE_MOCK_AUTH ? MOCK_SESSION : null);
   const [profile, setProfile] = useState<Profile | null>(USE_MOCK_AUTH ? MOCK_PROFILE : null);
@@ -104,10 +106,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const ensureProfile = async (user: User) => {
     try {
-      const ensured = await ensureProfileRow(user);
+      dbg.log('ensureProfile:start', redactAuthContext({ user: { id: user.id, email: user.email } }));
+      const ensured = await dbg.time('ensureProfile:upsert', async () => ensureProfileRow(user));
       setProfile(ensured);
     } catch (error) {
-      console.error('Unexpected error ensuring profile:', error);
+      dbg.error('ensureProfile:error', error);
       setProfile(null);
     }
   };
@@ -166,6 +169,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
+        dbg.group('onAuthStateChange', async () => {
+          dbg.log('event', { event });
+          dbg.log('session', { hasSession: !!session, userId: session?.user?.id });
         setSession(session);
         setUser(session?.user ?? null);
         
@@ -181,20 +187,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
         
         setLoading(false);
+        });
       }
     );
 
     // Check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      
-      if (session?.user) {
-        ensureProfile(session.user);
-        fetchPreferences(session.user.id);
-      }
-      
-      setLoading(false);
+      dbg.group('bootstrap:getSession', async () => {
+        setSession(session);
+        setUser(session?.user ?? null);
+        dbg.log('bootstrap:session', { hasSession: !!session, userId: session?.user?.id });
+        if (session?.user) {
+          await ensureProfile(session.user);
+          await fetchPreferences(session.user.id);
+        }
+        setLoading(false);
+      });
     });
 
     return () => subscription.unsubscribe();

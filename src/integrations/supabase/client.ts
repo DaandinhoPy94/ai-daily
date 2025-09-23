@@ -2,13 +2,48 @@
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from './types';
 
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || "https://ykfiubiogxetbgdkavep.supabase.co";
-const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlrZml1YmlvZ3hldGJnZGthdmVwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY1NTA1MzcsImV4cCI6MjA3MjEyNjUzN30.MuTGy7n4nCZcsE7qdAmu51CJSyIuU2ePeKHTbBlReNg";
+// Get environment variables - no fallbacks in production!
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+
+// Development-only fallbacks
+const DEV_SUPABASE_URL = "https://ykfiubiogxetbgdkavep.supabase.co";
+const DEV_SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlrZml1YmlvZ3hldGJnZGthdmVwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY1NTA1MzcsImV4cCI6MjA3MjEyNjUzN30.MuTGy7n4nCZcsE7qdAmu51CJSyIuU2ePeKHTbBlReNg";
+
+// Use dev fallbacks ONLY in development, fail fast in production
+const url = SUPABASE_URL || (import.meta.env.DEV ? DEV_SUPABASE_URL : '');
+const key = SUPABASE_PUBLISHABLE_KEY || (import.meta.env.DEV ? DEV_SUPABASE_KEY : '');
+
+// Validate configuration
+if (!url || !key) {
+  const mode = import.meta.env.MODE;
+  const missing = [];
+  if (!url) missing.push('VITE_SUPABASE_URL');
+  if (!key) missing.push('VITE_SUPABASE_PUBLISHABLE_KEY');
+  
+  console.error(`[SUPABASE] Missing environment variables in ${mode} mode:`, missing);
+  
+  // In production, throw an error to prevent silent failures
+  if (import.meta.env.PROD) {
+    throw new Error(
+      `Missing required Supabase configuration: ${missing.join(', ')}. ` +
+      `Please set these environment variables in your production build.`
+    );
+  }
+}
+
+// Log which project we're connecting to (without exposing keys)
+if (import.meta.env.DEV) {
+  console.log('[SUPABASE] Connecting to:', url);
+  if (!SUPABASE_URL) {
+    console.warn('[SUPABASE] Using fallback dev URL. Set VITE_SUPABASE_URL for production.');
+  }
+}
 
 // Import the supabase client like this:
 // import { supabase } from "@/integrations/supabase/client";
 
-export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+export const supabase = createClient<Database>(url, key, {
   auth: {
     storage: localStorage,
     persistSession: true,

@@ -1,3 +1,4 @@
+/** @jsxImportSource react */
 import { Badge } from "@/components/ui/badge";
 
 const USE_MOCK_AUTH = import.meta.env.VITE_USE_MOCK_AUTH === 'true';

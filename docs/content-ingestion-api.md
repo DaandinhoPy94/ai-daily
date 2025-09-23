@@ -4,6 +4,24 @@ On every successful sign-in (including session restore and OAuth callback), the 
 
 The database enforces RLS such that a logged-in user can select/insert/update only their own row. The ensure step performs an idempotent `upsert` by `user_id`, updating basic fields (display name, avatar) without overwriting elevated roles.
 
+## Auth debug tracing
+
+Enable in production using any of:
+- Add `?debug=auth` to the URL
+- In DevTools console: `localStorage.__auth_debug = 'true'`
+- Set `VITE_DEBUG_AUTH=true`
+
+When enabled:
+- A small banner appears: “Auth debug is ON (trace: …)”
+- Structured logs with a trace id appear for:
+  - OAuth callback: URL params presence, session exchange timing
+  - Listener/bootstrap: session presence, user id
+  - ensureProfile: derived display name, upsert payload keys, error objects (code, details, hint, message)
+  - Fallback select behavior
+  - Timings via performance.now()
+
+Optional: a `public.debug_profile_events` table exists to capture debug events server-side if needed.
+
 # Content Ingestion API Documentation
 
 This API endpoint allows you to create and update content programmatically from automation tools like Make.com and n8n.
