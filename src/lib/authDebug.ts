@@ -1,4 +1,5 @@
 /* Debug utility for tracing auth flows (prod-safe, toggleable) */
+import { supabase } from '@/integrations/supabase/client';
 
 export type AuthDebug = {
   enabled: boolean;
@@ -30,6 +31,22 @@ function shouldEnable(): boolean {
   return false;
 }
 
+function getStoredTraceId(): string | null {
+  try {
+    return sessionStorage.getItem('__auth_trace_id') || localStorage.getItem('__auth_trace_id');
+  } catch {}
+  return null;
+}
+
+function setStoredTraceId(traceId: string) {
+  try {
+    sessionStorage.setItem('__auth_trace_id', traceId);
+  } catch {}
+  try {
+    localStorage.setItem('__auth_trace_id', traceId);
+  } catch {}
+}
+
 function safeJson(value: any) {
   try {
     return JSON.parse(JSON.stringify(value));
@@ -40,7 +57,10 @@ function safeJson(value: any) {
 
 export function createAuthDebug(context: string, existingTraceId?: string): AuthDebug {
   const enabled = shouldEnable();
-  const traceId = existingTraceId || Math.random().toString(36).slice(2, 10);
+  let traceId = existingTraceId || getStoredTraceId() || Math.random().toString(36).slice(2, 10);
+
+  // Persist the trace id for this flow so other modules reuse it
+  if (enabled) setStoredTraceId(traceId);
 
   const prefix = `[auth:${context}][trace:${traceId}]`;
 
@@ -110,4 +130,33 @@ export function redactAuthContext(ctx: {
   });
 }
 
+// Public helpers for UI and other modules
+export function isAuthDebugEnabled(): boolean {
+  return shouldEnable();
+}
 
+export function getCurrentAuthTraceId(): string | null {
+  return getStoredTraceId();
+}
+
+// Insert a server-side breadcrumb (RLS-protected). Safe no-op if not enabled or not authed yet.
+export async function insertAuthDebugEvent(params: {
+  context: string;
+  event: string;
+  payload?: Record<string, any>;
+  userId?: string | null;
+}) {
+  if (!isAuthDebugEnabled()) return;
+  try {
+    const safePayload = safeJson(params.payload ?? {});
+    await supabase.from('debug_profile_events').insert({
+      user_id: params.userId ?? null,
+      trace_id: getStoredTraceId() || Math.random().toString(36).slice(2, 10),
+      context: params.context,
+      event: params.event,
+      payload: safePayload,
+    });
+  } catch (e) {
+    // Swallow errors silently to avoid impacting UX
+  }
+}

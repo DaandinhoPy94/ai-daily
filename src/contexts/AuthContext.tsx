@@ -3,7 +3,7 @@ import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
 import { ensureProfile as ensureProfileRow } from '@/lib/ensureProfile';
-import { createAuthDebug, redactAuthContext } from '@/lib/authDebug';
+import { createAuthDebug, redactAuthContext, insertAuthDebugEvent } from '@/lib/authDebug';
 
 const USE_MOCK_AUTH = import.meta.env.VITE_USE_MOCK_AUTH === 'true';
 
@@ -107,10 +107,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const ensureProfile = async (user: User) => {
     try {
       dbg.log('ensureProfile:start', redactAuthContext({ user: { id: user.id, email: user.email } }));
+      await insertAuthDebugEvent({ context: 'listener', event: 'ensure_profile_start', payload: { user_id: user.id } });
       const ensured = await dbg.time('ensureProfile:upsert', async () => ensureProfileRow(user));
       setProfile(ensured);
+      await insertAuthDebugEvent({ context: 'listener', event: 'ensure_profile_result', payload: { user_id: user.id, has_profile: !!ensured } });
     } catch (error) {
       dbg.error('ensureProfile:error', error);
+      await insertAuthDebugEvent({ context: 'listener', event: 'ensure_profile_error', payload: error, userId: user.id });
       setProfile(null);
     }
   };
@@ -172,6 +175,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         dbg.group('onAuthStateChange', async () => {
           dbg.log('event', { event });
           dbg.log('session', { hasSession: !!session, userId: session?.user?.id });
+          await insertAuthDebugEvent({ context: 'listener', event: 'auth_state', payload: { event, has_session: !!session, user_id: session?.user?.id } });
         setSession(session);
         setUser(session?.user ?? null);
         

@@ -1,6 +1,6 @@
 import { User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
-import { createAuthDebug, redactAuthContext } from '@/lib/authDebug';
+import { createAuthDebug, redactAuthContext, insertAuthDebugEvent } from '@/lib/authDebug';
 
 export interface Profile {
   user_id: string;
@@ -47,6 +47,7 @@ export async function ensureProfile(user: User): Promise<Profile | null> {
     };
 
     dbg.log('upsert:payload', redactAuthContext({ user: { id: user.id, email: user.email }, upsertPayload }));
+    await insertAuthDebugEvent({ context: 'ensure', event: 'upsert_attempt', payload: { user_id: user.id, has_display_name: !!displayName, has_avatar: !!avatarUrl } });
     const { data, error } = await supabase
       .from('profiles')
       .upsert(upsertPayload, { onConflict: 'user_id' })
@@ -55,20 +56,28 @@ export async function ensureProfile(user: User): Promise<Profile | null> {
 
     if (error) {
       dbg.error('upsert:error', error);
+      await insertAuthDebugEvent({ context: 'ensure', event: 'upsert_error', payload: error, userId: user.id });
       const { data: existing, error: selectErr } = await supabase
         .from('profiles')
         .select('*')
         .eq('user_id', user.id)
         .maybeSingle();
-      if (selectErr) dbg.error('fallback:select:error', selectErr);
+      if (selectErr) {
+        dbg.error('fallback:select:error', selectErr);
+        await insertAuthDebugEvent({ context: 'ensure', event: 'select_fallback_error', payload: selectErr, userId: user.id });
+      } else {
+        await insertAuthDebugEvent({ context: 'ensure', event: 'select_fallback_result', payload: { user_id: user.id, exists: !!existing } });
+      }
       return (existing as Profile) || null;
     }
 
     dbg.log('upsert:success', { userId: user.id });
+    await insertAuthDebugEvent({ context: 'ensure', event: 'upsert_success', payload: { user_id: user.id } });
     return data as Profile;
   } catch (error) {
     const dbg = createAuthDebug('ensure');
     dbg.error('unexpected', error);
+    await insertAuthDebugEvent({ context: 'ensure', event: 'unexpected_error', payload: error, userId: user?.id });
     return null;
   }
 }
