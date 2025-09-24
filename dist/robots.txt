@@ -1,0 +1,33 @@
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Twitterbot
+Allow: /
+
+User-agent: facebookexternalhit
+Allow: /
+
+User-agent: *
+Allow: /
+
+# Sitemaps
+Sitemap: https://aidagelijks.nl/sitemap_index.xml
+Sitemap: https://aidagelijks.nl/news-sitemap.xml
+
+# Disallow admin areas
+Disallow: /admin/
+Disallow: /auth/
+Disallow: /api/admin/
+Disallow: /auth/callback
+Disallow: /profile
+Disallow: /preferences
+Disallow: /mijn-nieuws
+
+# Allow important directories
+Allow: /artikel/
+Allow: /papers/
+Allow: /topic/
+Allow: /topics/
