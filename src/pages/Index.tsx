@@ -31,6 +31,8 @@ interface HomepageSlot {
   item_order: number;
   media_asset_url?: string;
   media_asset_alt?: string;
+  // Enriched client-side
+  topicName?: string;
 }
 
 interface DayArticle {
@@ -268,7 +270,45 @@ export default function Index() {
         ]);
 
         console.log('Homepage slots data:', slotsData);
-        setHomepageSlots(slotsData || []);
+
+        // Enrich homepage slots with primary topic name
+        const slots = slotsData || [];
+        const articleIds = Array.from(new Set(slots.map((s: any) => s.article_id).filter(Boolean)));
+
+        if (articleIds.length > 0) {
+          const { data: articleRows } = await (supabase as any)
+            .from('articles')
+            .select('id, primary_topic_id')
+            .in('id', articleIds);
+
+          const topicIds = Array.from(new Set((articleRows || [])
+            .map((r: any) => r.primary_topic_id)
+            .filter(Boolean)));
+
+          let topicsById: Record<string, string> = {};
+          if (topicIds.length > 0) {
+            const { data: topicRows } = await (supabase as any)
+              .from('topics')
+              .select('id, name')
+              .in('id', topicIds);
+            topicsById = Object.fromEntries((topicRows || []).map((t: any) => [t.id, t.name]));
+          }
+
+          const topicNameByArticleId: Record<string, string | undefined> = {};
+          (articleRows || []).forEach((r: any) => {
+            const name = r.primary_topic_id ? topicsById[r.primary_topic_id] : undefined;
+            if (name) topicNameByArticleId[r.id] = name;
+          });
+
+          const enrichedSlots: HomepageSlot[] = slots.map((s: any) => ({
+            ...s,
+            topicName: topicNameByArticleId[s.article_id]
+          }));
+
+          setHomepageSlots(enrichedSlots);
+        } else {
+          setHomepageSlots(slots);
+        }
         setTopicSections(sectionsData || []);
         
         // Transform latest data to RightRailItem format
@@ -308,14 +348,15 @@ export default function Index() {
   }, []);
 
   // Helper function to convert homepage slot to NewsArticle
-  const slotToNewsArticle = (slot: HomepageSlot): NewsArticle & { subtitle?: string; image_large?: string; image_standard?: string } => ({
+  const slotToNewsArticle = (slot: HomepageSlot): NewsArticle & { subtitle?: string; image_large?: string; image_standard?: string; topicName?: string } => ({
     id: slot.article_id,
     slug: slot.slug,
     title: slot.title,
     summary: slot.summary,
     subtitle: slot.summary, // Using summary as subtitle for now
     readTimeMinutes: slot.read_time_minutes,
-    category: slot.name, // Use the slot name as category
+    category: '',
+    topicName: slot.topicName,
     imageUrl: slot.media_asset_url || 'placeholder',
     image_large: slot.media_asset_url || 'placeholder',
     image_standard: slot.media_asset_url || 'placeholder'
@@ -330,7 +371,7 @@ export default function Index() {
       summary: slot.summary,
       subtitle: slot.summary, // Using summary as subtitle for now
       readTimeMinutes: slot.read_time_minutes,
-      category: slot.name, // Use the slot name as category
+      topicName: slot.topicName,
       media_asset_url: slot.media_asset_url,
       media_asset_alt: slot.media_asset_alt
     };
