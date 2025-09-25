@@ -1,3 +1,4 @@
+import { mediaBase } from '@/lib/imagesBase';
 
 export function ArticleListThumb({ id, title }: { id: string; title: string }) {
   const base = `${mediaBase(id)}/list`; // -> .../media/articles/<id>/list

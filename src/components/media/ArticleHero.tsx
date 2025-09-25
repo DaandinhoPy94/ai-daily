@@ -1,3 +1,4 @@
+import { mediaBase } from '@/lib/imagesBase';
 
 export function ArticleHero({ id, title, priority = false }: { id: string; title: string; priority?: boolean }) {
   const base = `${mediaBase(id)}/hero`; // -> .../media/articles/<id>/hero
