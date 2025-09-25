@@ -1,4 +1,9 @@
-import { mediaBase } from '@/lib/imagesBase';
+import * as ImgBase from '@/lib/imagesBase';
+import { useEffect } from 'react';
+
+useEffect(() => {
+  console.log('imagesBase module:', ImgBase);
+}, []);
 
 export function ArticleHero({ id, title, priority = false }: { id: string; title: string; priority?: boolean }) {
   const base = `${mediaBase(id)}/hero`; // -> .../media/articles/<id>/hero

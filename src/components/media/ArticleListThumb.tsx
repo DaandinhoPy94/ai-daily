@@ -1,4 +1,9 @@
-import { mediaBase } from '@/lib/imagesBase';
+import * as ImgBase from '@/lib/imagesBase';
+import { useEffect } from 'react';
+
+useEffect(() => {
+  console.log('imagesBase module:', ImgBase);
+}, []);
 
 export function ArticleListThumb({ id, title }: { id: string; title: string }) {
   const base = `${mediaBase(id)}/list`; // -> .../media/articles/<id>/list

@@ -1,5 +1,7 @@
 import { Link } from 'react-router-dom';
 import { getArticleKey, useReadArticles } from '../hooks/useReadArticles';
+import { ArticleHero } from '@/components/media/ArticleHero'; // ⬅️ bovenaan toevoegen
+
 
 interface Article {
   id: string;
@@ -41,14 +43,18 @@ export function LargeNewsCard({ article, className = '', priority = false }: Lar
       <article className="w-full active:scale-[0.995] transition-transform duration-150">
         {/* Image */}
         <div className="relative aspect-video mb-3 overflow-hidden rounded-lg">
-          <img
-            src={imageUrl}
-            alt={article.media_asset_alt || article.title}
-            className="w-full h-full object-cover group-active:scale-[1.01] transition-transform duration-200"
-            loading={priority ? 'eager' : 'lazy'}
-            decoding="async"
-            {...(priority ? { fetchpriority: 'high' as any } : {})}
-          />
+          {article.id ? (
+            <ArticleHero id={article.id} title={article.title} priority={priority} />
+          ) : (
+            <img
+              src={imageUrl}
+              alt={article.media_asset_alt || article.title}
+              className="w-full h-full object-cover group-active:scale-[1.01] transition-transform duration-200"
+              loading={priority ? 'eager' : 'lazy'}
+              decoding="async"
+              {...(priority ? { fetchpriority: 'high' as any } : {})}
+            />
+          )}
         </div>
 
         {/* Text Block */}

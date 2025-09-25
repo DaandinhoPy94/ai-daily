@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom';
 import { NewsArticle } from '../types';
 import { getArticleKey, useReadArticles } from '../hooks/useReadArticles';
+import { ArticleListThumb } from '@/components/media/ArticleListThumb'; // ⬅️ bovenaan toevoegen
+
 
 interface NewsCardProps {
   article: NewsArticle & { slug?: string; subtitle?: string; image_standard?: string };
@@ -25,20 +27,18 @@ export function NewsCard({ article, variant = 'standard', className = '', onBook
         aria-disabled="true"
       >
         <div className="relative overflow-hidden">
-          {!article.image_standard || article.image_standard === 'placeholder' ? (
+          {(!article.id) ? (
+            // fallback (als id ontbreekt)
             <div className={`w-full bg-muted flex items-center justify-center ${
               isHero ? 'h-64 md:h-80' : 'h-48'
             }`}>
               <span className="text-muted-foreground text-sm font-medium">Image</span>
             </div>
           ) : (
-            <img
-              src={article.image_standard}
-              alt={article.title}
-              className={`w-full object-cover ${
-                isHero ? 'h-64 md:h-80' : 'h-48'
-              }`}
-            />
+            // ✅ Supabase thumbnail (list)
+            <div className={isHero ? 'h-64 md:h-80' : 'h-48'}>
+              <ArticleListThumb id={article.id} title={article.title} />
+            </div>
           )}
         </div>
         
@@ -81,22 +81,18 @@ export function NewsCard({ article, variant = 'standard', className = '', onBook
       }}
     >
       <article className="bg-card border border-border rounded-lg overflow-hidden transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5">
-        <div className="relative overflow-hidden">
-          {!article.image_standard || article.image_standard === 'placeholder' ? (
-            <div className={`w-full bg-muted flex items-center justify-center ${
-              isHero ? 'h-64 md:h-80' : 'h-48'
-            }`}>
-              <span className="text-muted-foreground text-sm font-medium">Image</span>
-            </div>
-          ) : (
-            <img
-              src={article.image_standard}
-              alt={article.title}
-              className={`news-card-image w-full object-cover ${
-                isHero ? 'h-64 md:h-80' : 'h-48'
-              }`}
-            />
-          )}
+      <div className="relative overflow-hidden">
+        {article.id ? (
+          <div className={isHero ? 'h-64 md:h-80' : 'h-48'}>
+            <ArticleListThumb id={article.id} title={article.title} />
+          </div>
+        ) : (
+          <div className={`w-full bg-muted flex items-center justify-center ${
+            isHero ? 'h-64 md:h-80' : 'h-48'
+          }`}>
+            <span className="text-muted-foreground text-sm font-medium">Image</span>
+          </div>
+        )}
           
           {/* Bookmark button (if provided) - positioned outside main link flow */}
           {onBookmarkClick && (
