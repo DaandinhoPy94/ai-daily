@@ -27,7 +27,7 @@ export function NewsCard({ article, variant = 'standard', className = '', onBook
         aria-disabled="true"
       >
         <div className="relative overflow-hidden">
-          {(!article.id) ? (
+        {(!article.id) ? (
             // fallback (als id ontbreekt)
             <div className={`w-full bg-muted flex items-center justify-center ${
               isHero ? 'h-64 md:h-80' : 'h-48'
@@ -36,8 +36,8 @@ export function NewsCard({ article, variant = 'standard', className = '', onBook
             </div>
           ) : (
             // ✅ Supabase thumbnail (list)
-            <div className={isHero ? 'h-64 md:h-80' : 'h-48'}>
-              <ArticleListThumb id={article.id} title={article.title} />
+            <div className={`${isHero ? 'h-64 md:h-80' : 'h-48'} w-full`}>
+              <ArticleListThumb id={article.id} title={article.title} fill />
             </div>
           )}
         </div>
@@ -83,8 +83,8 @@ export function NewsCard({ article, variant = 'standard', className = '', onBook
       <article className="bg-card border border-border rounded-lg overflow-hidden transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5">
       <div className="relative overflow-hidden">
         {article.id ? (
-          <div className={isHero ? 'h-64 md:h-80' : 'h-48'}>
-            <ArticleListThumb id={article.id} title={article.title} />
+          <div className={`${isHero ? 'h-64 md:h-80' : 'h-48'} w-full`}>
+            <ArticleListThumb id={article.id} title={article.title} fill />
           </div>
         ) : (
           <div className={`w-full bg-muted flex items-center justify-center ${
