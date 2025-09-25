@@ -28,7 +28,7 @@ export function NewsCard({ article, variant = 'standard', className = '', onBook
     // If no slug available, render as disabled card
     return (
       <article 
-        className={`news-card bg-card border border-border rounded-lg overflow-hidden opacity-50 ${className}`}
+        className={`news-card bg-card border border-border rounded-lg overflow-hidden opacity-50 flex flex-col ${className}`}
         aria-disabled="true"
       >
         <div className="relative overflow-hidden">
@@ -47,7 +47,7 @@ export function NewsCard({ article, variant = 'standard', className = '', onBook
           )}
         </div>
         
-        <div className="p-4 md:p-5">
+        <div className="p-4 md:p-5 h-[176px] md:h-[192px] overflow-hidden">
           {/* First Line: Reading Time - Topic (small text) */}
           <div className="text-xs text-muted-foreground mb-2 uppercase tracking-wide">
             {article.readTimeMinutes} min leestijd{topicLabel && ` - ${topicLabel}`}
@@ -62,7 +62,7 @@ export function NewsCard({ article, variant = 'standard', className = '', onBook
           
           {/* Third Line: Subtitle */}
           {article.subtitle && (
-            <p className="text-sm text-muted-foreground leading-relaxed line-clamp-4">
+            <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3">
               {article.subtitle}
             </p>
           )}
@@ -85,7 +85,7 @@ export function NewsCard({ article, variant = 'standard', className = '', onBook
         }
       }}
     >
-      <article className="bg-card border border-border rounded-lg overflow-hidden transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5">
+      <article className="bg-card border border-border rounded-lg overflow-hidden transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 flex flex-col">
       <div className="relative overflow-hidden">
         {article.id ? (
           <div className={`${isHero ? 'h-64 md:h-80' : 'h-48'} w-full`}>
@@ -117,7 +117,7 @@ export function NewsCard({ article, variant = 'standard', className = '', onBook
           )}
         </div>
         
-        <div className="p-4 md:p-5">
+        <div className="p-4 md:p-5 h-[176px] md:h-[192px] overflow-hidden">
           {/* First Line: Reading Time - Topic (small text) */}
           <div className="text-xs text-muted-foreground mb-2 uppercase tracking-wide">
             {article.readTimeMinutes} min leestijd{topicLabel && ` - ${topicLabel}`}
@@ -132,7 +132,7 @@ export function NewsCard({ article, variant = 'standard', className = '', onBook
           
           {/* Third Line: Subtitle */}
           {article.subtitle && (
-            <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2">
+            <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3">
               {article.subtitle}
             </p>
           )}
