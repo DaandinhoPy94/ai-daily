@@ -21,7 +21,7 @@ export function JobCard({ job, className = '' }: JobCardProps) {
       to={`/banen/${job.id}`}
       className={`block group h-full ${className}`}
     >
-      <article className="card-animation h-full bg-card border border-border hover:border-muted-foreground/20 rounded-lg overflow-hidden group transition-all duration-200">
+      <article className="card-animation h-full bg-card border border-border hover:border-muted-foreground/20 rounded-lg overflow-hidden group transition-all duration-200 flex flex-col">
         {/* Image */}
         <div className="relative aspect-video overflow-hidden">
           <img
@@ -34,7 +34,7 @@ export function JobCard({ job, className = '' }: JobCardProps) {
         </div>
 
         {/* Content */}
-        <div className="p-4 flex flex-col justify-between h-[calc(100%-theme(spacing.40))]">
+        <div className="p-4 md:p-5 h-[176px] md:h-[192px] overflow-hidden">
           {/* Meta */}
           <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
             <span>{job.location}</span>
@@ -49,7 +49,7 @@ export function JobCard({ job, className = '' }: JobCardProps) {
 
           {/* Company & Salary */}
           <div className="flex flex-col gap-1">
-            <p className="text-sm text-muted-foreground line-clamp-4">
+            <p className="text-sm text-muted-foreground line-clamp-3">
               {job.company}
             </p>
             {job.salaryRange && (

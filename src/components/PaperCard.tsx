@@ -47,7 +47,7 @@ export function PaperCard({
       className={`news-card group block focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary focus-visible:ring-opacity-40 rounded-lg ${className}`}
       aria-label={`${title} — open paper`}
     >
-      <article className="bg-card border border-border rounded-lg overflow-hidden transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5">
+      <article className="bg-card border border-border rounded-lg overflow-hidden transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 flex flex-col">
         <div className="relative overflow-hidden">
           {!cover_icon?.path ? (
             <div className={`w-full bg-muted flex items-center justify-center ${
@@ -66,7 +66,7 @@ export function PaperCard({
           )}
         </div>
         
-        <div className="p-4 md:p-5">
+        <div className="p-4 md:p-5 h-[176px] md:h-[192px] overflow-hidden">
           {/* First Line: Date - Authors (small text) */}
           <div className="text-xs text-muted-foreground mb-2 uppercase tracking-wide">
             {formattedDate && authorsText ? `${formattedDate} - ${authorsText}` : 
@@ -82,7 +82,7 @@ export function PaperCard({
           
           {/* Third Line: Summary */}
           {summary && (
-            <p className="text-sm text-muted-foreground leading-relaxed line-clamp-4">
+            <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3">
               {summary}
             </p>
           )}
