@@ -5,7 +5,7 @@ import { ArticleListThumb } from '@/components/media/ArticleListThumb'; // â¬…ï¸
 
 
 interface NewsCardProps {
-  article: NewsArticle & { slug?: string; subtitle?: string; image_standard?: string };
+  article: NewsArticle & { slug?: string; subtitle?: string; image_standard?: string; primary_topic_id?: string; topicName?: string; primary_topic_name?: string };
   variant?: 'hero' | 'standard';
   className?: string;
   onBookmarkClick?: () => void;
@@ -15,6 +15,11 @@ export function NewsCard({ article, variant = 'standard', className = '', onBook
   const isHero = variant === 'hero';
   const { isRead, markRead, config } = useReadArticles();
   const key = getArticleKey({ slug: article.slug, id: article.id });
+  const topicLabel = (article as any).topicName
+    || (article as any).primary_topic_name
+    || (article as any).primaryTopicName
+    || (article as any).primary_topic_id
+    || article.category;
   
   // Generate slug from ID if not provided (fallback)
   const slug = article.slug || `artikel-${article.id}`;
@@ -45,7 +50,7 @@ export function NewsCard({ article, variant = 'standard', className = '', onBook
         <div className="p-4 md:p-5">
           {/* First Line: Reading Time - Topic (small text) */}
           <div className="text-xs text-muted-foreground mb-2 uppercase tracking-wide">
-            {article.readTimeMinutes} min leestijd{article.category && ` - ${article.category}`}
+            {article.readTimeMinutes} min leestijd{topicLabel && ` - ${topicLabel}`}
           </div>
           
           {/* Second Line: Title (big text) */}
@@ -115,7 +120,7 @@ export function NewsCard({ article, variant = 'standard', className = '', onBook
         <div className="p-4 md:p-5">
           {/* First Line: Reading Time - Topic (small text) */}
           <div className="text-xs text-muted-foreground mb-2 uppercase tracking-wide">
-            {article.readTimeMinutes} min leestijd{article.category && ` - ${article.category}`}
+            {article.readTimeMinutes} min leestijd{topicLabel && ` - ${topicLabel}`}
           </div>
           
           {/* Second Line: Title (big text) */}

@@ -11,6 +11,9 @@ interface Article {
   subtitle?: string; // New subtitle field from Supabase
   readTimeMinutes: number;
   category?: string; // Topic name
+  primary_topic_id?: string;
+  topicName?: string;
+  primary_topic_name?: string;
   media_asset_url?: string; // Media asset image URL from media_asset table
   media_asset_alt?: string; // Media asset alt text from media_asset table
 }
@@ -26,6 +29,11 @@ export function LargeNewsCard({ article, className = '', priority = false }: Lar
   const key = getArticleKey({ slug: article.slug, id: article.id });
   const imageUrl = article.media_asset_url || 
     'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&h=450&fit=crop';
+  const topicLabel = (article as any).topicName
+    || (article as any).primary_topic_name
+    || (article as any).primaryTopicName
+    || (article as any).primary_topic_id
+    || article.category;
   
   return (
     <Link 
@@ -61,7 +69,7 @@ export function LargeNewsCard({ article, className = '', priority = false }: Lar
         <div className="bg-card border border-border rounded-lg p-4 min-h-[180px] lg:min-h-[220px] max-h-[220px] lg:max-h-[280px] flex flex-col overflow-hidden">
           {/* First Line: Reading Time - Topic (small text) */}
           <div className="text-sm text-muted-foreground mb-2">
-            {article.readTimeMinutes} min leestijd{article.category && ` - ${article.category}`}
+            {article.readTimeMinutes} min leestijd{topicLabel && ` - ${topicLabel}`}
           </div>
 
           {/* Second Line: Title (big text) */}
