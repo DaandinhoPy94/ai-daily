@@ -12,7 +12,6 @@ const heroSizes = [800, 1200, 1600];
 async function ensureDir(dir) { await fs.mkdir(dir, { recursive: true }); }
 
 function getIdFromBasename(basename) {
-  // verwijder optioneel `_hero` suffix, zodat id = "<ARTICLE_ID>"
   return basename.replace(/_hero$/i, '');
 }
 
@@ -20,29 +19,44 @@ async function processOne(file) {
   const basename = path.parse(file).name;  // zonder .png
   const id = getIdFromBasename(basename);
   const inputPath = path.join(IN_DIR, file);
+  const DONE_DIR = path.join(IN_DIR, '_done');
+
+  await ensureDir(DONE_DIR);
+
+  // 1) lees origin één keer
   const origin = await fs.readFile(inputPath);
 
-  await fs.copyFile(inputPath, path.join(OUT_DIR, `${id}.png`)); // origin (gestandaardiseerd)
+  try {
+    // 2) origin naar OUT_DIR (gestandaardiseerde naam)
+    await fs.writeFile(path.join(OUT_DIR, `${id}.png`), origin);
 
-  // LIST (16:9): <ID>_list_320.webp etc.
-  for (const w of listSizes) {
-    const buf = await sharp(origin)
-      .resize({ width: w, height: Math.round(w * 9/16), fit: 'cover', position: 'attention' })
-      .webp({ quality: 80 })
-      .toBuffer();
-    await fs.writeFile(path.join(OUT_DIR, `${id}_list_${w}.webp`), buf);
+    // 3) LIST (16:9)
+    for (const w of listSizes) {
+      const buf = await sharp(origin)
+        .resize({ width: w, height: Math.round(w * 9/16), fit: 'cover', position: 'attention' })
+        .webp({ quality: 80 })
+        .toBuffer();
+      await fs.writeFile(path.join(OUT_DIR, `${id}_list_${w}.webp`), buf);
+    }
+
+    // 4) HERO (16:9)
+    for (const w of heroSizes) {
+      const buf = await sharp(origin)
+        .resize({ width: w, height: Math.round(w * 9/16), fit: 'cover', position: 'attention' })
+        .webp({ quality: 82 })
+        .toBuffer();
+      await fs.writeFile(path.join(OUT_DIR, `${id}_hero_${w}.webp`), buf);
+    }
+
+    console.log('✓ generated variants for', file);
+  } finally {
+    // 5) pas op het einde verplaatsen naar _done/
+    try {
+      await fs.rename(inputPath, path.join(DONE_DIR, file));
+    } catch (e) {
+      console.warn('⚠️ move to _done failed:', file, e?.message);
+    }
   }
-
-  // HERO (16:9): <ID>_hero_800.webp etc.  <-- belangrijk voor frontend
-  for (const w of heroSizes) {
-    const buf = await sharp(origin)
-      .resize({ width: w, height: Math.round(w * 9/16), fit: 'cover', position: 'attention' })
-      .webp({ quality: 82 })
-      .toBuffer();
-    await fs.writeFile(path.join(OUT_DIR, `${id}_hero_${w}.webp`), buf);
-  }
-
-  console.log('✓ generated variants for', file);
 }
 
 async function main() {
