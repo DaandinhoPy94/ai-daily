@@ -3,9 +3,8 @@ import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Header } from '../components/Header';
 import { Footer } from '../components/Footer';
-import { MobileHeader } from '../components/MobileHeader';
 import { BottomTabBar } from '../components/BottomTabBar';
-import { TabletAppShell } from '../components/TabletAppShell';
+import { MobileHeaderArticle } from '@/components/header/MobileHeaderArticle';
 import { ShareBar } from '../components/ShareBar';
 import { ArticleMeta } from '../components/ArticleMeta';
 import { TripleDivider } from '../components/TripleDivider';
@@ -343,9 +342,13 @@ export default function ArticleDetail() {
 
     if (viewType === 'tablet') {
       return (
-        <TabletAppShell viewType="tablet">
-          {loadingContent}
-        </TabletAppShell>
+        <>
+          <div className="min-h-screen bg-background" style={{ paddingBottom: 'calc(64px + env(safe-area-inset-bottom))' }}>
+            <MobileHeaderArticle />
+            <main>{loadingContent}</main>
+          </div>
+          <BottomTabBar viewType="tablet" />
+        </>
       );
     }
 
@@ -353,7 +356,7 @@ export default function ArticleDetail() {
       return (
         <>
           <div className="min-h-screen bg-background" style={{ paddingBottom: 'calc(64px + env(safe-area-inset-bottom))' }}>
-            <MobileHeader />
+            <MobileHeaderArticle />
             <main>{loadingContent}</main>
           </div>
           <BottomTabBar viewType="mobile" />
@@ -390,9 +393,13 @@ export default function ArticleDetail() {
 
     if (viewType === 'tablet') {
       return (
-        <TabletAppShell viewType="tablet">
-          {errorContent}
-        </TabletAppShell>
+        <>
+          <div className="min-h-screen bg-background" style={{ paddingBottom: 'calc(64px + env(safe-area-inset-bottom))' }}>
+            <MobileHeaderArticle />
+            <main>{errorContent}</main>
+          </div>
+          <BottomTabBar viewType="tablet" />
+        </>
       );
     }
 
@@ -400,7 +407,7 @@ export default function ArticleDetail() {
       return (
         <>
           <div className="min-h-screen bg-background" style={{ paddingBottom: 'calc(64px + env(safe-area-inset-bottom))' }}>
-            <MobileHeader />
+            <MobileHeaderArticle />
             <main>{errorContent}</main>
           </div>
           <BottomTabBar viewType="mobile" />
@@ -536,10 +543,16 @@ export default function ArticleDetail() {
 
   if (viewType === 'tablet') {
     return (
-      <TabletAppShell viewType="tablet">
-        {articleContent}
+      <>
+        <div className="min-h-screen bg-background" style={{ paddingBottom: 'calc(64px + env(safe-area-inset-bottom))' }}>
+          <MobileHeaderArticle articleId={article.id} />
+          <main>
+            {articleContent}
+          </main>
+        </div>
+        <BottomTabBar viewType="tablet" />
         <Toaster />
-      </TabletAppShell>
+      </>
     );
   }
 
@@ -547,7 +560,7 @@ export default function ArticleDetail() {
     return (
       <>
         <div className="min-h-screen bg-background" style={{ paddingBottom: 'calc(64px + env(safe-area-inset-bottom))' }}>
-          <MobileHeader />
+          <MobileHeaderArticle articleId={article.id} />
           <main>
             {articleContent}
           </main>

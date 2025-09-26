@@ -5,7 +5,11 @@ import { useAuth } from '@/contexts/AuthContext';
 import { AuthModal } from '@/components/auth/AuthModal';
 import { AccountMenu } from '@/components/auth/AccountMenu';
 
-export function MobileHeaderArticle() {
+type MobileHeaderArticleProps = {
+  articleId?: string;
+};
+
+export function MobileHeaderArticle({ articleId: _articleId }: MobileHeaderArticleProps) {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
 
