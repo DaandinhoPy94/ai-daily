@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetFooter } from '@/components/ui/sheet';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
+import { useBookmark } from '@/hooks/useBookmark';
 import { useAuth } from '@/contexts/AuthContext';
 import { AuthModal } from '@/components/auth/AuthModal';
 import { AccountMenu } from '@/components/auth/AccountMenu';
@@ -14,13 +15,12 @@ type MobileHeaderArticleProps = {
 
 export function MobileHeaderArticle({ articleId: _articleId }: MobileHeaderArticleProps) {
   const [showAuthModal, setShowAuthModal] = useState(false);
-  const [isBookmarked, setIsBookmarked] = useState(false);
+  const { isBookmarked, toggleBookmark } = useBookmark(_articleId);
   const [isShareOpen, setIsShareOpen] = useState(false);
 
   const { user } = useAuth();
 
   const { toast } = useToast();
-  const toggleBookmark = () => setIsBookmarked((prev) => !prev);
 
   const shareUrl = typeof window !== 'undefined' ? window.location.href : '';
 

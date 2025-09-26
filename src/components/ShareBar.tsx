@@ -3,6 +3,7 @@ import { Share2, Twitter, Facebook, Linkedin, Bookmark } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetFooter } from '@/components/ui/sheet';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
+import { useBookmark } from '@/hooks/useBookmark';
 
 interface ShareBarProps {
   article: {
@@ -15,7 +16,7 @@ interface ShareBarProps {
 
 export function ShareBar({ article, mobile = false }: ShareBarProps) {
   const { toast } = useToast();
-  const [isBookmarked, setIsBookmarked] = useState(false);
+  const { isBookmarked, toggleBookmark } = useBookmark(article.id);
   const [isShareOpen, setIsShareOpen] = useState(false);
 
   const url = `${window.location.origin}/artikel/${article.slug}`;
@@ -60,11 +61,7 @@ export function ShareBar({ article, mobile = false }: ShareBarProps) {
         window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`, '_blank', 'noopener');
         break;
       case 'bookmark':
-        setIsBookmarked(!isBookmarked);
-        toast({
-          description: isBookmarked ? "Bookmark verwijderd" : "Bookmark toegevoegd",
-          duration: 2000,
-        });
+        await toggleBookmark();
         break;
     }
   };
