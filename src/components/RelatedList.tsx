@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { ArticleListThumb } from '@/components/media/ArticleListThumb';
 
 interface RelatedArticle {
   id: string;
@@ -31,18 +32,13 @@ export function RelatedList({ articles }: RelatedListProps) {
               className="block group"
             >
               <article className="flex gap-3 py-3 px-4 min-h-[96px] active:bg-muted/60 active:scale-[0.998] transition-all duration-150 hover:bg-accent/40">
-                {/* Thumbnail */}
-                <div className="flex-shrink-0">
-                  <img
-                    src={article.imageUrl && article.imageUrl !== 'placeholder' 
-                      ? article.imageUrl 
-                      : 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=144&h=144&fit=crop'
-                    }
-                    alt={article.title}
-                    className="w-[72px] h-[72px] object-cover rounded-md bg-muted"
-                    loading="lazy"
-                    decoding="async"
-                  />
+                {/* Thumbnail – 120px breed, 16:9 */}
+                <div className="flex-shrink-0 w-[120px]">
+                  {article.id ? (
+                    <ArticleListThumb id={article.id} title={article.title} targetWidth={120} />
+                  ) : (
+                    <div className="w-[120px] h-[68px] bg-muted rounded-md" />
+                  )}
                 </div>
 
                 {/* Text Content */}
@@ -62,7 +58,7 @@ export function RelatedList({ articles }: RelatedListProps) {
 
             {/* Divider */}
             {index < articles.length - 1 && (
-              <div className="ml-[88px] h-px bg-border" />
+              <div className="ml-[136px] h-px bg-border" />
             )}
           </div>
         ))}
