@@ -497,10 +497,7 @@ export default function ArticleDetail() {
             </div>
           )}
 
-          {/* Mobile Share Bar */}
-          <div className="lg:hidden mb-6">
-            <ShareBar article={article} mobile />
-          </div>
+          {/* Mobile/Tablet share handled by MobileHeaderArticle; desktop ShareBar remains left */}
 
           <ArticleImage article={{
             title: article.title,
