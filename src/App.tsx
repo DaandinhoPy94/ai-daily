@@ -21,6 +21,7 @@ import Nieuwsbrief from "./pages/Nieuwsbrief";
 import AiCursussen from "./pages/AiCursussen";
 import AiJobs from "./pages/AiJobs";
 import LmArena from "./pages/LmArena";
+import OpgeslagenPage from "./pages/OpgeslagenPage";
 
 import Topic from "./pages/Topic";
 import TopicPage from "./pages/TopicPage";
@@ -62,6 +63,7 @@ const App = () => (
               <Route path="/artikel/:slug" element={<ArticleDetail />} />
               <Route path="/papers/:slug" element={<PaperPage />} />
               <Route path="/net-binnen" element={<NetBinnen />} />
+              <Route path="/opgeslagen" element={<OpgeslagenPage />} />
               <Route path="/auth/callback" element={<AuthCallback />} />
               <Route path="/profile" element={
                 <ProtectedRoute>
