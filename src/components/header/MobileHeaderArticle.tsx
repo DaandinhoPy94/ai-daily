@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import { User, Share2, Bookmark } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetFooter } from '@/components/ui/sheet';
+import { Input } from '@/components/ui/input';
+import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { AuthModal } from '@/components/auth/AuthModal';
 import { AccountMenu } from '@/components/auth/AccountMenu';
@@ -12,10 +15,34 @@ type MobileHeaderArticleProps = {
 export function MobileHeaderArticle({ articleId: _articleId }: MobileHeaderArticleProps) {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
+  const [isShareOpen, setIsShareOpen] = useState(false);
 
   const { user } = useAuth();
 
+  const { toast } = useToast();
   const toggleBookmark = () => setIsBookmarked((prev) => !prev);
+
+  const shareUrl = typeof window !== 'undefined' ? window.location.href : '';
+
+  const handleShare = async () => {
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: document.title, url: shareUrl });
+        return;
+      }
+    } catch (err) {
+      // Ignore AbortError; fall through to fallback sheet for other cases
+    }
+    setIsShareOpen(true);
+  };
+
+  const handleCopyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      toast({ description: 'Link gekopieerd', duration: 2000 });
+      setIsShareOpen(false);
+    } catch (_) {}
+  };
 
   return (
     <>
@@ -58,12 +85,7 @@ export function MobileHeaderArticle({ articleId: _articleId }: MobileHeaderArtic
               size="icon"
               className="w-9 h-9 rounded-full hover:bg-muted/50 transition-colors duration-150"
               aria-label="Deel"
-              onClick={() => {
-                // Use Web Share API if available, otherwise no-op; ShareBar handles deep share flows
-                if (navigator.share) {
-                  navigator.share({ title: document.title, url: window.location.href }).catch(() => {});
-                }
-              }}
+              onClick={handleShare}
             >
               <Share2 className="w-5 h-5 text-foreground" />
             </Button>
@@ -73,6 +95,20 @@ export function MobileHeaderArticle({ articleId: _articleId }: MobileHeaderArtic
 
       {/* Auth Modal */}
       <AuthModal open={showAuthModal} onOpenChange={setShowAuthModal} />
+
+      {/* Fallback Share Sheet */}
+      <Sheet open={isShareOpen} onOpenChange={setIsShareOpen}>
+        <SheetContent side="bottom" className="p-4">
+          <SheetHeader>
+            <SheetTitle>Deel link</SheetTitle>
+          </SheetHeader>
+          <div className="mt-3 space-y-3">
+            <Input readOnly value={shareUrl} className="text-sm" />
+            <Button onClick={handleCopyLink} className="w-full">Copy link</Button>
+          </div>
+          <SheetFooter />
+        </SheetContent>
+      </Sheet>
     </>
   );
 }
