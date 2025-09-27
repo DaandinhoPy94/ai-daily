@@ -1,20 +1,10 @@
-# Welcome to your Lovable project
+# AI Dagelijks
 
-## Project info
+News site built with Vite + React + TypeScript + shadcn-ui + Tailwind.
 
-**URL**: https://lovable.dev/projects/8fa0b71c-8dc2-40ee-8f1f-ae423c2ae84c
+## Local development
 
-## How can I edit this code?
-
-There are several ways of editing your application.
-
-**Use Lovable**
-
-Simply visit the [Lovable Project](https://lovable.dev/projects/8fa0b71c-8dc2-40ee-8f1f-ae423c2ae84c) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
+Use your preferred IDE, or run locally:
 
 If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
 
@@ -36,11 +26,7 @@ npm i
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+You can also edit files directly in GitHub and commit your changes.
 
 **Use GitHub Codespaces**
 
@@ -81,14 +67,16 @@ localStorage.removeItem('ai-daily:read-articles:v1')
 
 Tests: `src/lib/__tests__/readState.test.tsx`.
 
-## How can I deploy this project?
+## Deployment
 
-Simply open [Lovable](https://lovable.dev/projects/8fa0b71c-8dc2-40ee-8f1f-ae423c2ae84c) and click on Share -> Publish.
+Build the production bundle and upload the `dist/` folder to your host or CDN.
 
-## Can I connect a custom domain to my Lovable project?
+```sh
+npm run build
+```
 
-Yes, you can!
+## Project notes
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+- Read-state behavior is implemented in `src/hooks/useReadArticles.ts` and covered by `src/lib/__tests__/readState.test.tsx`.
+- Environment: set `VITE_SITE_URL` for correct canonical URLs and OG tags.
+- Icons: place brand icons in `public/icons/` to match `index.html` and `site.webmanifest` references.

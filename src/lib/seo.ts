@@ -33,8 +33,8 @@ export interface ArticleData {
 const SITE_NAME = "AI Dagelijks";
 const SITE_URL = import.meta.env.VITE_SITE_URL || "https://aidagelijks.nl";
 const DEFAULT_DESCRIPTION = "Het laatste nieuws over kunstmatige intelligentie, AI-ontwikkelingen en technologie-innovaties uit Nederland en de wereld.";
-const DEFAULT_IMAGE = "/og-default.jpg"; // ensure this exists in /public
-const PUBLISHER_LOGO = "/logo.png"; // ensure this exists in /public
+const DEFAULT_IMAGE = "/placeholder.svg"; // uses existing public asset to avoid 404
+const PUBLISHER_LOGO = "/favicon.ico"; // uses existing public icon
 const SOCIAL_SAME_AS = [
   "https://x.com/AI_dagelijks",
   "https://www.linkedin.com/company/ai-dagelijks/",

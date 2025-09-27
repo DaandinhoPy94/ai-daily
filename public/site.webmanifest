@@ -6,7 +6,11 @@
   "background_color": "#0B0B0C",
   "theme_color": "#0B0B0C",
   "icons": [
-    { "src": "/favicon.ico", "sizes": "any", "type": "image/x-icon" }
+    { "src": "/favicon.ico", "sizes": "any", "type": "image/x-icon" },
+    { "src": "/icons/ad-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icons/ad-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/icons/ad-maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "/icons/ad-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ]
 }
 
