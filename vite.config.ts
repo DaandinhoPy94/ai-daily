@@ -1,8 +1,8 @@
+/// <reference path="./src/types/lovable-tagger.d.ts" />
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import { componentTagger } from "lovable-tagger";
-import { imagetools } from "vite-imagetools"; // ⬅️ nieuw
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
@@ -12,7 +12,9 @@ export default defineConfig(({ mode }) => ({
   },
   plugins: [
     react(),
-    imagetools(),              // ⬅️ nieuw
+    componentTagger({
+      enabled: true,
+    }),
   ].filter(Boolean),
   resolve: {
     alias: {
