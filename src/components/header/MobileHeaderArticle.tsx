@@ -78,7 +78,10 @@ export function MobileHeaderArticle({ articleId: _articleId }: MobileHeaderArtic
               aria-label={isBookmarked ? 'Verwijder bookmark' : 'Voeg bookmark toe'}
               onClick={toggleBookmark}
             >
-              <Bookmark className="w-5 h-5 text-foreground" fill={isBookmarked ? 'currentColor' : 'none'} />
+              <Bookmark 
+                className={`w-5 h-5 transition-colors ${isBookmarked ? 'text-orange-500' : 'text-foreground'}`} 
+                fill={isBookmarked ? 'currentColor' : 'none'} 
+              />
             </Button>
             <Button
               variant="ghost"
