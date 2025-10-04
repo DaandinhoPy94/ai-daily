@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { User, Settings, Heart, LogOut } from 'lucide-react';
+import { User, Settings, Heart, LogOut, Bookmark } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
 export function AccountMenu() {
@@ -59,15 +59,21 @@ export function AccountMenu() {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
+          <Link to="/profile" onClick={() => setOpen(false)}>
+            <User className="mr-2 h-4 w-4" />
+            <span>Profiel</span>
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
           <Link to="/mijn-nieuws" onClick={() => setOpen(false)}>
             <Heart className="mr-2 h-4 w-4" />
             <span>Mijn nieuws</span>
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          <Link to="/profile" onClick={() => setOpen(false)}>
-            <User className="mr-2 h-4 w-4" />
-            <span>Profiel</span>
+          <Link to="/opgeslagen" onClick={() => setOpen(false)}>
+            <Bookmark className="mr-2 h-4 w-4" />
+            <span>Bookmarks</span>
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
