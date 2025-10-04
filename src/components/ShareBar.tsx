@@ -84,10 +84,10 @@ export function ShareBar({ article, mobile = false }: ShareBarProps) {
               onClick={() => handleShare(type)}
               aria-label={label}
               className={`p-2 rounded-full transition-all duration-150 hover:scale-105 hover:bg-accent ${
-                active ? 'text-orange-500 bg-orange-500/10' : 'text-muted-foreground hover:text-foreground'
+                active ? 'text-orange-500' : 'text-muted-foreground hover:text-foreground'
               }`}
             >
-              <Icon size={20} />
+              <Icon size={20} fill={active ? 'currentColor' : 'none'} />
             </button>
           ))}
         </div>
@@ -123,10 +123,10 @@ export function ShareBar({ article, mobile = false }: ShareBarProps) {
             onClick={() => handleShare(type)}
             aria-label={label}
             className={`flex items-center justify-center w-10 h-10 rounded-full transition-all duration-150 hover:scale-105 hover:bg-accent ${
-              active ? 'text-orange-500 bg-orange-500/10' : 'text-muted-foreground hover:text-foreground'
+              active ? 'text-orange-500' : 'text-muted-foreground hover:text-foreground'
             }`}
           >
-            <Icon size={20} />
+            <Icon size={20} fill={active ? 'currentColor' : 'none'} />
           </button>
         ))}
       </div>
