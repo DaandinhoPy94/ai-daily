@@ -500,6 +500,7 @@ export default function ArticleDetail() {
           {/* Mobile/Tablet share handled by MobileHeaderArticle; desktop ShareBar remains left */}
 
           <ArticleImage article={{
+            id: article.id,
             title: article.title,
             media_asset_url: article.hero_image?.path,
             media_asset_alt: article.hero_image?.alt,
