@@ -4,7 +4,7 @@ import { buildCanonical, buildArticleJSONLD, buildBreadcrumbJSONLD, buildOrganiz
 describe('seo utils', () => {
   it('buildCanonical adds base', () => {
     const url = buildCanonical('/artikel/test');
-    expect(url).toMatch(/^https:\/\/aidagelijks\.nl\/artikel\/test/);
+    expect(url).toMatch(/^https:\/\/www\.aidagelijks\.nl\/artikel\/test/);
   });
 
   it('buildArticleJSONLD contains required keys', () => {
@@ -26,8 +26,8 @@ describe('seo utils', () => {
 
   it('buildBreadcrumbJSONLD builds list items', () => {
     const json = buildBreadcrumbJSONLD([
-      { name: 'Home', url: 'https://aidagelijks.nl' },
-      { name: 'Topic', url: 'https://aidagelijks.nl/topic/ai' }
+      { name: 'Home', url: 'https://www.aidagelijks.nl' },
+      { name: 'Topic', url: 'https://www.aidagelijks.nl/topic/ai' }
     ]);
     const obj = JSON.parse(json);
     expect(obj.itemListElement.length).toBe(2);

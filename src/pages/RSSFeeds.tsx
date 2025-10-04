@@ -10,47 +10,49 @@ import { Badge } from '@/components/ui/badge';
 import { Copy, ExternalLink, Rss } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
+const BASE = import.meta.env.VITE_SITE_URL || 'https://www.aidagelijks.nl';
+
 const rssFeeds = [
   {
     title: 'Alle Artikelen',
     description: 'Volledige RSS feed met alle artikelen van AI Dagelijks',
-    url: 'https://aidagelijks.nl/rss/all',
+    url: `${BASE}/rss/all`,
     category: 'Algemeen'
   },
   {
     title: 'Net Binnen',
     description: 'Laatste breaking news en belangrijke ontwikkelingen',
-    url: 'https://aidagelijks.nl/rss/net-binnen',
+    url: `${BASE}/rss/net-binnen`,
     category: 'Nieuws'
   },
   {
     title: 'Research',
     description: 'Wetenschappelijke onderzoeken en AI research updates',
-    url: 'https://aidagelijks.nl/rss/research',
+    url: `${BASE}/rss/research`,
     category: 'Research'
   },
   {
     title: 'Regelgeving',
     description: 'Nieuwe wetgeving en regelgeving rondom AI',
-    url: 'https://aidagelijks.nl/rss/regelgeving',
+    url: `${BASE}/rss/regelgeving`,
     category: 'Beleid'
   },
   {
     title: 'VS Nieuws',
     description: 'AI ontwikkelingen uit de Verenigde Staten',
-    url: 'https://aidagelijks.nl/rss/vs',
+    url: `${BASE}/rss/vs`,
     category: 'Regio'
   },
   {
     title: 'Europa Nieuws',
     description: 'AI ontwikkelingen uit Europa',
-    url: 'https://aidagelijks.nl/rss/europa',
+    url: `${BASE}/rss/europa`,
     category: 'Regio'
   },
   {
     title: 'China Nieuws',
     description: 'AI ontwikkelingen uit China',
-    url: 'https://aidagelijks.nl/rss/china',
+    url: `${BASE}/rss/china`,
     category: 'Regio'
   }
 ];

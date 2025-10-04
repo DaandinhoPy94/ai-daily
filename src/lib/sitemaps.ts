@@ -44,7 +44,7 @@ function getArticleChangefreq(publishedAt: string): string {
 }
 
 export async function generateSitemapIndex(): Promise<string> {
-  const baseUrl = 'https://aidagelijks.nl';
+  const baseUrl = import.meta.env.VITE_SITE_URL || 'https://www.aidagelijks.nl';
   const now = new Date().toISOString().split('T')[0];
   
   return `<?xml version="1.0" encoding="UTF-8"?>
@@ -69,7 +69,7 @@ export async function generateSitemapIndex(): Promise<string> {
 }
 
 export async function generateStaticSitemap(): Promise<string> {
-  const baseUrl = 'https://aidagelijks.nl';
+  const baseUrl = import.meta.env.VITE_SITE_URL || 'https://www.aidagelijks.nl';
   const now = new Date().toISOString().split('T')[0];
   
   const staticPages = [
@@ -96,7 +96,7 @@ export async function generateStaticSitemap(): Promise<string> {
 }
 
 export async function generateArticlesSitemap(): Promise<string> {
-  const baseUrl = 'https://aidagelijks.nl';
+  const baseUrl = import.meta.env.VITE_SITE_URL || 'https://www.aidagelijks.nl';
   
   const { data: articles } = await supabase
     .from('articles')
@@ -123,7 +123,7 @@ export async function generateArticlesSitemap(): Promise<string> {
 }
 
 export async function generateTopicsSitemap(): Promise<string> {
-  const baseUrl = 'https://aidagelijks.nl';
+  const baseUrl = import.meta.env.VITE_SITE_URL || 'https://www.aidagelijks.nl';
   
   const { data: topics } = await supabase
     .from('topics')
@@ -145,7 +145,7 @@ export async function generateTopicsSitemap(): Promise<string> {
 }
 
 export async function generatePapersSitemap(): Promise<string> {
-  const baseUrl = 'https://aidagelijks.nl';
+  const baseUrl = import.meta.env.VITE_SITE_URL || 'https://www.aidagelijks.nl';
   
   const { data: papers } = await supabase
     .from('ai_papers' as any)
@@ -168,7 +168,7 @@ export async function generatePapersSitemap(): Promise<string> {
 }
 
 export async function generateNewsSitemap(): Promise<string> {
-  const baseUrl = 'https://aidagelijks.nl';
+  const baseUrl = import.meta.env.VITE_SITE_URL || 'https://www.aidagelijks.nl';
   const since = new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString();
 
   const { data: articles } = await supabase

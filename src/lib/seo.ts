@@ -31,7 +31,7 @@ export interface ArticleData {
 }
 
 const SITE_NAME = "AI Dagelijks";
-const SITE_URL = import.meta.env.VITE_SITE_URL || "https://aidagelijks.nl";
+const SITE_URL = import.meta.env.VITE_SITE_URL || "https://www.aidagelijks.nl";
 const DEFAULT_DESCRIPTION = "Het laatste nieuws over kunstmatige intelligentie, AI-ontwikkelingen en technologie-innovaties uit Nederland en de wereld.";
 const DEFAULT_IMAGE = "/placeholder.svg"; // uses existing public asset to avoid 404
 const PUBLISHER_LOGO = "/favicon.ico"; // uses existing public icon

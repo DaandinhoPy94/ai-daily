@@ -18,7 +18,7 @@ interface Paper {
 }
 
 export async function generateSitemap(): Promise<string> {
-  const baseUrl = 'https://aidagelijks.nl';
+  const baseUrl = import.meta.env.VITE_SITE_URL || 'https://www.aidagelijks.nl';
   const now = new Date().toISOString().split('T')[0];
   
   // Fetch all published articles
