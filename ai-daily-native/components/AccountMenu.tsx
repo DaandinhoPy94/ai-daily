@@ -1,6 +1,7 @@
-import { Modal, View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { Modal, View, Text, TouchableOpacity, StyleSheet, ScrollView, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { User, Settings, Heart, LogOut, Bookmark, X } from 'lucide-react-native';
+import { useRouter } from 'expo-router';
 
 interface AccountMenuProps {
   visible: boolean;
@@ -10,6 +11,7 @@ interface AccountMenuProps {
 }
 
 export function AccountMenu({ visible, onClose, userEmail, displayName }: AccountMenuProps) {
+  const router = useRouter();
   const initials = displayName
     ?.split(' ')
     .map(name => name[0])
@@ -17,9 +19,16 @@ export function AccountMenu({ visible, onClose, userEmail, displayName }: Accoun
     .toUpperCase()
     .slice(0, 2) || userEmail?.slice(0, 2).toUpperCase() || 'D';
 
-  const handleSignOut = () => {
-    // TODO: Implement sign out
+  const handleNavigation = (path: string, label: string) => {
     onClose();
+    Alert.alert('Navigatie', `${label} wordt binnenkort toegevoegd!`);
+    // TODO: router.push(path);
+  };
+
+  const handleSignOut = () => {
+    onClose();
+    Alert.alert('Uitloggen', 'Uitlog functionaliteit wordt binnenkort toegevoegd!');
+    // TODO: Implement sign out with Supabase
   };
 
   return (
@@ -55,22 +64,38 @@ export function AccountMenu({ visible, onClose, userEmail, displayName }: Accoun
 
           {/* Menu Items */}
           <ScrollView style={styles.menuContainer}>
-            <TouchableOpacity style={styles.menuItem} activeOpacity={0.7}>
+            <TouchableOpacity 
+              style={styles.menuItem} 
+              onPress={() => handleNavigation('/profile', 'Profiel')}
+              activeOpacity={0.7}
+            >
               <User size={20} color="#0a0a0a" strokeWidth={2} />
               <Text style={styles.menuText}>Profiel</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.menuItem} activeOpacity={0.7}>
+            <TouchableOpacity 
+              style={styles.menuItem} 
+              onPress={() => handleNavigation('/mijn-nieuws', 'Mijn nieuws')}
+              activeOpacity={0.7}
+            >
               <Heart size={20} color="#0a0a0a" strokeWidth={2} />
               <Text style={styles.menuText}>Mijn nieuws</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.menuItem} activeOpacity={0.7}>
+            <TouchableOpacity 
+              style={styles.menuItem} 
+              onPress={() => handleNavigation('/opgeslagen', 'Bookmarks')}
+              activeOpacity={0.7}
+            >
               <Bookmark size={20} color="#0a0a0a" strokeWidth={2} />
               <Text style={styles.menuText}>Bookmarks</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.menuItem} activeOpacity={0.7}>
+            <TouchableOpacity 
+              style={styles.menuItem} 
+              onPress={() => handleNavigation('/preferences', 'Voorkeuren')}
+              activeOpacity={0.7}
+            >
               <Settings size={20} color="#0a0a0a" strokeWidth={2} />
               <Text style={styles.menuText}>Voorkeuren</Text>
             </TouchableOpacity>
@@ -131,7 +156,7 @@ const styles = StyleSheet.create({
     width: 64,
     height: 64,
     borderRadius: 32,
-    backgroundColor: '#8b7355',
+    backgroundColor: '#E36B2C',
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 12,
