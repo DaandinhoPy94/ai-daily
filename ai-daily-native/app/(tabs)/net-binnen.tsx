@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
-import { View, Text, FlatList, ActivityIndicator, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, FlatList, ActivityIndicator, StyleSheet } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { User, Search } from 'lucide-react-native';
+import { AppHeader } from '@/components/AppHeader';
+import { SearchModal } from '@/components/SearchModal';
+import { AuthModal } from '@/components/AuthModal';
 import { ArticleListRow } from '@/components/ArticleListRow';
 import { supabase } from '@/src/lib/supabase';
 
@@ -23,6 +25,8 @@ export default function NetBinnenScreen() {
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
+  const [showSearch, setShowSearch] = useState(false);
+  const [showAuth, setShowAuth] = useState(false);
 
   const fetchArticles = async (offset: number = 0) => {
     try {
@@ -90,21 +94,10 @@ export default function NetBinnenScreen() {
       <StatusBar style="auto" />
       
       {/* Header */}
-      <View style={styles.header}>
-        <View style={styles.headerLeft}>
-          <TouchableOpacity style={styles.iconButton}>
-            <User size={20} color="#0a0a0a" strokeWidth={2} />
-          </TouchableOpacity>
-        </View>
-        
-        <Text style={styles.headerTitle}>AI Dagelijks</Text>
-        
-        <View style={styles.headerRight}>
-          <TouchableOpacity style={styles.iconButton}>
-            <Search size={20} color="#0a0a0a" strokeWidth={2} />
-          </TouchableOpacity>
-        </View>
-      </View>
+      <AppHeader 
+        onSearchPress={() => setShowSearch(true)}
+        onProfilePress={() => setShowAuth(true)}
+      />
 
       {/* Page Title */}
       <View style={styles.pageTitleContainer}>
@@ -133,41 +126,15 @@ export default function NetBinnenScreen() {
           contentContainerStyle={styles.listContent}
         />
       )}
+
+      {/* Modals */}
+      <SearchModal visible={showSearch} onClose={() => setShowSearch(false)} />
+      <AuthModal visible={showAuth} onClose={() => setShowAuth(false)} />
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  header: {
-    height: 56,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 12,
-    backgroundColor: '#ffffff',
-    borderBottomWidth: 1,
-    borderBottomColor: '#e4e4e7',
-  },
-  headerLeft: {
-    width: 36,
-  },
-  headerRight: {
-    width: 36,
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#0a0a0a',
-    letterSpacing: -0.5,
-    fontFamily: 'Georgia',
-  },
-  iconButton: {
-    width: 36,
-    height: 36,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 18,
-  },
   pageTitleContainer: {
     paddingHorizontal: 16,
     paddingTop: 16,

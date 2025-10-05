@@ -1,7 +1,10 @@
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, TextInput } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { User, Search, ChevronRight, X } from 'lucide-react-native';
+import { ChevronRight, X, Search } from 'lucide-react-native';
+import { AppHeader } from '@/components/AppHeader';
+import { SearchModal } from '@/components/SearchModal';
+import { AuthModal } from '@/components/AuthModal';
 import { useState } from 'react';
 
 const menuItems = [
@@ -25,27 +28,18 @@ const mainTopics = [
 
 export default function MeerScreen() {
   const [searchQuery, setSearchQuery] = useState('');
+  const [showSearch, setShowSearch] = useState(false);
+  const [showAuth, setShowAuth] = useState(false);
 
   return (
     <SafeAreaView className="flex-1 bg-background" edges={['top']}>
       <StatusBar style="auto" />
       
       {/* Header */}
-      <View style={styles.header}>
-        <View style={styles.headerLeft}>
-          <TouchableOpacity style={styles.iconButton}>
-            <User size={20} color="#0a0a0a" strokeWidth={2} />
-          </TouchableOpacity>
-        </View>
-        
-        <Text style={styles.headerTitle}>AI Dagelijks</Text>
-        
-        <View style={styles.headerRight}>
-          <TouchableOpacity style={styles.iconButton}>
-            <Search size={20} color="#0a0a0a" strokeWidth={2} />
-          </TouchableOpacity>
-        </View>
-      </View>
+      <AppHeader 
+        onSearchPress={() => setShowSearch(true)}
+        onProfilePress={() => setShowAuth(true)}
+      />
 
       {/* Page Header with Title */}
       <View style={styles.pageHeader}>
@@ -73,21 +67,8 @@ export default function MeerScreen() {
 
       {/* Content */}
       <ScrollView style={styles.content}>
-        {/* Menu Items Section */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Menu</Text>
-          {menuItems.map((item) => (
-            <TouchableOpacity key={item.slug} style={styles.menuItem}>
-              <Text style={styles.menuItemText}>{item.name}</Text>
-              <ChevronRight size={20} color="#71717a" strokeWidth={2} />
-            </TouchableOpacity>
-          ))}
-        </View>
-
-        {/* Topics Section */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Onderwerpen</Text>
-          
+        {/* Topics List */}
+        <View style={styles.topicsList}>
           {/* Alle onderwerpen */}
           <TouchableOpacity style={styles.topicItem}>
             <Text style={styles.topicText}>Alle onderwerpen</Text>
@@ -103,41 +84,15 @@ export default function MeerScreen() {
           ))}
         </View>
       </ScrollView>
+
+      {/* Modals */}
+      <SearchModal visible={showSearch} onClose={() => setShowSearch(false)} />
+      <AuthModal visible={showAuth} onClose={() => setShowAuth(false)} />
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  header: {
-    height: 56,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 12,
-    backgroundColor: '#ffffff',
-    borderBottomWidth: 1,
-    borderBottomColor: '#e4e4e7',
-  },
-  headerLeft: {
-    width: 36,
-  },
-  headerRight: {
-    width: 36,
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#0a0a0a',
-    letterSpacing: -0.5,
-    fontFamily: 'Georgia',
-  },
-  iconButton: {
-    width: 36,
-    height: 36,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 18,
-  },
   pageHeader: {
     paddingHorizontal: 16,
     paddingTop: 16,
@@ -175,34 +130,8 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
   },
-  section: {
+  topicsList: {
     paddingTop: 16,
-  },
-  sectionTitle: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#71717a',
-    textTransform: 'uppercase',
-    letterSpacing: 0.8,
-    paddingHorizontal: 16,
-    paddingBottom: 8,
-    fontFamily: 'System',
-  },
-  menuItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: 16,
-    paddingHorizontal: 16,
-    backgroundColor: '#ffffff',
-    borderBottomWidth: 1,
-    borderBottomColor: '#e4e4e7',
-  },
-  menuItemText: {
-    fontSize: 16,
-    fontWeight: '500',
-    color: '#0a0a0a',
-    fontFamily: 'System',
   },
   topicItem: {
     flexDirection: 'row',
