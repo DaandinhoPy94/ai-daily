@@ -102,6 +102,26 @@ export default function TabLayout() {
           ),
         }}
       />
+      
+      {/* Hidden tabs - these show the tab bar but don't appear in it */}
+      <Tabs.Screen
+        name="profile"
+        options={{
+          href: null,
+        }}
+      />
+      <Tabs.Screen
+        name="opgeslagen"
+        options={{
+          href: null,
+        }}
+      />
+      <Tabs.Screen
+        name="preferences"
+        options={{
+          href: null,
+        }}
+      />
     </Tabs>
   );
 }

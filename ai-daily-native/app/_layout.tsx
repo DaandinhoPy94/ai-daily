@@ -20,9 +20,6 @@ export default function RootLayout() {
           >
             <Stack.Screen name="(tabs)" />
             <Stack.Screen name="artikel/[slug]" />
-            <Stack.Screen name="profile" />
-            <Stack.Screen name="opgeslagen" />
-            <Stack.Screen name="preferences" />
           </Stack>
         </StockProvider>
       </QueryClientProvider>

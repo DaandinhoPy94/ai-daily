@@ -80,7 +80,7 @@ export function AccountMenu({ visible, onClose, userEmail, displayName }: Accoun
           <ScrollView style={styles.menuContainer}>
             <TouchableOpacity 
               style={styles.menuItem} 
-              onPress={() => handleNavigation('/profile')}
+              onPress={() => handleNavigation('/(tabs)/profile')}
               activeOpacity={0.7}
             >
               <User size={20} color="#0a0a0a" strokeWidth={2} />
@@ -101,7 +101,7 @@ export function AccountMenu({ visible, onClose, userEmail, displayName }: Accoun
 
             <TouchableOpacity 
               style={styles.menuItem} 
-              onPress={() => handleNavigation('/opgeslagen')}
+              onPress={() => handleNavigation('/(tabs)/opgeslagen')}
               activeOpacity={0.7}
             >
               <Bookmark size={20} color="#0a0a0a" strokeWidth={2} />
@@ -110,7 +110,7 @@ export function AccountMenu({ visible, onClose, userEmail, displayName }: Accoun
 
             <TouchableOpacity 
               style={styles.menuItem} 
-              onPress={() => handleNavigation('/preferences')}
+              onPress={() => handleNavigation('/(tabs)/preferences')}
               activeOpacity={0.7}
             >
               <Settings size={20} color="#0a0a0a" strokeWidth={2} />
