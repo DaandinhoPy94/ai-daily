@@ -4,7 +4,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { ChevronRight, X, Search } from 'lucide-react-native';
 import { AppHeader } from '@/components/AppHeader';
 import { SearchModal } from '@/components/SearchModal';
-import { AuthModal } from '@/components/AuthModal';
 import { useState } from 'react';
 
 const menuItems = [
@@ -29,7 +28,6 @@ const mainTopics = [
 export default function MeerScreen() {
   const [searchQuery, setSearchQuery] = useState('');
   const [showSearch, setShowSearch] = useState(false);
-  const [showAuth, setShowAuth] = useState(false);
 
   return (
     <SafeAreaView className="flex-1 bg-background" edges={['top']}>
@@ -38,7 +36,6 @@ export default function MeerScreen() {
       {/* Header */}
       <AppHeader 
         onSearchPress={() => setShowSearch(true)}
-        onProfilePress={() => setShowAuth(true)}
       />
 
       {/* Page Header with Title */}
@@ -87,7 +84,6 @@ export default function MeerScreen() {
 
       {/* Modals */}
       <SearchModal visible={showSearch} onClose={() => setShowSearch(false)} />
-      <AuthModal visible={showAuth} onClose={() => setShowAuth(false)} />
     </SafeAreaView>
   );
 }

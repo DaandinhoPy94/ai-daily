@@ -35,7 +35,6 @@ export default function HomeScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showSearch, setShowSearch] = useState(false);
-  const [showAuth, setShowAuth] = useState(false);
 
   const fetchData = async () => {
     try {
@@ -139,7 +138,6 @@ export default function HomeScreen() {
       {/* Header */}
       <AppHeader 
         onSearchPress={() => setShowSearch(true)}
-        onProfilePress={() => setShowAuth(true)}
       />
 
       {/* Stocks Strip */}
@@ -187,7 +185,6 @@ export default function HomeScreen() {
 
       {/* Modals */}
       <SearchModal visible={showSearch} onClose={() => setShowSearch(false)} />
-      <AuthModal visible={showAuth} onClose={() => setShowAuth(false)} />
     </SafeAreaView>
   );
 }

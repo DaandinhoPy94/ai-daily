@@ -4,7 +4,6 @@ import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AppHeader } from '@/components/AppHeader';
 import { SearchModal } from '@/components/SearchModal';
-import { AuthModal } from '@/components/AuthModal';
 import { ArticleListRow } from '@/components/ArticleListRow';
 import { supabase } from '@/src/lib/supabase';
 
@@ -26,7 +25,6 @@ export default function NetBinnenScreen() {
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [showSearch, setShowSearch] = useState(false);
-  const [showAuth, setShowAuth] = useState(false);
 
   const fetchArticles = async (offset: number = 0) => {
     try {
@@ -96,7 +94,6 @@ export default function NetBinnenScreen() {
       {/* Header */}
       <AppHeader 
         onSearchPress={() => setShowSearch(true)}
-        onProfilePress={() => setShowAuth(true)}
       />
 
       {/* Page Title */}
@@ -129,7 +126,6 @@ export default function NetBinnenScreen() {
 
       {/* Modals */}
       <SearchModal visible={showSearch} onClose={() => setShowSearch(false)} />
-      <AuthModal visible={showAuth} onClose={() => setShowAuth(false)} />
     </SafeAreaView>
   );
 }

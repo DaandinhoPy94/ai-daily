@@ -8,7 +8,6 @@ import { ArticleMeta } from '@/components/ArticleMeta';
 import { SummaryBox } from '@/components/SummaryBox';
 import { RelatedTopicsNative } from '@/components/RelatedTopicsNative';
 import { RelatedListNative } from '@/components/RelatedListNative';
-import { AuthModal } from '@/components/AuthModal';
 import { supabase } from '@/src/lib/supabase';
 import { getHeroImage } from '@/src/lib/imagesBase';
 
@@ -29,7 +28,6 @@ export default function ArticleDetailScreen() {
   const [article, setArticle] = useState<Article | null>(null);
   const [relatedArticles, setRelatedArticles] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [showAuth, setShowAuth] = useState(false);
 
   useEffect(() => {
     fetchArticle();
@@ -94,7 +92,6 @@ export default function ArticleDetailScreen() {
       <ArticleHeader 
         articleId={article?.id}
         articleTitle={article?.title}
-        onProfilePress={() => setShowAuth(true)}
       />
 
       {/* Content */}
@@ -164,8 +161,6 @@ export default function ArticleDetailScreen() {
         </View>
       )}
 
-      {/* Modals */}
-      <AuthModal visible={showAuth} onClose={() => setShowAuth(false)} />
     </SafeAreaView>
   );
 }
