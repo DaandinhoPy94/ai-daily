@@ -8,9 +8,16 @@ function TabBarIcon({ IconComponent, color, focused }: {
   focused: boolean 
 }) {
   return (
-    <View className="items-center justify-center pt-2">
+    <View style={{ alignItems: 'center', justifyContent: 'center', height: 26, marginBottom: -2 }}>
       {focused && (
-        <View className="absolute top-0 w-8 h-0.5 bg-accent rounded-full" />
+        <View style={{
+          position: 'absolute',
+          top: -4,
+          width: 32,
+          height: 2,
+          backgroundColor: '#E36B2C',
+          borderRadius: 2,
+        }} />
       )}
       <IconComponent size={24} color={color} strokeWidth={2} />
     </View>
@@ -22,18 +29,25 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: '#3b82f6', // accent color
-        tabBarInactiveTintColor: '#6b7280',
+        tabBarActiveTintColor: '#E36B2C', // Oranje accent (zoals web)
+        tabBarInactiveTintColor: '#0a0a0a', // Foreground (zoals web)
         tabBarStyle: {
-          height: 64,
-          paddingBottom: 8,
-          paddingTop: 8,
+          height: 66,
+          paddingBottom: 2,
+          paddingTop: 6,
+          paddingHorizontal: 16,
           borderTopWidth: 1,
-          borderTopColor: '#e5e7eb',
+          borderTopColor: '#e4e4e7',
+          backgroundColor: '#ffffff',
         },
         tabBarLabelStyle: {
-          fontSize: 12,
+          fontSize: 11,
           fontWeight: '400',
+          marginTop: 0,
+        },
+        tabBarItemStyle: {
+          paddingVertical: 2,
+          paddingHorizontal: 2,
         },
       }}
     >
@@ -69,7 +83,22 @@ export default function TabLayout() {
         options={{
           title: 'Meer',
           tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon IconComponent={MoreHorizontal} color={color} focused={focused} />
+            <View style={{ alignItems: 'center', justifyContent: 'center', height: 26, marginBottom: -2, marginLeft: -8 }}>
+              {focused && (
+                <View style={{
+                  position: 'absolute',
+                  top: -4,
+                  width: 32,
+                  height: 2,
+                  backgroundColor: '#E36B2C',
+                  borderRadius: 2,
+                }} />
+              )}
+              <MoreHorizontal size={26} color={color} strokeWidth={2} />
+            </View>
+          ),
+          tabBarLabel: ({ color }) => (
+            <Text style={{ color, fontSize: 11, fontWeight: '400', marginTop: 0, marginLeft: -8 }}>Meer</Text>
           ),
         }}
       />

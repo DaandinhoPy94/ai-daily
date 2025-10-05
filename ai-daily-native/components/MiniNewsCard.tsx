@@ -1,33 +1,30 @@
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Clock } from 'lucide-react-native';
-import { getHeroImage } from '@/src/lib/imagesBase';
+import { getStandardImage } from '@/src/lib/imagesBase';
 
 interface Article {
   id: string;
   slug: string;
   title: string;
-  summary?: string;
   readTimeMinutes: number;
   topicName?: string;
   media_asset_url?: string;
-  media_asset_alt?: string;
 }
 
-interface LargeNewsCardProps {
+interface MiniNewsCardProps {
   article: Article;
 }
 
-export function LargeNewsCard({ article }: LargeNewsCardProps) {
+export function MiniNewsCard({ article }: MiniNewsCardProps) {
   const router = useRouter();
-  const imageUrl = article.id ? getHeroImage(article.id, 1200) : article.media_asset_url;
+  const imageUrl = article.id ? getStandardImage(article.id, 400) : article.media_asset_url;
 
   const handlePress = () => {
     router.push(`/artikel/${article.slug}` as any);
   };
 
   return (
-    <TouchableOpacity 
+    <TouchableOpacity
       onPress={handlePress}
       activeOpacity={0.7}
       style={styles.container}
@@ -43,27 +40,18 @@ export function LargeNewsCard({ article }: LargeNewsCardProps) {
         </View>
       )}
 
-      {/* Card Content */}
+      {/* Text Block */}
       <View style={styles.card}>
-        {/* Reading Time - Topic */}
-        <View style={styles.metaContainer}>
-          <Text style={styles.metaText}>
-            {article.readTimeMinutes} min leestijd
-            {article.topicName && ` - ${article.topicName}`}
-          </Text>
-        </View>
-
-        {/* Title */}
-        <Text style={styles.title} numberOfLines={3}>
-          {article.title}
+        {/* Meta */}
+        <Text style={styles.meta}>
+          {article.readTimeMinutes} min leestijd
+          {article.topicName && ` · ${article.topicName}`}
         </Text>
 
-        {/* Summary */}
-        {article.summary && (
-          <Text style={styles.summary} numberOfLines={3}>
-            {article.summary}
-          </Text>
-        )}
+        {/* Title */}
+        <Text style={styles.title} numberOfLines={2}>
+          {article.title}
+        </Text>
       </View>
     </TouchableOpacity>
   );
@@ -71,14 +59,14 @@ export function LargeNewsCard({ article }: LargeNewsCardProps) {
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 16,
+    flex: 1,
   },
   imageContainer: {
     width: '100%',
     aspectRatio: 16 / 9,
-    borderRadius: 12,
+    borderRadius: 8,
     overflow: 'hidden',
-    marginBottom: 12,
+    marginBottom: 8,
   },
   image: {
     width: '100%',
@@ -88,30 +76,20 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
     borderWidth: 1,
     borderColor: '#e4e4e7',
-    borderRadius: 12,
-    padding: 16,
-    minHeight: 180,
+    borderRadius: 8,
+    padding: 12,
   },
-  metaContainer: {
-    marginBottom: 8,
-  },
-  metaText: {
+  meta: {
     fontSize: 14,
     color: '#71717a',
+    marginBottom: 8,
     fontFamily: 'System',
   },
   title: {
-    fontSize: 20,
-    fontWeight: '700',
-    lineHeight: 26,
-    color: '#0a0a0a',
-    marginBottom: 8,
-    fontFamily: 'Georgia',
-  },
-  summary: {
     fontSize: 16,
-    lineHeight: 24,
-    color: '#71717a',
+    fontWeight: '500',
+    lineHeight: 20,
+    color: '#0a0a0a',
     fontFamily: 'System',
   },
 });

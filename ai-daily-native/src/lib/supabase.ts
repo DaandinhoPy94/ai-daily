@@ -13,25 +13,47 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   },
 });
 
-// Helper functions - same as your web app
+// Helper functions aligned with web app views
 export const getMostRead = async (limit = 10) => {
   const { data, error } = await supabase
-    .from('articles')
+    .from('v_most_read_24h')
     .select('*')
-    .order('view_count', { ascending: false })
     .limit(limit);
 
-  if (error) throw error;
-  return data;
+  if (error) throw error as any;
+
+  // Map fields to match app expectations
+  return (data || []).map((item: any) => ({
+    ...item,
+    media_asset_url: item.image_path,
+    media_asset_alt: item.image_alt,
+    readTimeMinutes: item.read_time_minutes,
+  }));
 };
 
 export const getLatest = async (limit = 20) => {
   const { data, error } = await supabase
-    .from('articles')
+    .from('v_latest_published')
     .select('*')
-    .order('published_at', { ascending: false })
     .limit(limit);
 
-  if (error) throw error;
-  return data;
+  if (error) throw error as any;
+
+  return (data || []).map((item: any) => ({
+    ...item,
+    media_asset_url: item.image_path,
+    media_asset_alt: item.image_alt,
+    readTimeMinutes: item.read_time_minutes,
+  }));
+};
+
+export const getTopicSections = async () => {
+  const { data, error } = await supabase
+    .from('v_topic_sections_cards')
+    .select('*')
+    .eq('is_active', true)
+    .order('display_order', { ascending: true });
+
+  if (error) throw error as any;
+  return data || [];
 };
