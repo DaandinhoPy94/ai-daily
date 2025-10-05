@@ -26,7 +26,6 @@ import OpgeslagenPage from "./pages/OpgeslagenPage";
 import Topic from "./pages/Topic";
 import TopicPage from "./pages/TopicPage";
 import RSSFeeds from "./pages/RSSFeeds";
-import Meer from "./pages/Meer";
 import Search from "./pages/Search";
 import AuthCallback from "./pages/AuthCallback";
 import NotFound from "./pages/NotFound";
@@ -99,7 +98,6 @@ const App = () => (
               <Route path="/:slug" element={<Topic />} />
               <Route path="/rss-feeds" element={<RSSFeeds />} />
               <Route path="/search" element={<Search />} />
-              <Route path="/meer" element={<Meer />} />
             <Route path="/sitemap_index.xml" element={<SitemapIndex />} />
             <Route path="/sitemap.xml" element={<SitemapXml />} />
             <Route path="/sitemap-static.xml" element={<SitemapStatic />} />

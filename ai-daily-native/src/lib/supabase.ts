@@ -57,3 +57,21 @@ export const getTopicSections = async () => {
   if (error) throw error as any;
   return data || [];
 };
+
+// Main topics (type='main')
+export const getMainTopics = async () => {
+  try {
+    const { data, error } = await supabase
+      .from('topics')
+      .select('*')
+      .eq('type', 'main')
+      .eq('is_active', true)
+      .order('display_order', { ascending: true });
+    
+    if (error) throw error;
+    return data;
+  } catch (error) {
+    console.error('Error fetching main topics:', error);
+    return [];
+  }
+};

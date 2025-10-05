@@ -1,4 +1,4 @@
-import { useState, useRef, startTransition } from 'react';
+import { useState, useRef, startTransition, useEffect } from 'react';
 import { X, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
@@ -6,6 +6,7 @@ import { SearchBar } from '@/components/SearchBar';
 import { SearchResults } from '@/components/SearchResults';
 import { useNavigate } from 'react-router-dom';
 import { searchArticles } from '@/lib/search';
+import { getMainTopics } from '@/lib/supabase';
 
 interface MeerSheetProps {
   isOpen: boolean;
@@ -13,16 +14,11 @@ interface MeerSheetProps {
   viewType: 'mobile' | 'tablet';
 }
 
-const mainTopics = [
-  { name: 'Onderzoek & Ontwikkeling', slug: 'onderzoek-ontwikkeling' },
-  { name: 'Technologie & Modellen', slug: 'technologie-modellen' },
-  { name: 'Toepassingen', slug: 'toepassingen' },
-  { name: 'Bedrijven & Markt', slug: 'bedrijven-markt' },
-  { name: 'Geografie & Politiek', slug: 'geografie-politiek' },
-  { name: 'Veiligheid & Regelgeving', slug: 'veiligheid-regelgeving' },
-  { name: 'Economie & Werk', slug: 'economie-werk' },
-  { name: 'Cultuur & Samenleving', slug: 'cultuur-samenleving' }
-];
+interface Topic {
+  id: string;
+  name: string;
+  slug: string;
+}
 
 export function MeerSheet({ isOpen, onClose, viewType }: MeerSheetProps) {
   const [searchQuery, setSearchQuery] = useState('');
@@ -30,8 +26,26 @@ export function MeerSheet({ isOpen, onClose, viewType }: MeerSheetProps) {
   const [isSearching, setIsSearching] = useState(false);
   const [searchError, setSearchError] = useState<any>(null);
   const [showMinimalLoader, setShowMinimalLoader] = useState(false);
+  const [mainTopics, setMainTopics] = useState<Topic[]>([]);
+  const [topicsLoading, setTopicsLoading] = useState(true);
   const navigate = useNavigate();
   const abortControllerRef = useRef<AbortController | null>(null);
+
+  // Load topics from database
+  useEffect(() => {
+    const loadTopics = async () => {
+      try {
+        setTopicsLoading(true);
+        const topics = await getMainTopics();
+        setMainTopics(topics || []);
+      } catch (error) {
+        console.error('Error loading topics:', error);
+      } finally {
+        setTopicsLoading(false);
+      }
+    };
+    loadTopics();
+  }, []);
 
   const handleSearch = async (query: string) => {
     // Abort previous search
@@ -179,18 +193,31 @@ export function MeerSheet({ isOpen, onClose, viewType }: MeerSheetProps) {
                      <ChevronRight className="h-5 w-5 text-muted-foreground" />
                    </button>
                    
-                   {mainTopics.map((topic) => (
-                     <button
-                       key={topic.slug}
-                       onClick={() => handleTopicClick(topic.slug)}
-                       className="flex items-center justify-between w-full p-4 hover:bg-muted/50 rounded-lg transition-colors text-left"
-                     >
-                       <div>
-                         <span className="text-foreground font-medium">{topic.name}</span>
-                       </div>
-                       <ChevronRight className="h-5 w-5 text-muted-foreground" />
-                     </button>
-                   ))}
+                   {/* Loading state */}
+                   {topicsLoading ? (
+                     <>
+                       {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+                         <div key={i} className="flex items-center justify-between w-full p-4">
+                           <div className="h-5 w-48 bg-muted rounded animate-pulse"></div>
+                           <div className="h-5 w-5 bg-muted rounded animate-pulse"></div>
+                         </div>
+                       ))}
+                     </>
+                   ) : (
+                     /* Main Topics from database */
+                     mainTopics.map((topic) => (
+                       <button
+                         key={topic.slug}
+                         onClick={() => handleTopicClick(topic.slug)}
+                         className="flex items-center justify-between w-full p-4 hover:bg-muted/50 rounded-lg transition-colors text-left"
+                       >
+                         <div>
+                           <span className="text-foreground font-medium">{topic.name}</span>
+                         </div>
+                         <ChevronRight className="h-5 w-5 text-muted-foreground" />
+                       </button>
+                     ))
+                   )}
                  </div>
                </div>
             )}

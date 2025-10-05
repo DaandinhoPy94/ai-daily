@@ -4,30 +4,35 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { ChevronRight, X, Search } from 'lucide-react-native';
 import { AppHeader } from '@/components/AppHeader';
 import { SearchModal } from '@/components/SearchModal';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { getMainTopics } from '@/src/lib/supabase';
 
-const menuItems = [
-  { name: 'Over Ons', slug: 'over-ons' },
-  { name: 'Nieuwsbrief', slug: 'nieuwsbrief' },
-  { name: 'AI Cursussen', slug: 'ai-cursussen' },
-  { name: 'AI Jobs', slug: 'ai-jobs' },
-  { name: 'RSS Feeds', slug: 'rss-feeds' },
-];
-
-const mainTopics = [
-  { name: 'Onderzoek & Ontwikkeling', slug: 'onderzoek-ontwikkeling' },
-  { name: 'Technologie & Modellen', slug: 'technologie-modellen' },
-  { name: 'Toepassingen', slug: 'toepassingen' },
-  { name: 'Bedrijven & Markt', slug: 'bedrijven-markt' },
-  { name: 'Geografie & Politiek', slug: 'geografie-politiek' },
-  { name: 'Veiligheid & Regelgeving', slug: 'veiligheid-regelgeving' },
-  { name: 'Economie & Werk', slug: 'economie-werk' },
-  { name: 'Cultuur & Samenleving', slug: 'cultuur-samenleving' }
-];
+interface Topic {
+  id: string;
+  name: string;
+  slug: string;
+}
 
 export default function MeerScreen() {
   const [searchQuery, setSearchQuery] = useState('');
   const [showSearch, setShowSearch] = useState(false);
+  const [mainTopics, setMainTopics] = useState<Topic[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadTopics = async () => {
+      try {
+        setLoading(true);
+        const topics = await getMainTopics();
+        setMainTopics(topics || []);
+      } catch (error) {
+        console.error('Error loading topics:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadTopics();
+  }, []);
 
   return (
     <SafeAreaView className="flex-1 bg-background" edges={['top']}>
@@ -72,13 +77,25 @@ export default function MeerScreen() {
             <ChevronRight size={20} color="#71717a" strokeWidth={2} />
           </TouchableOpacity>
 
-          {/* Main Topics */}
-          {mainTopics.map((topic) => (
-            <TouchableOpacity key={topic.slug} style={styles.topicItem}>
-              <Text style={styles.topicText}>{topic.name}</Text>
-              <ChevronRight size={20} color="#71717a" strokeWidth={2} />
-            </TouchableOpacity>
-          ))}
+          {/* Loading state */}
+          {loading ? (
+            <>
+              {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+                <View key={i} style={styles.topicItem}>
+                  <View style={styles.skeletonText} />
+                  <View style={styles.skeletonIcon} />
+                </View>
+              ))}
+            </>
+          ) : (
+            /* Main Topics from database */
+            mainTopics.map((topic) => (
+              <TouchableOpacity key={topic.slug} style={styles.topicItem}>
+                <Text style={styles.topicText}>{topic.name}</Text>
+                <ChevronRight size={20} color="#71717a" strokeWidth={2} />
+              </TouchableOpacity>
+            ))
+          )}
         </View>
       </ScrollView>
 
@@ -144,5 +161,17 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: '#0a0a0a',
     fontFamily: 'System',
+  },
+  skeletonText: {
+    width: 200,
+    height: 20,
+    backgroundColor: '#e4e4e7',
+    borderRadius: 4,
+  },
+  skeletonIcon: {
+    width: 20,
+    height: 20,
+    backgroundColor: '#e4e4e7',
+    borderRadius: 4,
   },
 });
