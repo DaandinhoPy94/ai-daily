@@ -33,9 +33,9 @@ export function RelatedList({ articles }: RelatedListProps) {
             >
               <article className="flex gap-3 py-3 px-4 min-h-[96px] active:bg-muted/60 active:scale-[0.998] transition-all duration-150 hover:bg-accent/40">
                 {/* Thumbnail */}
-                <div className="flex-shrink-0 w-[72px] h-[72px]">
+                <div className="flex-shrink-0 w-[128px] h-[72px]">
                   {article.id ? (
-                    <ArticleListThumb id={article.id} title={article.title} fill />
+                    <ArticleListThumb id={article.id} title={article.title} targetWidth={128} fill />
                   ) : (
                     <div className="w-full h-full bg-muted flex items-center justify-center rounded-md">
                       <span className="text-muted-foreground text-xs">Image</span>
@@ -60,7 +60,7 @@ export function RelatedList({ articles }: RelatedListProps) {
 
             {/* Divider */}
             {index < articles.length - 1 && (
-              <div className="ml-[88px] h-px bg-border" />
+              <div className="ml-[140px] h-px bg-border" />
             )}
           </div>
         ))}
