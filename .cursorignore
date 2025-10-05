@@ -1,0 +1,10 @@
+# Allow .env files to be used by Cursor
+!.env
+!.env.local
+!.env.production
+!ai-daily-native/.env
+
+# Still ignore common directories
+node_modules/
+dist/
+.git/

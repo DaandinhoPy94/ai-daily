@@ -14,8 +14,8 @@ User-agent: *
 Allow: /
 
 # Sitemaps
-Sitemap: https://aidagelijks.nl/sitemap_index.xml
-Sitemap: https://aidagelijks.nl/news-sitemap.xml
+Sitemap: https://www.aidagelijks.nl/sitemap_index.xml
+Sitemap: https://www.aidagelijks.nl/news-sitemap.xml
 
 # Disallow admin areas
 Disallow: /admin/
