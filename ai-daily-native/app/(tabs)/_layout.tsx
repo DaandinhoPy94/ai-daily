@@ -83,7 +83,7 @@ export default function TabLayout() {
         options={{
           title: 'Meer',
           tabBarIcon: ({ color, focused }) => (
-            <View style={{ alignItems: 'center', justifyContent: 'center', height: 26, marginBottom: -2, marginLeft: -8 }}>
+            <View style={{ alignItems: 'center', justifyContent: 'center', height: 26, marginBottom: 2, marginLeft: -8 }}>
               {focused && (
                 <View style={{
                   position: 'absolute',
@@ -98,7 +98,7 @@ export default function TabLayout() {
             </View>
           ),
           tabBarLabel: ({ color }) => (
-            <Text style={{ color, fontSize: 11, fontWeight: '400', marginTop: 0, marginLeft: -8 }}>Meer</Text>
+            <Text style={{ color, fontSize: 11, fontWeight: '400', marginTop: -2, marginLeft: -8 }}>Meer</Text>
           ),
         }}
       />

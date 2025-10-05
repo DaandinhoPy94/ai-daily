@@ -197,23 +197,6 @@ export default function Profile() {
                 </p>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="avatar_url">Avatar URL (optioneel)</Label>
-                <Input
-                  id="avatar_url"
-                  type="url"
-                  value={formData.avatar_url}
-                  onChange={(e) => setFormData(prev => ({ 
-                    ...prev, 
-                    avatar_url: e.target.value 
-                  }))}
-                  placeholder="https://example.com/avatar.jpg"
-                />
-                <p className="text-xs text-muted-foreground">
-                  Of upload een afbeelding hierboven.
-                </p>
-              </div>
-
               <div className="flex justify-end">
                 <Button type="submit" disabled={formLoading}>
                   {formLoading ? 'Opslaan...' : 'Profiel opslaan'}
