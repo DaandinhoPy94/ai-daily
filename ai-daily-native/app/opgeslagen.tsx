@@ -5,7 +5,7 @@ import { AppHeader } from '@/components/AppHeader';
 import { SearchModal } from '@/components/SearchModal';
 import { useState } from 'react';
 
-export default function MijnNieuwsScreen() {
+export default function OpgeslagenScreen() {
   const [showSearch, setShowSearch] = useState(false);
 
   return (
@@ -15,15 +15,15 @@ export default function MijnNieuwsScreen() {
       <AppHeader onSearchPress={() => setShowSearch(true)} />
 
       <View style={styles.pageTitleContainer}>
-        <Text style={styles.pageTitle}>Mijn Nieuws</Text>
+        <Text style={styles.pageTitle}>Opgeslagen Artikelen</Text>
         <View style={styles.divider} />
       </View>
 
       <ScrollView style={styles.content} contentContainerStyle={styles.contentContainer}>
         <View style={styles.emptyState}>
-          <Text style={styles.emptyTitle}>Je persoonlijke nieuwsfeed</Text>
+          <Text style={styles.emptyTitle}>Geen opgeslagen artikelen</Text>
           <Text style={styles.emptyText}>
-            Volg onderwerpen om hier gepersonaliseerd nieuws te zien. Ga naar "Meer" → selecteer onderwerpen en tap "Volg".
+            Tap op het bookmark icoon in een artikel om het op te slaan voor later.
           </Text>
         </View>
       </ScrollView>
@@ -67,7 +67,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#0a0a0a',
     marginBottom: 8,
-    textAlign: 'center',
     fontFamily: 'System',
   },
   emptyText: {

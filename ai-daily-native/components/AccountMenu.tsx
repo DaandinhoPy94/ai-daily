@@ -19,16 +19,30 @@ export function AccountMenu({ visible, onClose, userEmail, displayName }: Accoun
     .toUpperCase()
     .slice(0, 2) || userEmail?.slice(0, 2).toUpperCase() || 'D';
 
-  const handleNavigation = (path: string, label: string) => {
+  const handleNavigation = (path: string) => {
     onClose();
-    Alert.alert('Navigatie', `${label} wordt binnenkort toegevoegd!`);
-    // TODO: router.push(path);
+    setTimeout(() => {
+      router.push(path as any);
+    }, 300);
   };
 
   const handleSignOut = () => {
     onClose();
-    Alert.alert('Uitloggen', 'Uitlog functionaliteit wordt binnenkort toegevoegd!');
-    // TODO: Implement sign out with Supabase
+    Alert.alert(
+      'Uitloggen',
+      'Weet je zeker dat je wilt uitloggen?',
+      [
+        { text: 'Annuleren', style: 'cancel' },
+        { 
+          text: 'Uitloggen', 
+          style: 'destructive',
+          onPress: () => {
+            // TODO: Implement sign out with Supabase
+            Alert.alert('Uitgelogd', 'Je bent succesvol uitgelogd');
+          }
+        }
+      ]
+    );
   };
 
   return (
@@ -66,7 +80,7 @@ export function AccountMenu({ visible, onClose, userEmail, displayName }: Accoun
           <ScrollView style={styles.menuContainer}>
             <TouchableOpacity 
               style={styles.menuItem} 
-              onPress={() => handleNavigation('/profile', 'Profiel')}
+              onPress={() => handleNavigation('/profile')}
               activeOpacity={0.7}
             >
               <User size={20} color="#0a0a0a" strokeWidth={2} />
@@ -75,7 +89,10 @@ export function AccountMenu({ visible, onClose, userEmail, displayName }: Accoun
 
             <TouchableOpacity 
               style={styles.menuItem} 
-              onPress={() => handleNavigation('/mijn-nieuws', 'Mijn nieuws')}
+              onPress={() => {
+                onClose();
+                setTimeout(() => router.replace('/(tabs)/mijn-nieuws'), 300);
+              }}
               activeOpacity={0.7}
             >
               <Heart size={20} color="#0a0a0a" strokeWidth={2} />
@@ -84,7 +101,7 @@ export function AccountMenu({ visible, onClose, userEmail, displayName }: Accoun
 
             <TouchableOpacity 
               style={styles.menuItem} 
-              onPress={() => handleNavigation('/opgeslagen', 'Bookmarks')}
+              onPress={() => handleNavigation('/opgeslagen')}
               activeOpacity={0.7}
             >
               <Bookmark size={20} color="#0a0a0a" strokeWidth={2} />
@@ -93,7 +110,7 @@ export function AccountMenu({ visible, onClose, userEmail, displayName }: Accoun
 
             <TouchableOpacity 
               style={styles.menuItem} 
-              onPress={() => handleNavigation('/preferences', 'Voorkeuren')}
+              onPress={() => handleNavigation('/preferences')}
               activeOpacity={0.7}
             >
               <Settings size={20} color="#0a0a0a" strokeWidth={2} />

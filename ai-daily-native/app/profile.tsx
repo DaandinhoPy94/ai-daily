@@ -5,7 +5,7 @@ import { AppHeader } from '@/components/AppHeader';
 import { SearchModal } from '@/components/SearchModal';
 import { useState } from 'react';
 
-export default function MijnNieuwsScreen() {
+export default function ProfileScreen() {
   const [showSearch, setShowSearch] = useState(false);
 
   return (
@@ -15,15 +15,24 @@ export default function MijnNieuwsScreen() {
       <AppHeader onSearchPress={() => setShowSearch(true)} />
 
       <View style={styles.pageTitleContainer}>
-        <Text style={styles.pageTitle}>Mijn Nieuws</Text>
+        <Text style={styles.pageTitle}>Profiel</Text>
         <View style={styles.divider} />
       </View>
 
-      <ScrollView style={styles.content} contentContainerStyle={styles.contentContainer}>
-        <View style={styles.emptyState}>
-          <Text style={styles.emptyTitle}>Je persoonlijke nieuwsfeed</Text>
-          <Text style={styles.emptyText}>
-            Volg onderwerpen om hier gepersonaliseerd nieuws te zien. Ga naar "Meer" → selecteer onderwerpen en tap "Volg".
+      <ScrollView style={styles.content}>
+        <View style={styles.section}>
+          <Text style={styles.label}>Naam</Text>
+          <Text style={styles.value}>Daan van der Ster</Text>
+        </View>
+
+        <View style={styles.section}>
+          <Text style={styles.label}>Email</Text>
+          <Text style={styles.value}>daanvdster@gmail.com</Text>
+        </View>
+
+        <View style={styles.infoBox}>
+          <Text style={styles.infoText}>
+            Profiel bewerking komt binnenkort beschikbaar in de app!
           </Text>
         </View>
       </ScrollView>
@@ -52,25 +61,30 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
+    padding: 16,
   },
-  contentContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 24,
+  section: {
+    marginBottom: 24,
   },
-  emptyState: {
-    alignItems: 'center',
-  },
-  emptyTitle: {
-    fontSize: 18,
+  label: {
+    fontSize: 14,
     fontWeight: '600',
-    color: '#0a0a0a',
+    color: '#71717a',
     marginBottom: 8,
-    textAlign: 'center',
     fontFamily: 'System',
   },
-  emptyText: {
+  value: {
+    fontSize: 16,
+    color: '#0a0a0a',
+    fontFamily: 'System',
+  },
+  infoBox: {
+    backgroundColor: '#f4f4f5',
+    padding: 16,
+    borderRadius: 8,
+    marginTop: 24,
+  },
+  infoText: {
     fontSize: 14,
     color: '#71717a',
     textAlign: 'center',
