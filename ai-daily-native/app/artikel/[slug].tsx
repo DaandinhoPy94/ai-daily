@@ -75,7 +75,11 @@ export default function ArticleDetailScreen() {
         body: articleData.body,
         readTimeMinutes: articleData.read_time_minutes || 5,
         publishedAt: articleData.published_at,
-        topics: articleData.topics ? JSON.parse(articleData.topics) : [],
+        topics: Array.isArray(articleData.topics) 
+          ? articleData.topics 
+          : (typeof articleData.topics === 'string' 
+            ? (articleData.topics.startsWith('[') ? JSON.parse(articleData.topics) : [])
+            : []),
       });
     } catch (error) {
       console.error('Error fetching article:', error);
