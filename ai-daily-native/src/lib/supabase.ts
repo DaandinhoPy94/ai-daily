@@ -61,6 +61,9 @@ export const getTopicSections = async () => {
 // Main topics (type='main')
 export const getMainTopics = async () => {
   try {
+    console.log('[getMainTopics] Starting fetch...');
+    console.log('[getMainTopics] Supabase URL:', supabaseUrl ? 'Set' : 'Not set');
+    
     const { data, error } = await supabase
       .from('topics')
       .select('*')
@@ -68,10 +71,18 @@ export const getMainTopics = async () => {
       .eq('is_active', true)
       .order('display_order', { ascending: true });
     
-    if (error) throw error;
-    return data;
+    console.log('[getMainTopics] Data:', data);
+    console.log('[getMainTopics] Error:', error);
+    
+    if (error) {
+      console.error('[getMainTopics] Supabase error:', error);
+      throw error;
+    }
+    
+    console.log('[getMainTopics] Returning', data?.length || 0, 'topics');
+    return data || [];
   } catch (error) {
-    console.error('Error fetching main topics:', error);
+    console.error('[getMainTopics] Exception:', error);
     return [];
   }
 };

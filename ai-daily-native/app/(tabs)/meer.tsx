@@ -22,17 +22,23 @@ export default function MeerScreen() {
   useEffect(() => {
     const loadTopics = async () => {
       try {
-        setLoading(true);
+        console.log('Loading topics...');
         const topics = await getMainTopics();
+        console.log('Topics loaded:', topics?.length || 0, 'items');
         setMainTopics(topics || []);
-      } catch (error) {
-        console.error('Error loading topics:', error);
+      } catch (err) {
+        console.error('Error loading topics:', err);
       } finally {
         setLoading(false);
       }
     };
     loadTopics();
   }, []);
+
+  console.log('=== RENDER ===');
+  console.log('Loading:', loading);
+  console.log('Topics length:', mainTopics.length);
+  console.log('First topic:', mainTopics[0]?.name);
 
   return (
     <SafeAreaView className="flex-1 bg-background" edges={['top']}>
@@ -42,11 +48,6 @@ export default function MeerScreen() {
       <AppHeader 
         onSearchPress={() => setShowSearch(true)}
       />
-
-      {/* Page Header with Title */}
-      <View style={styles.pageHeader}>
-        <Text style={styles.pageTitle}>Meer</Text>
-      </View>
 
       {/* Search Bar */}
       <View style={styles.searchContainer}>
@@ -69,34 +70,34 @@ export default function MeerScreen() {
 
       {/* Content */}
       <ScrollView style={styles.content}>
-        {/* Topics List */}
-        <View style={styles.topicsList}>
-          {/* Alle onderwerpen */}
-          <TouchableOpacity style={styles.topicItem}>
-            <Text style={styles.topicText}>Alle onderwerpen</Text>
+        {/* Debug info */}
+        <View style={{ padding: 16, backgroundColor: '#fef3c7' }}>
+          <Text>Loading: {loading ? 'YES' : 'NO'}</Text>
+          <Text>Topics: {mainTopics.length}</Text>
+        </View>
+
+        {/* Alle onderwerpen */}
+        <TouchableOpacity style={styles.topicItem}>
+          <Text style={styles.topicText}>Alle onderwerpen</Text>
+          <ChevronRight size={20} color="#71717a" strokeWidth={2} />
+        </TouchableOpacity>
+
+        {/* Simply render all topics */}
+        {mainTopics.map((topic, index) => (
+          <TouchableOpacity key={topic.id} style={styles.topicItem}>
+            <Text style={styles.topicText}>
+              {index + 1}. {topic.name}
+            </Text>
             <ChevronRight size={20} color="#71717a" strokeWidth={2} />
           </TouchableOpacity>
+        ))}
 
-          {/* Loading state */}
-          {loading ? (
-            <>
-              {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-                <View key={i} style={styles.topicItem}>
-                  <View style={styles.skeletonText} />
-                  <View style={styles.skeletonIcon} />
-                </View>
-              ))}
-            </>
-          ) : (
-            /* Main Topics from database */
-            mainTopics.map((topic) => (
-              <TouchableOpacity key={topic.slug} style={styles.topicItem}>
-                <Text style={styles.topicText}>{topic.name}</Text>
-                <ChevronRight size={20} color="#71717a" strokeWidth={2} />
-              </TouchableOpacity>
-            ))
-          )}
-        </View>
+        {/* Show if empty */}
+        {mainTopics.length === 0 && !loading && (
+          <View style={{ padding: 16 }}>
+            <Text style={{ color: 'red' }}>Geen topics!</Text>
+          </View>
+        )}
       </ScrollView>
 
       {/* Modals */}
@@ -106,19 +107,6 @@ export default function MeerScreen() {
 }
 
 const styles = StyleSheet.create({
-  pageHeader: {
-    paddingHorizontal: 16,
-    paddingTop: 16,
-    paddingBottom: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: '#e4e4e7',
-  },
-  pageTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#0a0a0a',
-    fontFamily: 'System',
-  },
   searchContainer: {
     padding: 16,
     paddingBottom: 8,
@@ -143,9 +131,6 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
   },
-  topicsList: {
-    paddingTop: 16,
-  },
   topicItem: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -161,17 +146,5 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: '#0a0a0a',
     fontFamily: 'System',
-  },
-  skeletonText: {
-    width: 200,
-    height: 20,
-    backgroundColor: '#e4e4e7',
-    borderRadius: 4,
-  },
-  skeletonIcon: {
-    width: 20,
-    height: 20,
-    backgroundColor: '#e4e4e7',
-    borderRadius: 4,
   },
 });
