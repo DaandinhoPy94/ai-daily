@@ -5,6 +5,10 @@ export default function TabLayout() {
     <NativeTabs
       minimizeBehavior="onScrollDown"
       tintColor="#E36B2C"
+      // Hardware-accelerated Liquid Glass: null background + system blur
+      backgroundColor={null}
+      blurEffect="systemMaterial"
+      disableTransparentOnScrollEdge={false}
     >
       {/* Visible Tabs */}
       <NativeTabs.Trigger name="index">

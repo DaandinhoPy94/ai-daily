@@ -1,30 +1,63 @@
-import { View, Text, ScrollView, StyleSheet, Switch } from 'react-native';
-import { StatusBar } from 'expo-status-bar';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { AppHeader } from '@/components/AppHeader';
+import { View, Text, ScrollView, StyleSheet, Switch, TouchableOpacity } from 'react-native';
+import { Stack } from 'expo-router';
 import { SearchModal } from '@/components/SearchModal';
 import { useState } from 'react';
+import { Search } from 'lucide-react-native';
+import { AccountMenu } from '@/components/AccountMenu';
+
+// Native header button components
+function HeaderRight({ onSearchPress }: { onSearchPress: () => void }) {
+  return (
+    <TouchableOpacity onPress={onSearchPress} style={styles.headerButton}>
+      <Search size={22} color="#0a0a0a" strokeWidth={2} />
+    </TouchableOpacity>
+  );
+}
+
+function HeaderLeft({ onPress }: { onPress: () => void }) {
+  return (
+    <TouchableOpacity onPress={onPress} style={styles.headerButton}>
+      <View style={styles.avatar}>
+        <Text style={styles.avatarText}>D</Text>
+      </View>
+    </TouchableOpacity>
+  );
+}
 
 export default function PreferencesScreen() {
   const [showSearch, setShowSearch] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
   const [emailNotifications, setEmailNotifications] = useState(true);
   const [pushNotifications, setPushNotifications] = useState(false);
 
   return (
-    <SafeAreaView className="flex-1 bg-background" edges={['top']}>
-      <StatusBar style="auto" />
-      
-      <AppHeader onSearchPress={() => setShowSearch(true)} />
+    <>
+      {/* Native header with GPU-accelerated Liquid Glass blur */}
+      <Stack.Screen
+        options={{
+          headerShown: true,
+          headerTransparent: true,
+          headerBlurEffect: 'systemMaterial',
+          headerLargeTitle: true,
+          headerLargeTitleShadowVisible: false,
+          headerShadowVisible: false,
+          title: 'Voorkeuren',
+          headerLargeTitleStyle: styles.largeTitleStyle,
+          headerTitleStyle: styles.titleStyle,
+          headerLeft: () => <HeaderLeft onPress={() => setShowMenu(true)} />,
+          headerRight: () => <HeaderRight onSearchPress={() => setShowSearch(true)} />,
+        }}
+      />
 
-      <View style={styles.pageTitleContainer}>
-        <Text style={styles.pageTitle}>Voorkeuren</Text>
-        <View style={styles.divider} />
-      </View>
-
-      <ScrollView style={styles.content}>
+      <ScrollView
+        style={styles.scrollView}
+        contentInsetAdjustmentBehavior="automatic"
+        contentContainerStyle={styles.contentContainer}
+        scrollEventThrottle={16}
+      >
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Notificaties</Text>
-          
+
           <View style={styles.preferenceItem}>
             <Text style={styles.preferenceLabel}>Email notificaties</Text>
             <Switch
@@ -53,30 +86,25 @@ export default function PreferencesScreen() {
         </View>
       </ScrollView>
 
+      {/* Modals */}
       <SearchModal visible={showSearch} onClose={() => setShowSearch(false)} />
-    </SafeAreaView>
+      <AccountMenu
+        visible={showMenu}
+        onClose={() => setShowMenu(false)}
+        userEmail="daanvdster@gmail.com"
+        displayName="Daan van der Ster"
+      />
+    </>
   );
 }
 
 const styles = StyleSheet.create({
-  pageTitleContainer: {
-    paddingHorizontal: 16,
-    paddingTop: 16,
-    paddingBottom: 16,
-  },
-  pageTitle: {
-    fontSize: 30,
-    fontWeight: '700',
-    fontFamily: 'Georgia',
-    color: '#0a0a0a',
-    marginBottom: 16,
-  },
-  divider: {
-    height: 1,
-    backgroundColor: '#e4e4e7',
-  },
-  content: {
+  scrollView: {
     flex: 1,
+    backgroundColor: '#fafafa',
+  },
+  contentContainer: {
+    paddingBottom: 100,
   },
   section: {
     padding: 16,
@@ -86,7 +114,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#0a0a0a',
     marginBottom: 16,
-    fontFamily: 'System',
   },
   preferenceItem: {
     flexDirection: 'row',
@@ -99,7 +126,6 @@ const styles = StyleSheet.create({
   preferenceLabel: {
     fontSize: 16,
     color: '#0a0a0a',
-    fontFamily: 'System',
   },
   infoBox: {
     backgroundColor: '#f4f4f5',
@@ -111,6 +137,31 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#71717a',
     textAlign: 'center',
-    fontFamily: 'System',
+  },
+  headerButton: {
+    padding: 8,
+  },
+  avatar: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#E36B2C',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  avatarText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#ffffff',
+  },
+  largeTitleStyle: {
+    fontFamily: 'Georgia',
+    fontWeight: '700',
+    color: '#0a0a0a',
+  },
+  titleStyle: {
+    fontFamily: 'Georgia',
+    fontWeight: '600',
+    color: '#0a0a0a',
   },
 });

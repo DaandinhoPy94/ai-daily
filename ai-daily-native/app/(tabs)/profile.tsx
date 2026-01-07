@@ -1,13 +1,32 @@
 import { View, Text, ScrollView, StyleSheet, TextInput, TouchableOpacity, Switch } from 'react-native';
-import { StatusBar } from 'expo-status-bar';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { AppHeader } from '@/components/AppHeader';
+import { Stack } from 'expo-router';
 import { SearchModal } from '@/components/SearchModal';
-import { Upload } from 'lucide-react-native';
+import { Upload, Search } from 'lucide-react-native';
 import { useState } from 'react';
+import { AccountMenu } from '@/components/AccountMenu';
+
+// Native header button components
+function HeaderRight({ onSearchPress }: { onSearchPress: () => void }) {
+  return (
+    <TouchableOpacity onPress={onSearchPress} style={styles.headerButton}>
+      <Search size={22} color="#0a0a0a" strokeWidth={2} />
+    </TouchableOpacity>
+  );
+}
+
+function HeaderLeft({ onPress }: { onPress: () => void }) {
+  return (
+    <TouchableOpacity onPress={onPress} style={styles.headerButton}>
+      <View style={styles.headerAvatar}>
+        <Text style={styles.headerAvatarText}>D</Text>
+      </View>
+    </TouchableOpacity>
+  );
+}
 
 export default function ProfileScreen() {
   const [showSearch, setShowSearch] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
   const [displayName, setDisplayName] = useState('Daan van der Ster');
   const [email] = useState('daanvdster@gmail.com');
   const [newsletterEnabled, setNewsletterEnabled] = useState(true);
@@ -20,22 +39,34 @@ export default function ProfileScreen() {
     .slice(0, 2) || 'DV';
 
   const handleSave = () => {
-    // TODO: Implement save functionality with Supabase
     console.log('Saving profile...', { displayName, newsletterEnabled });
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-background" edges={['top']}>
-      <StatusBar style="auto" />
-      
-      <AppHeader onSearchPress={() => setShowSearch(true)} />
+    <>
+      {/* Native header with GPU-accelerated Liquid Glass blur */}
+      <Stack.Screen
+        options={{
+          headerShown: true,
+          headerTransparent: true,
+          headerBlurEffect: 'systemMaterial',
+          headerLargeTitle: true,
+          headerLargeTitleShadowVisible: false,
+          headerShadowVisible: false,
+          title: 'Profiel',
+          headerLargeTitleStyle: styles.largeTitleStyle,
+          headerTitleStyle: styles.titleStyle,
+          headerLeft: () => <HeaderLeft onPress={() => setShowMenu(true)} />,
+          headerRight: () => <HeaderRight onSearchPress={() => setShowSearch(true)} />,
+        }}
+      />
 
-      <View style={styles.pageTitleContainer}>
-        <Text style={styles.pageTitle}>Profiel</Text>
-        <Text style={styles.subtitle}>Beheer je profielinformatie en voorkeuren.</Text>
-      </View>
-
-      <ScrollView style={styles.content} contentContainerStyle={styles.contentContainer}>
+      <ScrollView
+        style={styles.scrollView}
+        contentInsetAdjustmentBehavior="automatic"
+        contentContainerStyle={styles.contentContainer}
+        scrollEventThrottle={16}
+      >
         <View style={styles.card}>
           <Text style={styles.cardTitle}>Profielinformatie</Text>
           <Text style={styles.cardDescription}>
@@ -91,8 +122,8 @@ export default function ProfileScreen() {
               <Text style={styles.inputHint}>Je e-mailadres kan niet worden gewijzigd.</Text>
             </View>
 
-            <TouchableOpacity 
-              style={styles.saveButton} 
+            <TouchableOpacity
+              style={styles.saveButton}
               activeOpacity={0.8}
               onPress={handleSave}
             >
@@ -102,36 +133,26 @@ export default function ProfileScreen() {
         </View>
       </ScrollView>
 
+      {/* Modals */}
       <SearchModal visible={showSearch} onClose={() => setShowSearch(false)} />
-    </SafeAreaView>
+      <AccountMenu
+        visible={showMenu}
+        onClose={() => setShowMenu(false)}
+        userEmail="daanvdster@gmail.com"
+        displayName="Daan van der Ster"
+      />
+    </>
   );
 }
 
 const styles = StyleSheet.create({
-  pageTitleContainer: {
-    paddingHorizontal: 16,
-    paddingTop: 16,
-    paddingBottom: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#e4e4e7',
-  },
-  pageTitle: {
-    fontSize: 30,
-    fontWeight: '700',
-    fontFamily: 'Georgia',
-    color: '#0a0a0a',
-    marginBottom: 4,
-  },
-  subtitle: {
-    fontSize: 14,
-    color: '#71717a',
-    fontFamily: 'System',
-  },
-  content: {
+  scrollView: {
     flex: 1,
+    backgroundColor: '#fafafa',
   },
   contentContainer: {
     padding: 16,
+    paddingBottom: 100,
   },
   card: {
     backgroundColor: '#ffffff',
@@ -145,13 +166,11 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#0a0a0a',
     marginBottom: 2,
-    fontFamily: 'System',
   },
   cardDescription: {
     fontSize: 14,
     color: '#71717a',
     marginBottom: 20,
-    fontFamily: 'System',
   },
   topSection: {
     flexDirection: 'row',
@@ -180,7 +199,6 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: '600',
     color: '#ffffff',
-    fontFamily: 'System',
   },
   avatarButtons: {
     marginLeft: 16,
@@ -200,12 +218,10 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '500',
     color: '#0a0a0a',
-    fontFamily: 'System',
   },
   uploadHint: {
     fontSize: 12,
     color: '#71717a',
-    fontFamily: 'System',
   },
   newsletterSection: {
     alignItems: 'center',
@@ -215,7 +231,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '500',
     color: '#0a0a0a',
-    fontFamily: 'System',
   },
   formSection: {
     marginTop: 8,
@@ -227,7 +242,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '500',
     color: '#0a0a0a',
-    fontFamily: 'System',
   },
   input: {
     backgroundColor: '#ffffff',
@@ -238,7 +252,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     fontSize: 16,
     color: '#0a0a0a',
-    fontFamily: 'System',
   },
   inputDisabled: {
     backgroundColor: '#f4f4f5',
@@ -247,7 +260,6 @@ const styles = StyleSheet.create({
   inputHint: {
     fontSize: 12,
     color: '#71717a',
-    fontFamily: 'System',
   },
   saveButton: {
     backgroundColor: '#E36B2C',
@@ -261,6 +273,31 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     color: '#ffffff',
-    fontFamily: 'System',
+  },
+  headerButton: {
+    padding: 8,
+  },
+  headerAvatar: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#E36B2C',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  headerAvatarText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#ffffff',
+  },
+  largeTitleStyle: {
+    fontFamily: 'Georgia',
+    fontWeight: '700',
+    color: '#0a0a0a',
+  },
+  titleStyle: {
+    fontFamily: 'Georgia',
+    fontWeight: '600',
+    color: '#0a0a0a',
   },
 });
