@@ -146,6 +146,8 @@ export default function HomeScreen() {
       {/* Content */}
       <ScrollView
         className="flex-1"
+        contentInsetAdjustmentBehavior="automatic"
+        contentContainerStyle={{ paddingBottom: 66 }}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }

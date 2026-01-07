@@ -120,7 +120,11 @@ export default function NetBinnenScreen() {
           onEndReached={handleLoadMore}
           onEndReachedThreshold={0.5}
           ListFooterComponent={renderFooter}
-          contentContainerStyle={styles.listContent}
+          contentInsetAdjustmentBehavior="automatic"
+          contentContainerStyle={[styles.listContent, { paddingBottom: 66 }]}
+          scrollEventThrottle={16}
+          removeClippedSubviews={true}
+          maxToRenderPerBatch={10}
         />
       )}
 

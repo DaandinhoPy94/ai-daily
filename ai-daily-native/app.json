@@ -17,8 +17,11 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.aidaily.app",
       "infoPlist": {
-        "UIBackgroundModes": ["remote-notification"]
-      }
+        "UIBackgroundModes": [
+          "remote-notification"
+        ]
+      },
+      "deploymentTarget": "18.0"
     },
     "android": {
       "adaptiveIcon": {
@@ -38,6 +41,9 @@
       [
         "expo-build-properties",
         {
+          "ios": {
+            "deploymentTarget": "18.0"
+          },
           "android": {
             "kotlinVersion": "1.9.20"
           }

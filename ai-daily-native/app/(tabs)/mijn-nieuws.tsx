@@ -19,7 +19,11 @@ export default function MijnNieuwsScreen() {
         <View style={styles.divider} />
       </View>
 
-      <ScrollView style={styles.content} contentContainerStyle={styles.contentContainer}>
+      <ScrollView
+        style={styles.content}
+        contentInsetAdjustmentBehavior="automatic"
+        contentContainerStyle={[styles.contentContainer, { paddingBottom: 66 }]}
+      >
         <View style={styles.emptyState}>
           <Text style={styles.emptyTitle}>Je persoonlijke nieuwsfeed</Text>
           <Text style={styles.emptyText}>

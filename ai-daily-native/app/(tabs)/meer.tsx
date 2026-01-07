@@ -69,7 +69,11 @@ export default function MeerScreen() {
       </View>
 
       {/* Content */}
-      <ScrollView style={styles.content}>
+      <ScrollView
+        style={styles.content}
+        contentInsetAdjustmentBehavior="automatic"
+        contentContainerStyle={{ paddingBottom: 66 }}
+      >
         {/* Debug info */}
         <View style={{ padding: 16, backgroundColor: '#fef3c7' }}>
           <Text>Loading: {loading ? 'YES' : 'NO'}</Text>
