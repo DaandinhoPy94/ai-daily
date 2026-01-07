@@ -1,15 +1,17 @@
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useNativeTabBarHeight } from '@/src/lib/nativeTabs';
 import { AppHeader } from '@/components/AppHeader';
 import { SearchModal } from '@/components/SearchModal';
 import { useState } from 'react';
 
 export default function OpgeslagenScreen() {
   const [showSearch, setShowSearch] = useState(false);
+  const tabBarHeight = useNativeTabBarHeight();
 
   return (
-    <SafeAreaView className="flex-1 bg-background" edges={['top']}>
+    <SafeAreaView className="flex-1 bg-background" edges={['top', 'left', 'right']} style={{ paddingBottom: tabBarHeight }}>
       <StatusBar style="auto" />
       
       <AppHeader onSearchPress={() => setShowSearch(true)} />
@@ -19,7 +21,10 @@ export default function OpgeslagenScreen() {
         <View style={styles.divider} />
       </View>
 
-      <ScrollView style={styles.content} contentContainerStyle={styles.contentContainer}>
+      <ScrollView
+        style={styles.content}
+        contentContainerStyle={[styles.contentContainer, { paddingBottom: tabBarHeight }]}
+      >
         <View style={styles.emptyState}>
           <Text style={styles.emptyTitle}>Geen opgeslagen artikelen</Text>
           <Text style={styles.emptyText}>

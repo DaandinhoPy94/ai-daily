@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { View, Text, FlatList, ActivityIndicator, StyleSheet } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useNativeTabBarHeight } from '@/src/lib/nativeTabs';
 import { AppHeader } from '@/components/AppHeader';
 import { SearchModal } from '@/components/SearchModal';
 import { ArticleListRow } from '@/components/ArticleListRow';
@@ -25,6 +26,7 @@ export default function NetBinnenScreen() {
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [showSearch, setShowSearch] = useState(false);
+  const tabBarHeight = useNativeTabBarHeight();
 
   const fetchArticles = async (offset: number = 0) => {
     try {
@@ -88,7 +90,7 @@ export default function NetBinnenScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-background" edges={['top']}>
+    <SafeAreaView className="flex-1 bg-background" edges={['top', 'left', 'right']} style={{ paddingBottom: tabBarHeight }}>
       <StatusBar style="auto" />
       
       {/* Header */}
@@ -120,7 +122,7 @@ export default function NetBinnenScreen() {
           onEndReached={handleLoadMore}
           onEndReachedThreshold={0.5}
           ListFooterComponent={renderFooter}
-          contentContainerStyle={styles.listContent}
+          contentContainerStyle={[styles.listContent, { paddingBottom: tabBarHeight }]}
         />
       )}
 

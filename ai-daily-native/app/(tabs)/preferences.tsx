@@ -1,6 +1,7 @@
 import { View, Text, ScrollView, StyleSheet, Switch } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useNativeTabBarHeight } from '@/src/lib/nativeTabs';
 import { AppHeader } from '@/components/AppHeader';
 import { SearchModal } from '@/components/SearchModal';
 import { useState } from 'react';
@@ -9,9 +10,10 @@ export default function PreferencesScreen() {
   const [showSearch, setShowSearch] = useState(false);
   const [emailNotifications, setEmailNotifications] = useState(true);
   const [pushNotifications, setPushNotifications] = useState(false);
+  const tabBarHeight = useNativeTabBarHeight();
 
   return (
-    <SafeAreaView className="flex-1 bg-background" edges={['top']}>
+    <SafeAreaView className="flex-1 bg-background" edges={['top', 'left', 'right']} style={{ paddingBottom: tabBarHeight }}>
       <StatusBar style="auto" />
       
       <AppHeader onSearchPress={() => setShowSearch(true)} />
@@ -21,7 +23,7 @@ export default function PreferencesScreen() {
         <View style={styles.divider} />
       </View>
 
-      <ScrollView style={styles.content}>
+      <ScrollView style={styles.content} contentContainerStyle={{ paddingBottom: tabBarHeight }}>
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Notificaties</Text>
           

@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import { View, ScrollView, RefreshControl, StyleSheet } from 'react-native';
+import { View, ScrollView, RefreshControl, Text } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useNativeTabBarHeight } from '@/src/lib/nativeTabs';
 import { LargeNewsCard } from '@/components/LargeNewsCard';
 import { ArticleListRow } from '@/components/ArticleListRow';
 import { MobileStocksStrip } from '@/components/MobileStocksStrip';
@@ -9,7 +10,6 @@ import { SectionSpacer } from '@/components/SectionSpacer';
 import { LoadingSkeleton } from '@/components/LoadingSkeleton';
 import { AppHeader } from '@/components/AppHeader';
 import { SearchModal } from '@/components/SearchModal';
-import { AuthModal } from '@/components/AuthModal';
 import { getMostRead, getLatest, getTopicSections } from '@/src/lib/supabase';
 import { TopicBlock } from '@/components/TopicBlock';
 import { useStocks } from '@/src/contexts/StockProvider';
@@ -35,6 +35,7 @@ export default function HomeScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showSearch, setShowSearch] = useState(false);
+  const tabBarHeight = useNativeTabBarHeight();
 
   const fetchData = async () => {
     try {
@@ -120,7 +121,7 @@ export default function HomeScreen() {
 
   if (error) {
     return (
-      <SafeAreaView className="flex-1 bg-background" edges={['top']}>
+      <SafeAreaView className="flex-1 bg-background" edges={['top', 'left', 'right']} style={{ paddingBottom: tabBarHeight }}>
         <View className="flex-1 items-center justify-center px-4">
           <Text className="text-destructive text-center mb-4">{error}</Text>
           <Text className="text-muted-foreground text-center">
@@ -132,7 +133,7 @@ export default function HomeScreen() {
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-background" edges={['top']}>
+    <SafeAreaView className="flex-1 bg-background" edges={['top', 'left', 'right']} style={{ paddingBottom: tabBarHeight }}>
       <StatusBar style="auto" />
       
       {/* Header */}
@@ -149,6 +150,7 @@ export default function HomeScreen() {
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
+        contentContainerStyle={{ paddingBottom: tabBarHeight + 16 }}
       >
         {/* Top Two - Most Read */}
         <View className="px-4 pt-4">
@@ -178,9 +180,6 @@ export default function HomeScreen() {
         {topicHeading && topicCards.length > 0 && (
           <TopicBlock heading={topicHeading} articles={topicCards} />
         )}
-
-        {/* Bottom padding */}
-        <View className="h-8" />
       </ScrollView>
 
       {/* Modals */}
@@ -188,5 +187,3 @@ export default function HomeScreen() {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({});

@@ -1,6 +1,7 @@
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, TextInput } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useNativeTabBarHeight } from '@/src/lib/nativeTabs';
 import { ChevronRight, X, Search } from 'lucide-react-native';
 import { AppHeader } from '@/components/AppHeader';
 import { SearchModal } from '@/components/SearchModal';
@@ -18,6 +19,7 @@ export default function MeerScreen() {
   const [showSearch, setShowSearch] = useState(false);
   const [mainTopics, setMainTopics] = useState<Topic[]>([]);
   const [loading, setLoading] = useState(true);
+  const tabBarHeight = useNativeTabBarHeight();
 
   useEffect(() => {
     const loadTopics = async () => {
@@ -41,7 +43,7 @@ export default function MeerScreen() {
   console.log('First topic:', mainTopics[0]?.name);
 
   return (
-    <SafeAreaView className="flex-1 bg-background" edges={['top']}>
+    <SafeAreaView className="flex-1 bg-background" edges={['top', 'left', 'right']} style={{ paddingBottom: tabBarHeight }}>
       <StatusBar style="auto" />
       
       {/* Header */}
@@ -69,7 +71,10 @@ export default function MeerScreen() {
       </View>
 
       {/* Content */}
-      <ScrollView style={styles.content}>
+      <ScrollView
+        style={styles.content}
+        contentContainerStyle={{ paddingBottom: tabBarHeight }}
+      >
         {/* Debug info */}
         <View style={{ padding: 16, backgroundColor: '#fef3c7' }}>
           <Text>Loading: {loading ? 'YES' : 'NO'}</Text>

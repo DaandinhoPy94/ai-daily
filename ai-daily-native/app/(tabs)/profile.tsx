@@ -1,6 +1,7 @@
 import { View, Text, ScrollView, StyleSheet, TextInput, TouchableOpacity, Switch } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useNativeTabBarHeight } from '@/src/lib/nativeTabs';
 import { AppHeader } from '@/components/AppHeader';
 import { SearchModal } from '@/components/SearchModal';
 import { Upload } from 'lucide-react-native';
@@ -11,6 +12,7 @@ export default function ProfileScreen() {
   const [displayName, setDisplayName] = useState('Daan van der Ster');
   const [email] = useState('daanvdster@gmail.com');
   const [newsletterEnabled, setNewsletterEnabled] = useState(true);
+  const tabBarHeight = useNativeTabBarHeight();
 
   const initials = displayName
     ?.split(' ')
@@ -25,7 +27,7 @@ export default function ProfileScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-background" edges={['top']}>
+    <SafeAreaView className="flex-1 bg-background" edges={['top', 'left', 'right']} style={{ paddingBottom: tabBarHeight }}>
       <StatusBar style="auto" />
       
       <AppHeader onSearchPress={() => setShowSearch(true)} />
@@ -35,7 +37,10 @@ export default function ProfileScreen() {
         <Text style={styles.subtitle}>Beheer je profielinformatie en voorkeuren.</Text>
       </View>
 
-      <ScrollView style={styles.content} contentContainerStyle={styles.contentContainer}>
+      <ScrollView
+        style={styles.content}
+        contentContainerStyle={[styles.contentContainer, { paddingBottom: tabBarHeight }]}
+      >
         <View style={styles.card}>
           <Text style={styles.cardTitle}>Profielinformatie</Text>
           <Text style={styles.cardDescription}>
