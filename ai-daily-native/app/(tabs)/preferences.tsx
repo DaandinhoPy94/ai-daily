@@ -1,29 +1,31 @@
 import { View, Text, ScrollView, StyleSheet, Switch } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useHeaderHeight } from '@react-navigation/elements';
 import { useNativeTabBarHeight } from '@/src/lib/nativeTabs';
-import { AppHeader } from '@/components/AppHeader';
-import { SearchModal } from '@/components/SearchModal';
 import { useState } from 'react';
 
 export default function PreferencesScreen() {
-  const [showSearch, setShowSearch] = useState(false);
   const [emailNotifications, setEmailNotifications] = useState(true);
   const [pushNotifications, setPushNotifications] = useState(false);
   const tabBarHeight = useNativeTabBarHeight();
+  const headerHeight = useHeaderHeight();
 
   return (
-    <SafeAreaView className="flex-1 bg-background" edges={['top', 'left', 'right']} style={{ paddingBottom: tabBarHeight }}>
+    <SafeAreaView className="flex-1 bg-background" edges={['left', 'right']}>
       <StatusBar style="auto" />
-      
-      <AppHeader onSearchPress={() => setShowSearch(true)} />
 
-      <View style={styles.pageTitleContainer}>
-        <Text style={styles.pageTitle}>Voorkeuren</Text>
-        <View style={styles.divider} />
-      </View>
+      <ScrollView
+        style={styles.content}
+        contentInsetAdjustmentBehavior="never"
+        scrollIndicatorInsets={{ top: headerHeight }}
+        contentContainerStyle={{ paddingTop: headerHeight, paddingBottom: tabBarHeight }}
+      >
+        <View style={styles.pageTitleContainer}>
+          <Text style={styles.pageTitle}>Voorkeuren</Text>
+          <View style={styles.divider} />
+        </View>
 
-      <ScrollView style={styles.content} contentContainerStyle={{ paddingBottom: tabBarHeight }}>
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Notificaties</Text>
           
@@ -54,8 +56,6 @@ export default function PreferencesScreen() {
           </Text>
         </View>
       </ScrollView>
-
-      <SearchModal visible={showSearch} onClose={() => setShowSearch(false)} />
     </SafeAreaView>
   );
 }

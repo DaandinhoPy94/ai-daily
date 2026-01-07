@@ -2,8 +2,9 @@ import { useState, useEffect } from 'react';
 import { View, Text, ScrollView, ActivityIndicator, StyleSheet, Image } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useLocalSearchParams } from 'expo-router';
-import { ArticleHeader } from '@/components/ArticleHeader';
+import { Stack, useLocalSearchParams } from 'expo-router';
+import { useHeaderHeight } from '@react-navigation/elements';
+import { ArticleHeaderRightActions } from '@/components/header/ArticleHeaderRightActions';
 import { ArticleMeta } from '@/components/ArticleMeta';
 import { SummaryBox } from '@/components/SummaryBox';
 import { RelatedTopicsNative } from '@/components/RelatedTopicsNative';
@@ -28,6 +29,7 @@ export default function ArticleDetailScreen() {
   const [article, setArticle] = useState<Article | null>(null);
   const [relatedArticles, setRelatedArticles] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const headerHeight = useHeaderHeight();
 
   useEffect(() => {
     fetchArticle();
@@ -89,22 +91,26 @@ export default function ArticleDetailScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-background" edges={['top']}>
+    <SafeAreaView className="flex-1 bg-background" edges={['left', 'right']}>
       <StatusBar style="auto" />
-      
-      {/* Header with Bookmark & Share */}
-      <ArticleHeader 
-        articleId={article?.id}
-        articleTitle={article?.title}
+      <Stack.Screen
+        options={{
+          headerRight: () => <ArticleHeaderRightActions articleTitle={article?.title} />,
+        }}
       />
 
       {/* Content */}
       {loading ? (
-        <View style={styles.loadingContainer}>
+        <View style={[styles.loadingContainer, { paddingTop: headerHeight }]}>
           <ActivityIndicator size="large" color="#E36B2C" />
         </View>
       ) : article ? (
-        <ScrollView style={styles.content}>
+        <ScrollView
+          style={styles.content}
+          contentInsetAdjustmentBehavior="never"
+          scrollIndicatorInsets={{ top: headerHeight }}
+          contentContainerStyle={{ paddingTop: headerHeight }}
+        >
           {/* Meta Info */}
           <ArticleMeta 
             publishedAt={article.publishedAt}
@@ -160,7 +166,7 @@ export default function ArticleDetailScreen() {
           <View style={{ height: 40 }} />
         </ScrollView>
       ) : (
-        <View style={styles.errorContainer}>
+        <View style={[styles.errorContainer, { paddingTop: headerHeight }]}>
           <Text style={styles.errorText}>Artikel niet gevonden</Text>
         </View>
       )}

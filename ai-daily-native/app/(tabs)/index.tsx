@@ -2,14 +2,13 @@ import { useState, useEffect } from 'react';
 import { View, ScrollView, RefreshControl, Text } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useHeaderHeight } from '@react-navigation/elements';
 import { useNativeTabBarHeight } from '@/src/lib/nativeTabs';
 import { LargeNewsCard } from '@/components/LargeNewsCard';
 import { ArticleListRow } from '@/components/ArticleListRow';
 import { MobileStocksStrip } from '@/components/MobileStocksStrip';
 import { SectionSpacer } from '@/components/SectionSpacer';
 import { LoadingSkeleton } from '@/components/LoadingSkeleton';
-import { AppHeader } from '@/components/AppHeader';
-import { SearchModal } from '@/components/SearchModal';
 import { getMostRead, getLatest, getTopicSections } from '@/src/lib/supabase';
 import { TopicBlock } from '@/components/TopicBlock';
 import { useStocks } from '@/src/contexts/StockProvider';
@@ -34,8 +33,8 @@ export default function HomeScreen() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [showSearch, setShowSearch] = useState(false);
   const tabBarHeight = useNativeTabBarHeight();
+  const headerHeight = useHeaderHeight();
 
   const fetchData = async () => {
     try {
@@ -121,8 +120,8 @@ export default function HomeScreen() {
 
   if (error) {
     return (
-      <SafeAreaView className="flex-1 bg-background" edges={['top', 'left', 'right']} style={{ paddingBottom: tabBarHeight }}>
-        <View className="flex-1 items-center justify-center px-4">
+      <SafeAreaView className="flex-1 bg-background" edges={['left', 'right']}>
+        <View className="flex-1 items-center justify-center px-4" style={{ paddingTop: headerHeight, paddingBottom: tabBarHeight }}>
           <Text className="text-destructive text-center mb-4">{error}</Text>
           <Text className="text-muted-foreground text-center">
             Trek naar beneden om opnieuw te laden
@@ -133,25 +132,22 @@ export default function HomeScreen() {
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-background" edges={['top', 'left', 'right']} style={{ paddingBottom: tabBarHeight }}>
+    <SafeAreaView className="flex-1 bg-background" edges={['left', 'right']}>
       <StatusBar style="auto" />
-      
-      {/* Header */}
-      <AppHeader 
-        onSearchPress={() => setShowSearch(true)}
-      />
-
-      {/* Stocks Strip */}
-      <MobileStocksStrip tickers={tickers} />
 
       {/* Content */}
       <ScrollView
         className="flex-1"
+        contentInsetAdjustmentBehavior="never"
+        scrollIndicatorInsets={{ top: headerHeight }}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
-        contentContainerStyle={{ paddingBottom: tabBarHeight + 16 }}
+        contentContainerStyle={{ paddingTop: headerHeight, paddingBottom: tabBarHeight + 16 }}
       >
+        {/* Stocks Strip */}
+        <MobileStocksStrip tickers={tickers} />
+
         {/* Top Two - Most Read */}
         <View className="px-4 pt-4">
           {mostRead.slice(0, 2).map((article) => (
@@ -181,9 +177,6 @@ export default function HomeScreen() {
           <TopicBlock heading={topicHeading} articles={topicCards} />
         )}
       </ScrollView>
-
-      {/* Modals */}
-      <SearchModal visible={showSearch} onClose={() => setShowSearch(false)} />
     </SafeAreaView>
   );
 }

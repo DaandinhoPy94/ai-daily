@@ -1,10 +1,9 @@
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, TextInput } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useHeaderHeight } from '@react-navigation/elements';
 import { useNativeTabBarHeight } from '@/src/lib/nativeTabs';
 import { ChevronRight, X, Search } from 'lucide-react-native';
-import { AppHeader } from '@/components/AppHeader';
-import { SearchModal } from '@/components/SearchModal';
 import { useState, useEffect } from 'react';
 import { getMainTopics } from '@/src/lib/supabase';
 
@@ -16,10 +15,10 @@ interface Topic {
 
 export default function MeerScreen() {
   const [searchQuery, setSearchQuery] = useState('');
-  const [showSearch, setShowSearch] = useState(false);
   const [mainTopics, setMainTopics] = useState<Topic[]>([]);
   const [loading, setLoading] = useState(true);
   const tabBarHeight = useNativeTabBarHeight();
+  const headerHeight = useHeaderHeight();
 
   useEffect(() => {
     const loadTopics = async () => {
@@ -43,38 +42,35 @@ export default function MeerScreen() {
   console.log('First topic:', mainTopics[0]?.name);
 
   return (
-    <SafeAreaView className="flex-1 bg-background" edges={['top', 'left', 'right']} style={{ paddingBottom: tabBarHeight }}>
+    <SafeAreaView className="flex-1 bg-background" edges={['left', 'right']}>
       <StatusBar style="auto" />
-      
-      {/* Header */}
-      <AppHeader 
-        onSearchPress={() => setShowSearch(true)}
-      />
-
-      {/* Search Bar */}
-      <View style={styles.searchContainer}>
-        <View style={styles.searchBar}>
-          <Search size={20} color="#71717a" strokeWidth={2} />
-          <TextInput
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-            placeholder="Zoek in artikelen..."
-            placeholderTextColor="#71717a"
-            style={styles.searchInput}
-          />
-          {searchQuery.length > 0 && (
-            <TouchableOpacity onPress={() => setSearchQuery('')}>
-              <X size={20} color="#71717a" strokeWidth={2} />
-            </TouchableOpacity>
-          )}
-        </View>
-      </View>
 
       {/* Content */}
       <ScrollView
         style={styles.content}
-        contentContainerStyle={{ paddingBottom: tabBarHeight }}
+        contentInsetAdjustmentBehavior="never"
+        scrollIndicatorInsets={{ top: headerHeight }}
+        contentContainerStyle={{ paddingTop: headerHeight, paddingBottom: tabBarHeight }}
       >
+        {/* Search Bar */}
+        <View style={styles.searchContainer}>
+          <View style={styles.searchBar}>
+            <Search size={20} color="#71717a" strokeWidth={2} />
+            <TextInput
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+              placeholder="Zoek in artikelen..."
+              placeholderTextColor="#71717a"
+              style={styles.searchInput}
+            />
+            {searchQuery.length > 0 && (
+              <TouchableOpacity onPress={() => setSearchQuery('')}>
+                <X size={20} color="#71717a" strokeWidth={2} />
+              </TouchableOpacity>
+            )}
+          </View>
+        </View>
+
         {/* Debug info */}
         <View style={{ padding: 16, backgroundColor: '#fef3c7' }}>
           <Text>Loading: {loading ? 'YES' : 'NO'}</Text>
@@ -104,9 +100,6 @@ export default function MeerScreen() {
           </View>
         )}
       </ScrollView>
-
-      {/* Modals */}
-      <SearchModal visible={showSearch} onClose={() => setShowSearch(false)} />
     </SafeAreaView>
   );
 }

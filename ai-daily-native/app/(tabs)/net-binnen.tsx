@@ -2,9 +2,8 @@ import { useState, useEffect } from 'react';
 import { View, Text, FlatList, ActivityIndicator, StyleSheet } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useHeaderHeight } from '@react-navigation/elements';
 import { useNativeTabBarHeight } from '@/src/lib/nativeTabs';
-import { AppHeader } from '@/components/AppHeader';
-import { SearchModal } from '@/components/SearchModal';
 import { ArticleListRow } from '@/components/ArticleListRow';
 import { supabase } from '@/src/lib/supabase';
 
@@ -25,8 +24,8 @@ export default function NetBinnenScreen() {
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
-  const [showSearch, setShowSearch] = useState(false);
   const tabBarHeight = useNativeTabBarHeight();
+  const headerHeight = useHeaderHeight();
 
   const fetchArticles = async (offset: number = 0) => {
     try {
@@ -90,23 +89,12 @@ export default function NetBinnenScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-background" edges={['top', 'left', 'right']} style={{ paddingBottom: tabBarHeight }}>
+    <SafeAreaView className="flex-1 bg-background" edges={['left', 'right']}>
       <StatusBar style="auto" />
-      
-      {/* Header */}
-      <AppHeader 
-        onSearchPress={() => setShowSearch(true)}
-      />
-
-      {/* Page Title */}
-      <View style={styles.pageTitleContainer}>
-        <Text style={styles.pageTitle}>Net binnen</Text>
-        <View style={styles.divider} />
-      </View>
 
       {/* Articles List */}
       {loading ? (
-        <View style={styles.loadingContainer}>
+        <View style={[styles.loadingContainer, { paddingTop: headerHeight }]}>
           <ActivityIndicator size="large" color="#E36B2C" />
         </View>
       ) : (
@@ -122,12 +110,17 @@ export default function NetBinnenScreen() {
           onEndReached={handleLoadMore}
           onEndReachedThreshold={0.5}
           ListFooterComponent={renderFooter}
+          contentInsetAdjustmentBehavior="never"
+          scrollIndicatorInsets={{ top: headerHeight }}
+          ListHeaderComponent={
+            <View style={[styles.pageTitleContainer, { paddingTop: headerHeight + 16 }]}>
+              <Text style={styles.pageTitle}>Net binnen</Text>
+              <View style={styles.divider} />
+            </View>
+          }
           contentContainerStyle={[styles.listContent, { paddingBottom: tabBarHeight }]}
         />
       )}
-
-      {/* Modals */}
-      <SearchModal visible={showSearch} onClose={() => setShowSearch(false)} />
     </SafeAreaView>
   );
 }

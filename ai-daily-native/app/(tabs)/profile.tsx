@@ -1,18 +1,17 @@
 import { View, Text, ScrollView, StyleSheet, TextInput, TouchableOpacity, Switch } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useHeaderHeight } from '@react-navigation/elements';
 import { useNativeTabBarHeight } from '@/src/lib/nativeTabs';
-import { AppHeader } from '@/components/AppHeader';
-import { SearchModal } from '@/components/SearchModal';
 import { Upload } from 'lucide-react-native';
 import { useState } from 'react';
 
 export default function ProfileScreen() {
-  const [showSearch, setShowSearch] = useState(false);
   const [displayName, setDisplayName] = useState('Daan van der Ster');
   const [email] = useState('daanvdster@gmail.com');
   const [newsletterEnabled, setNewsletterEnabled] = useState(true);
   const tabBarHeight = useNativeTabBarHeight();
+  const headerHeight = useHeaderHeight();
 
   const initials = displayName
     ?.split(' ')
@@ -27,20 +26,23 @@ export default function ProfileScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-background" edges={['top', 'left', 'right']} style={{ paddingBottom: tabBarHeight }}>
+    <SafeAreaView className="flex-1 bg-background" edges={['left', 'right']}>
       <StatusBar style="auto" />
-      
-      <AppHeader onSearchPress={() => setShowSearch(true)} />
-
-      <View style={styles.pageTitleContainer}>
-        <Text style={styles.pageTitle}>Profiel</Text>
-        <Text style={styles.subtitle}>Beheer je profielinformatie en voorkeuren.</Text>
-      </View>
 
       <ScrollView
         style={styles.content}
-        contentContainerStyle={[styles.contentContainer, { paddingBottom: tabBarHeight }]}
+        contentInsetAdjustmentBehavior="never"
+        scrollIndicatorInsets={{ top: headerHeight }}
+        contentContainerStyle={[
+          styles.contentContainer,
+          { paddingTop: headerHeight + 16, paddingBottom: tabBarHeight },
+        ]}
       >
+        <View style={styles.pageTitleContainer}>
+          <Text style={styles.pageTitle}>Profiel</Text>
+          <Text style={styles.subtitle}>Beheer je profielinformatie en voorkeuren.</Text>
+        </View>
+
         <View style={styles.card}>
           <Text style={styles.cardTitle}>Profielinformatie</Text>
           <Text style={styles.cardDescription}>
@@ -106,8 +108,6 @@ export default function ProfileScreen() {
           </View>
         </View>
       </ScrollView>
-
-      <SearchModal visible={showSearch} onClose={() => setShowSearch(false)} />
     </SafeAreaView>
   );
 }
@@ -115,7 +115,6 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
   pageTitleContainer: {
     paddingHorizontal: 16,
-    paddingTop: 16,
     paddingBottom: 16,
     borderBottomWidth: 1,
     borderBottomColor: '#e4e4e7',
