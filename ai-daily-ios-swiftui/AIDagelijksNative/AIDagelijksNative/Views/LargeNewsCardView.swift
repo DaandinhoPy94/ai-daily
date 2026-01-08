@@ -69,15 +69,10 @@ struct LargeNewsCardView: View {
             .padding(.horizontal, 4)
             .padding(.bottom, 12)
         }
-        .background(Color(.systemBackground))
-        // We don't necessarily need a background container if it's just the image and text, 
-        // but the prompt implies "Cards". 
-        // "Style: Full-width high-quality image at the top, with the title and a snippet... positioned clearly below"
-        // I'll keep it clean without a visible card border/shadow for the large one unless requested, 
-        // or maybe just the image has the radius.
-        // Wait, "Cards: Use a clean 20pt corner radius for all images and card containers."
-        // I'll wrap it in a card style just to be safe and consistent.
-        .clipShape(RoundedRectangle(cornerRadius: 20))
-        .shadow(color: .black.opacity(0.05), radius: 10, x: 0, y: 4)
+        .background(.background, in: RoundedRectangle(cornerRadius: 20, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 20, style: .continuous)
+                .stroke(Color(.separator), lineWidth: 0.5)
+        )
     }
 }

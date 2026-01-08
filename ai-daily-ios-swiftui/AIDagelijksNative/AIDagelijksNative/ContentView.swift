@@ -58,11 +58,6 @@ struct ContentView: View {
                 
                 // Floating glass tab bar removed
                 
-                // Search Overlay
-                if showSearch {
-                    SearchView(isPresented: $showSearch)
-                        .zIndex(2)
-                }
             }
             .navigationDestination(for: Article.self) { article in
                 ArticleDetailView(article: article)
@@ -70,13 +65,14 @@ struct ContentView: View {
             .sheet(isPresented: $showProfile) {
                 ProfileView()
             }
+            .sheet(isPresented: $showSearch) {
+                SearchView(isPresented: $showSearch)
+            }
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     HStack(spacing: 16) {
                         Button(action: { 
-                            withAnimation {
-                                showSearch = true 
-                            }
+                            showSearch = true
                         }) {
                             Image(systemName: "magnifyingglass")
                                 .font(.system(size: 17, weight: .medium))
@@ -98,7 +94,8 @@ struct ContentView: View {
                     }
                 }
             }
-            .toolbarBackground(.hidden, for: .navigationBar)
+            .toolbarBackground(.bar, for: .navigationBar)
+            .toolbarBackground(navigationBarBackgroundVisibility, for: .navigationBar)
             .navigationBarTitleDisplayMode(.inline)
         }
         .task {
@@ -165,28 +162,16 @@ struct ContentView: View {
             .refreshable {
                 await viewModel.refresh()
             }
-
-            // Glassmorphism header overlay
-            GlassHeaderView(
-                scrollOffset: scrollOffset,
-                headerOpacity: headerMaterialOpacity
-            )
         }
     }
 
     // MARK: - Computed Properties
 
-    private var headerMaterialOpacity: Double {
-        let threshold: CGFloat = -30
-        let fullOpacityAt: CGFloat = -100
-
-        if scrollOffset >= threshold {
-            return 0
-        } else if scrollOffset <= fullOpacityAt {
-            return 1
-        } else {
-            return Double((threshold - scrollOffset) / (threshold - fullOpacityAt))
+    private var navigationBarBackgroundVisibility: Visibility {
+        if selectedTab == .home {
+            return scrollOffset < -30 ? .visible : .hidden
         }
+        return .visible
     }
 
 
@@ -213,32 +198,6 @@ struct LogoView: View {
                     )
                 )
         }
-    }
-}
-
-
-
-// MARK: - Glass Header View
-
-struct GlassHeaderView: View {
-    let scrollOffset: CGFloat
-    let headerOpacity: Double
-
-    var body: some View {
-        VStack(spacing: 0) {
-            Rectangle()
-                .fill(.ultraThinMaterial)
-                .opacity(headerOpacity)
-                .frame(height: 100)
-                .overlay(alignment: .bottom) {
-                    Divider()
-                        .opacity(headerOpacity)
-                }
-
-            Spacer()
-        }
-        .ignoresSafeArea(edges: .top)
-        .allowsHitTesting(false)
     }
 }
 

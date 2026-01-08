@@ -255,7 +255,8 @@ struct ArticleDetailView: View {
             .background(Color.brandBackground)
             .ignoresSafeArea(edges: .top)
             .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(.hidden, for: .navigationBar)
+            .toolbarBackground(.bar, for: .navigationBar)
+            .toolbarBackground(.visible, for: .navigationBar)
             .onAppear {
                 Task {
                     await viewModel.fetchArticleDetail(id: article.id)
@@ -268,24 +269,14 @@ struct ArticleDetailView: View {
                         // Share Button
                         ShareLink(item: URL(string: "https://aidagelijks.nl/artikel/\(article.slug)")!) {
                             Image(systemName: "square.and.arrow.up")
-                                .font(.system(size: 14, weight: .semibold))
-                                .foregroundStyle(.primary)
-                                .frame(width: 32, height: 32)
-                                .clipShape(Circle())
                         }
-                        .buttonStyle(.plain) // Remove system background
                         
                         // Bookmark Button
                         Button(action: {
                             // TODO: Implement bookmark functionality
                         }) {
                             Image(systemName: "bookmark")
-                                .font(.system(size: 14, weight: .semibold))
-                                .foregroundStyle(.primary)
-                                .frame(width: 32, height: 32)
-                                .clipShape(Circle())
                         }
-                        .buttonStyle(.plain) // Remove system background
                     }
                 }
             }
