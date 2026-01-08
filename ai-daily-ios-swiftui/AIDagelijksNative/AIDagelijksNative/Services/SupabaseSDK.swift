@@ -6,12 +6,13 @@
 //
 
 import Foundation
-import Supabase
-import Auth
+// import Supabase
+// import Auth
 
 enum SupabaseSDK {
     static let redirectURL = URL(string: "aidagelijksnative://auth/callback")!
 
+    /*
     static let client: SupabaseClient = {
         let supabaseURL = URL(string: SupabaseConfig.url)!
 
@@ -27,5 +28,6 @@ enum SupabaseSDK {
             )
         )
     }()
+    */
 }
 

@@ -262,6 +262,33 @@ struct ArticleDetailView: View {
                     await viewModel.fetchLatestArticles(limit: 5) // Fetch for "Latest News" rail
                 }
             }
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    HStack(spacing: 12) {
+                        // Share Button
+                        ShareLink(item: URL(string: "https://aidagelijks.nl/artikel/\(article.slug)")!) {
+                            Image(systemName: "square.and.arrow.up")
+                                .font(.system(size: 14, weight: .semibold))
+                                .foregroundStyle(.primary)
+                                .frame(width: 32, height: 32)
+                                .background(.ultraThinMaterial)
+                                .clipShape(Circle())
+                        }
+                        
+                        // Bookmark Button
+                        Button(action: {
+                            // TODO: Implement bookmark functionality
+                        }) {
+                            Image(systemName: "bookmark")
+                                .font(.system(size: 14, weight: .semibold))
+                                .foregroundStyle(.primary)
+                                .frame(width: 32, height: 32)
+                                .background(.ultraThinMaterial)
+                                .clipShape(Circle())
+                        }
+                    }
+                }
+            }
         }
     }
 }

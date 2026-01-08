@@ -1,7 +1,7 @@
 import SwiftUI
 import PhotosUI
 import UIKit
-import Auth
+// import Auth
 
 struct ProfileView: View {
     @Environment(\.dismiss) var dismiss

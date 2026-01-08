@@ -1,0 +1,55 @@
+
+Showing Recent Issues
+
+Build target AIDagelijksNative of project AIDagelijksNative with configuration Debug
+
+SwiftDriver AIDagelijksNative normal arm64 com.apple.xcode.tools.swift.compiler (in target 'AIDagelijksNative' from project 'AIDagelijksNative')
+    cd /Users/daanster/GitHub/ai-daily/ai-daily-ios-swiftui/AIDagelijksNative
+    builtin-SwiftDriver -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name AIDagelijksNative -Onone -enforce-exclusivity\=checked @/Users/daanster/Library/Developer/Xcode/DerivedData/AIDagelijksNative-bcvgqazhkkelnaafqwmhlsujtksp/Build/Intermediates.noindex/AIDagelijksNative.build/Debug-iphoneos/AIDagelijksNative.build/Objects-normal/arm64/AIDagelijksNative.SwiftFileList -DDEBUG -default-isolation\=MainActor -enable-bare-slash-regex -enable-upcoming-feature DisableOutwardActorInference -enable-upcoming-feature InferSendableFromCaptures -enable-upcoming-feature GlobalActorIsolatedTypesUsability -enable-upcoming-feature MemberImportVisibility -enable-upcoming-feature InferIsolatedConformances -enable-upcoming-feature NonisolatedNonsendingByDefault -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.2.sdk -target arm64-apple-ios26.2 -g -module-cache-path /Users/daanster/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/daanster/Library/Developer/Xcode/DerivedData/AIDagelijksNative-bcvgqazhkkelnaafqwmhlsujtksp/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 5 -I /Users/daanster/Library/Developer/Xcode/DerivedData/AIDagelijksNative-bcvgqazhkkelnaafqwmhlsujtksp/Build/Products/Debug-iphoneos -F /Users/daanster/Library/Developer/Xcode/DerivedData/AIDagelijksNative-bcvgqazhkkelnaafqwmhlsujtksp/Build/Products/Debug-iphoneos -emit-localized-strings -emit-localized-strings-path /Users/daanster/Library/Developer/Xcode/DerivedData/AIDagelijksNative-bcvgqazhkkelnaafqwmhlsujtksp/Build/Intermediates.noindex/AIDagelijksNative.build/Debug-iphoneos/AIDagelijksNative.build/Objects-normal/arm64 -c -j8 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/daanster/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphoneos26.2-23C53-3794476bd08197c3e2abd9bb477ef7f7.sdkstatcache -output-file-map /Users/daanster/Library/Developer/Xcode/DerivedData/AIDagelijksNative-bcvgqazhkkelnaafqwmhlsujtksp/Build/Intermediates.noindex/AIDagelijksNative.build/Debug-iphoneos/AIDagelijksNative.build/Objects-normal/arm64/AIDagelijksNative-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/daanster/Library/Developer/Xcode/DerivedData/AIDagelijksNative-bcvgqazhkkelnaafqwmhlsujtksp/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/daanster/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -sdk-module-cache-path /Users/daanster/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/daanster/Library/Developer/Xcode/DerivedData/AIDagelijksNative-bcvgqazhkkelnaafqwmhlsujtksp/Build/Intermediates.noindex/AIDagelijksNative.build/Debug-iphoneos/AIDagelijksNative.build/Objects-normal/arm64/AIDagelijksNative.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/daanster/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/daanster/Library/Developer/Xcode/DerivedData/AIDagelijksNative-bcvgqazhkkelnaafqwmhlsujtksp/Build/Intermediates.noindex/AIDagelijksNative.build/Debug-iphoneos/AIDagelijksNative.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/daanster/Library/Developer/Xcode/DerivedData/AIDagelijksNative-bcvgqazhkkelnaafqwmhlsujtksp/Build/Intermediates.noindex/AIDagelijksNative.build/Debug-iphoneos/AIDagelijksNative.build/Objects-normal/arm64/AIDagelijksNative_const_extract_protocols.json -Xcc -iquote -Xcc /Users/daanster/Library/Developer/Xcode/DerivedData/AIDagelijksNative-bcvgqazhkkelnaafqwmhlsujtksp/Build/Intermediates.noindex/AIDagelijksNative.build/Debug-iphoneos/AIDagelijksNative.build/AIDagelijksNative-generated-files.hmap -Xcc -I/Users/daanster/Library/Developer/Xcode/DerivedData/AIDagelijksNative-bcvgqazhkkelnaafqwmhlsujtksp/Build/Intermediates.noindex/AIDagelijksNative.build/Debug-iphoneos/AIDagelijksNative.build/AIDagelijksNative-own-target-headers.hmap -Xcc -I/Users/daanster/Library/Developer/Xcode/DerivedData/AIDagelijksNative-bcvgqazhkkelnaafqwmhlsujtksp/Build/Intermediates.noindex/AIDagelijksNative.build/Debug-iphoneos/AIDagelijksNative.build/AIDagelijksNative-all-target-headers.hmap -Xcc -iquote -Xcc /Users/daanster/Library/Developer/Xcode/DerivedData/AIDagelijksNative-bcvgqazhkkelnaafqwmhlsujtksp/Build/Intermediates.noindex/AIDagelijksNative.build/Debug-iphoneos/AIDagelijksNative.build/AIDagelijksNative-project-headers.hmap -Xcc -I/Users/daanster/Library/Developer/Xcode/DerivedData/AIDagelijksNative-bcvgqazhkkelnaafqwmhlsujtksp/Build/Products/Debug-iphoneos/include -Xcc -I/Users/daanster/Library/Developer/Xcode/DerivedData/AIDagelijksNative-bcvgqazhkkelnaafqwmhlsujtksp/Build/Intermediates.noindex/AIDagelijksNative.build/Debug-iphoneos/AIDagelijksNative.build/DerivedSources-normal/arm64 -Xcc -I/Users/daanster/Library/Developer/Xcode/DerivedData/AIDagelijksNative-bcvgqazhkkelnaafqwmhlsujtksp/Build/Intermediates.noindex/AIDagelijksNative.build/Debug-iphoneos/AIDagelijksNative.build/DerivedSources/arm64 -Xcc -I/Users/daanster/Library/Developer/Xcode/DerivedData/AIDagelijksNative-bcvgqazhkkelnaafqwmhlsujtksp/Build/Intermediates.noindex/AIDagelijksNative.build/Debug-iphoneos/AIDagelijksNative.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/daanster/Library/Developer/Xcode/DerivedData/AIDagelijksNative-bcvgqazhkkelnaafqwmhlsujtksp/Build/Intermediates.noindex/AIDagelijksNative.build/Debug-iphoneos/AIDagelijksNative.build/Objects-normal/arm64/AIDagelijksNative-Swift.h -working-directory /Users/daanster/GitHub/ai-daily/ai-daily-ios-swiftui/AIDagelijksNative -experimental-emit-module-separately -disable-cmo
+
+/Users/daanster/GitHub/ai-daily/ai-daily-ios-swiftui/AIDagelijksNative/AIDagelijksNative/Services/AuthManager.swift:9:8: error: Unable to find module dependency: 'Supabase'
+import Supabase
+       ^ (in target 'AIDagelijksNative' from project 'AIDagelijksNative')
+/Users/daanster/GitHub/ai-daily/ai-daily-ios-swiftui/AIDagelijksNative/AIDagelijksNative/Services/AuthManager.swift:9:8: note: A dependency of main module 'AIDagelijksNative'
+import Supabase
+       ^ (in target 'AIDagelijksNative' from project 'AIDagelijksNative')
+/Users/daanster/GitHub/ai-daily/ai-daily-ios-swiftui/AIDagelijksNative/AIDagelijksNative/Services/SupabaseSDK.swift:9:8: note: Also imported here
+import Supabase
+       ^ (in target 'AIDagelijksNative' from project 'AIDagelijksNative')
+/Users/daanster/GitHub/ai-daily/ai-daily-ios-swiftui/AIDagelijksNative/AIDagelijksNative/Services/SupabaseSDK.swift:10:8: error: Unable to find module dependency: 'Auth'
+import Auth
+       ^ (in target 'AIDagelijksNative' from project 'AIDagelijksNative')
+/Users/daanster/GitHub/ai-daily/ai-daily-ios-swiftui/AIDagelijksNative/AIDagelijksNative/Services/SupabaseSDK.swift:10:8: note: A dependency of main module 'AIDagelijksNative'
+import Auth
+       ^ (in target 'AIDagelijksNative' from project 'AIDagelijksNative')
+/Users/daanster/GitHub/ai-daily/ai-daily-ios-swiftui/AIDagelijksNative/AIDagelijksNative/Views/ProfileView.swift:4:8: note: Also imported here
+import Auth
+       ^ (in target 'AIDagelijksNative' from project 'AIDagelijksNative')
+
+/Users/daanster/GitHub/ai-daily/ai-daily-ios-swiftui/AIDagelijksNative/AIDagelijksNative/Services/AuthManager.swift:9:8: Unable to find module dependency: 'Supabase'
+import Supabase
+       ^
+
+/Users/daanster/GitHub/ai-daily/ai-daily-ios-swiftui/AIDagelijksNative/AIDagelijksNative/Services/AuthManager.swift:9:8: A dependency of main module 'AIDagelijksNative'
+import Supabase
+       ^
+
+/Users/daanster/GitHub/ai-daily/ai-daily-ios-swiftui/AIDagelijksNative/AIDagelijksNative/Services/SupabaseSDK.swift:9:8: Also imported here
+import Supabase
+       ^
+
+/Users/daanster/GitHub/ai-daily/ai-daily-ios-swiftui/AIDagelijksNative/AIDagelijksNative/Services/SupabaseSDK.swift:10:8: Unable to find module dependency: 'Auth'
+import Auth
+       ^
+
+/Users/daanster/GitHub/ai-daily/ai-daily-ios-swiftui/AIDagelijksNative/AIDagelijksNative/Services/SupabaseSDK.swift:10:8: A dependency of main module 'AIDagelijksNative'
+import Auth
+       ^
+
+/Users/daanster/GitHub/ai-daily/ai-daily-ios-swiftui/AIDagelijksNative/AIDagelijksNative/Views/ProfileView.swift:4:8: Also imported here
+import Auth
+       ^
+
+
+
+Build failed    08/01/2026, 18:27    0.3 seconds
