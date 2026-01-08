@@ -271,7 +271,6 @@ struct ArticleDetailView: View {
                                 .font(.system(size: 14, weight: .semibold))
                                 .foregroundStyle(.primary)
                                 .frame(width: 32, height: 32)
-                                .background(.ultraThinMaterial)
                                 .clipShape(Circle())
                         }
                         .buttonStyle(.plain) // Remove system background
@@ -284,7 +283,6 @@ struct ArticleDetailView: View {
                                 .font(.system(size: 14, weight: .semibold))
                                 .foregroundStyle(.primary)
                                 .frame(width: 32, height: 32)
-                                .background(.ultraThinMaterial)
                                 .clipShape(Circle())
                         }
                         .buttonStyle(.plain) // Remove system background
