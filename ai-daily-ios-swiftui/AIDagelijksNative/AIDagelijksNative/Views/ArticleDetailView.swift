@@ -15,17 +15,17 @@ struct ArticleDetailView: View {
                         case .empty:
                             Rectangle()
                                 .fill(Color(.systemGray5))
-                                .frame(height: 250)
+                                .frame(width: geometry.size.width, height: 250)
                         case .success(let image):
                             image
                                 .resizable()
                                 .scaledToFill()
-                                .frame(height: 250)
+                                .frame(width: geometry.size.width, height: 250)
                                 .clipped()
                         case .failure:
                             Rectangle()
                                 .fill(Color(.systemGray5))
-                                .frame(height: 250)
+                                .frame(width: geometry.size.width, height: 250)
                         @unknown default:
                             EmptyView()
                         }
@@ -249,6 +249,7 @@ struct ArticleDetailView: View {
                     }
                     .padding(.horizontal, 20) // Horizontal padding for the content
                     .padding(.bottom, 40)
+                    .frame(width: geometry.size.width) // Force the content to fit the screen width
                 }
             }
             .background(Color.brandBackground)

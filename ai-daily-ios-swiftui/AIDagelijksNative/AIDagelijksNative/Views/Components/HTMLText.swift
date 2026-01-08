@@ -23,6 +23,8 @@ struct HTMLText: UIViewRepresentable {
                 font-size: 17px;
                 line-height: 1.6;
                 color: #000000;
+                word-wrap: break-word;
+                overflow-wrap: break-word;
             }
             p { margin-bottom: 16px; }
             strong { font-weight: 600; }
@@ -43,6 +45,9 @@ struct HTMLText: UIViewRepresentable {
                     documentAttributes: nil
                 ) {
                     uiView.attributedText = attributedString
+                    uiView.lineBreakMode = .byWordWrapping
+                    uiView.numberOfLines = 0
+                    uiView.preferredMaxLayoutWidth = width
                 }
             }
         }
