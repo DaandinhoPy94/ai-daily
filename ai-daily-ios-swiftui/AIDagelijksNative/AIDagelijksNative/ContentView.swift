@@ -17,7 +17,7 @@ enum TabSelection: String, CaseIterable {
 
     var title: String {
         switch self {
-        case .home: return "Home"
+        case .home: return "AI Dagelijks"
         case .netBinnen: return "Net Binnen"
         case .myNews: return "Mijn Nieuws"
         case .more: return "Meer"
@@ -56,10 +56,7 @@ struct ContentView: View {
                     }
                 }
                 
-                // Floating glass tab bar
-                FloatingTabBar(selectedTab: $selectedTab)
-                    .padding(.horizontal, 60)
-                    .padding(.bottom, 28)
+                // Floating glass tab bar removed
                 
                 // Search Overlay
                 if showSearch {
@@ -98,7 +95,6 @@ struct ContentView: View {
                     ToolbarItem(placement: .principal) {
                         LogoView()
                             .frame(height: 20)
-                            .opacity(smallTitleOpacity)
                     }
                 }
             }
@@ -128,19 +124,14 @@ struct ContentView: View {
 
                     // Large title area with logo
                     VStack(alignment: .leading, spacing: 8) {
-                        // Logo image (falls back to text if not found)
-                        LogoView()
-                            .frame(height: 32)
-
                         Text("Het laatste AI nieuws")
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.horizontal, 20)
-                    .padding(.top, 60)
+                    .padding(.top, 100)
                     .padding(.bottom, 16)
-                    .opacity(largeTitleOpacity)
 
                     // News feed
                     if viewModel.isLoading && viewModel.latestArticles.isEmpty {
@@ -206,31 +197,7 @@ struct ContentView: View {
         }
     }
 
-    private var largeTitleOpacity: Double {
-        let startFade: CGFloat = -20
-        let endFade: CGFloat = -80
 
-        if scrollOffset >= startFade {
-            return 1
-        } else if scrollOffset <= endFade {
-            return 0
-        } else {
-            return Double((scrollOffset - endFade) / (startFade - endFade))
-        }
-    }
-
-    private var smallTitleOpacity: Double {
-        let startShow: CGFloat = -60
-        let fullShow: CGFloat = -100
-
-        if scrollOffset >= startShow {
-            return 0
-        } else if scrollOffset <= fullShow {
-            return 1
-        } else {
-            return Double((startShow - scrollOffset) / (startShow - fullShow))
-        }
-    }
 }
 
 // MARK: - Logo View
@@ -257,62 +224,7 @@ struct LogoView: View {
     }
 }
 
-// MARK: - Floating Tab Bar
 
-struct FloatingTabBar: View {
-    @Binding var selectedTab: TabSelection
-
-    var body: some View {
-        HStack(spacing: 0) {
-            ForEach(TabSelection.allCases, id: \.self) { tab in
-                Button {
-                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                        selectedTab = tab
-                    }
-                } label: {
-                    VStack(spacing: 4) {
-                        Image(systemName: tab.rawValue)
-                            .font(.system(size: 20, weight: selectedTab == tab ? .semibold : .regular))
-                            .symbolRenderingMode(.hierarchical)
-                            .scaleEffect(selectedTab == tab ? 1.1 : 1.0) // Lift effect
-
-                        Text(tab.title)
-                            .font(.system(size: 10, weight: .medium))
-                    }
-                    .foregroundStyle(selectedTab == tab ? Color.brandOrange : .secondary)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 10)
-                    .contentShape(Rectangle())
-                }
-                .buttonStyle(TabButtonStyle()) // Add press effect
-            }
-        }
-        .padding(.horizontal, 8)
-        .padding(.vertical, 6)
-        .background(
-            ZStack {
-                // Custom blur layer for "frosted" look
-                Rectangle()
-                    .fill(.ultraThinMaterial)
-                    .opacity(0.95) // Increased opacity for better blur visibility
-                
-                // Subtle white tint for "glass" feel
-                Rectangle()
-                    .fill(Color.white.opacity(0.1))
-            }
-            .clipShape(Capsule())
-            .shadow(color: .black.opacity(0.15), radius: 20, x: 0, y: 10)
-        )
-    }
-}
-
-struct TabButtonStyle: ButtonStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .scaleEffect(configuration.isPressed ? 0.9 : 1)
-            .animation(.spring(response: 0.2, dampingFraction: 0.6), value: configuration.isPressed)
-    }
-}
 
 // MARK: - Glass Header View
 
