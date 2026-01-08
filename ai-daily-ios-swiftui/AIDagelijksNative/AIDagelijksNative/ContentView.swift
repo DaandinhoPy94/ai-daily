@@ -55,6 +55,7 @@ struct ContentView: View {
                 .tabItem { Label(TabSelection.more.title, systemImage: TabSelection.more.rawValue) }
                 .tag(TabSelection.more)
         }
+        .tint(Color.brandTeal)
         .sheet(isPresented: $showSearch) {
             SearchView(isPresented: $showSearch)
         }
