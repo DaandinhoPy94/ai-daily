@@ -274,6 +274,7 @@ struct ArticleDetailView: View {
                                 .background(.ultraThinMaterial)
                                 .clipShape(Circle())
                         }
+                        .buttonStyle(.plain) // Remove system background
                         
                         // Bookmark Button
                         Button(action: {
@@ -286,6 +287,7 @@ struct ArticleDetailView: View {
                                 .background(.ultraThinMaterial)
                                 .clipShape(Circle())
                         }
+                        .buttonStyle(.plain) // Remove system background
                     }
                 }
             }
