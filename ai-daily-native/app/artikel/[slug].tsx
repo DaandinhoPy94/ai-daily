@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { View, Text, ScrollView, ActivityIndicator, StyleSheet, Image, TouchableOpacity, Share } from 'react-native';
+import { View, Text, ScrollView, ActivityIndicator, StyleSheet, Image, Share } from 'react-native';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { ArticleMeta } from '@/components/ArticleMeta';
 import { SummaryBox } from '@/components/SummaryBox';
@@ -7,7 +7,7 @@ import { RelatedTopicsNative } from '@/components/RelatedTopicsNative';
 import { RelatedListNative } from '@/components/RelatedListNative';
 import { supabase } from '@/src/lib/supabase';
 import { getHeroImage } from '@/src/lib/imagesBase';
-import { Share2, Bookmark, ChevronLeft } from 'lucide-react-native';
+import { GlassBackButton, GlassShareButton, GlassBookmarkButton } from '@/components/GlassHeaderButtons';
 
 interface Article {
   id: string;
@@ -21,19 +21,17 @@ interface Article {
   topics?: Array<{ id: string; name: string; slug: string }>;
 }
 
-// Header button components
+// Header button components using Liquid Glass SF Symbols
 function HeaderLeft() {
   const router = useRouter();
-  return (
-    <TouchableOpacity onPress={() => router.back()} style={styles.headerButton}>
-      <ChevronLeft size={28} color="#0a0a0a" strokeWidth={2} />
-    </TouchableOpacity>
-  );
+  return <GlassBackButton onPress={() => router.back()} />;
 }
 
-function HeaderRight({ articleTitle }: { articleTitle?: string }) {
-  const [isBookmarked, setIsBookmarked] = useState(false);
-
+function HeaderRight({ articleTitle, isBookmarked, onBookmarkToggle }: {
+  articleTitle?: string;
+  isBookmarked: boolean;
+  onBookmarkToggle: () => void;
+}) {
   const handleShare = async () => {
     try {
       await Share.share({
@@ -47,17 +45,8 @@ function HeaderRight({ articleTitle }: { articleTitle?: string }) {
 
   return (
     <View style={styles.headerRightContainer}>
-      <TouchableOpacity onPress={() => setIsBookmarked(!isBookmarked)} style={styles.headerButton}>
-        <Bookmark
-          size={22}
-          color={isBookmarked ? '#E36B2C' : '#0a0a0a'}
-          fill={isBookmarked ? '#E36B2C' : 'none'}
-          strokeWidth={2}
-        />
-      </TouchableOpacity>
-      <TouchableOpacity onPress={handleShare} style={styles.headerButton}>
-        <Share2 size={22} color="#0a0a0a" strokeWidth={2} />
-      </TouchableOpacity>
+      <GlassBookmarkButton onPress={onBookmarkToggle} isActive={isBookmarked} />
+      <GlassShareButton onPress={handleShare} />
     </View>
   );
 }
@@ -68,6 +57,7 @@ export default function ArticleDetailScreen() {
   const [relatedArticles, setRelatedArticles] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isBookmarked, setIsBookmarked] = useState(false);
 
   useEffect(() => {
     if (slug) {
@@ -170,7 +160,13 @@ export default function ArticleDetailScreen() {
           headerTitle: '',
           headerShadowVisible: false,
           headerLeft: () => <HeaderLeft />,
-          headerRight: () => <HeaderRight articleTitle={article?.title} />,
+          headerRight: () => (
+            <HeaderRight
+              articleTitle={article?.title}
+              isBookmarked={isBookmarked}
+              onBookmarkToggle={() => setIsBookmarked(!isBookmarked)}
+            />
+          ),
         }}
       />
 
@@ -325,9 +321,6 @@ const styles = StyleSheet.create({
     lineHeight: 26,
     color: '#0a0a0a',
     fontFamily: 'Georgia',
-  },
-  headerButton: {
-    padding: 8,
   },
   headerRightContainer: {
     flexDirection: 'row',

@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
-import { View, Text, FlatList, ActivityIndicator, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, FlatList, ActivityIndicator, StyleSheet } from 'react-native';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { ArticleListRow } from '@/components/ArticleListRow';
 import { supabase } from '@/src/lib/supabase';
-import { ChevronLeft, Search } from 'lucide-react-native';
 import { SearchModal } from '@/components/SearchModal';
+import { GlassBackButton, GlassSearchButton } from '@/components/GlassHeaderButtons';
 
 interface Topic {
   id: string;
@@ -23,26 +23,9 @@ interface Article {
 
 const ARTICLES_PER_PAGE = 20;
 
-// Header button components
-function HeaderLeft() {
-  const router = useRouter();
-  return (
-    <TouchableOpacity onPress={() => router.back()} style={styles.headerButton}>
-      <ChevronLeft size={28} color="#0a0a0a" strokeWidth={2} />
-    </TouchableOpacity>
-  );
-}
-
-function HeaderRight({ onSearchPress }: { onSearchPress: () => void }) {
-  return (
-    <TouchableOpacity onPress={onSearchPress} style={styles.headerButton}>
-      <Search size={22} color="#0a0a0a" strokeWidth={2} />
-    </TouchableOpacity>
-  );
-}
-
 export default function TopicScreen() {
   const { slug } = useLocalSearchParams<{ slug: string }>();
+  const router = useRouter();
   const [topic, setTopic] = useState<Topic | null>(null);
   const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
@@ -152,8 +135,8 @@ export default function TopicScreen() {
           title: topic?.name || 'Onderwerp',
           headerLargeTitleStyle: styles.largeTitleStyle,
           headerTitleStyle: styles.titleStyle,
-          headerLeft: () => <HeaderLeft />,
-          headerRight: () => <HeaderRight onSearchPress={() => setShowSearch(true)} />,
+          headerLeft: () => <GlassBackButton onPress={() => router.back()} />,
+          headerRight: () => <GlassSearchButton onPress={() => setShowSearch(true)} />,
         }}
       />
 
@@ -224,9 +207,6 @@ const styles = StyleSheet.create({
   footer: {
     paddingVertical: 20,
     alignItems: 'center',
-  },
-  headerButton: {
-    padding: 8,
   },
   largeTitleStyle: {
     fontFamily: 'Georgia',

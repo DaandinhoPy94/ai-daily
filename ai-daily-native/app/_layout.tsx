@@ -44,6 +44,17 @@ export default function RootLayout() {
                 headerTintColor: '#0a0a0a',
               }}
             />
+            <Stack.Screen
+              name="auth/login"
+              options={{
+                headerShown: true,
+                headerTransparent: true,
+                headerBlurEffect: 'systemMaterial',
+                headerTitle: '',
+                headerShadowVisible: false,
+                presentation: 'modal',
+              }}
+            />
           </Stack>
         </StockProvider>
       </QueryClientProvider>

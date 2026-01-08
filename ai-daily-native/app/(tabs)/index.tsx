@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { View, Text, ScrollView, RefreshControl, StyleSheet } from 'react-native';
-import { Stack } from 'expo-router';
+import { Stack, useRouter } from 'expo-router';
 import { LargeNewsCard } from '@/components/LargeNewsCard';
 import { ArticleListRow } from '@/components/ArticleListRow';
-import { MobileStocksStrip } from '@/components/MobileStocksStrip';
+import { AnimatedStocksTicker } from '@/components/AnimatedStocksTicker';
 import { SectionSpacer } from '@/components/SectionSpacer';
 import { LoadingSkeleton } from '@/components/LoadingSkeleton';
 import { SearchModal } from '@/components/SearchModal';
@@ -11,7 +11,7 @@ import { getMostRead, getLatest, getTopicSections } from '@/src/lib/supabase';
 import { TopicBlock } from '@/components/TopicBlock';
 import { useStocks } from '@/src/contexts/StockProvider';
 import { AccountMenu } from '@/components/AccountMenu';
-import { GlassSearchButton, GlassAvatarButton } from '@/components/GlassHeaderButtons';
+import { GlassSearchButton, GlassLoginButton } from '@/components/GlassHeaderButtons';
 
 interface Article {
   id: string;
@@ -25,6 +25,7 @@ interface Article {
 }
 
 export default function HomeScreen() {
+  const router = useRouter();
   const { tickers } = useStocks();
   const [mostRead, setMostRead] = useState<Article[]>([]);
   const [latest, setLatest] = useState<Article[]>([]);
@@ -35,6 +36,10 @@ export default function HomeScreen() {
   const [error, setError] = useState<string | null>(null);
   const [showSearch, setShowSearch] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
+
+  const handleLoginPress = () => {
+    router.push('/auth/login');
+  };
 
   const fetchData = async () => {
     try {
@@ -124,7 +129,7 @@ export default function HomeScreen() {
     title: 'AI Dagelijks',
     headerLargeTitleStyle: styles.largeTitleStyle,
     headerTitleStyle: styles.titleStyle,
-    headerLeft: () => <GlassAvatarButton onPress={() => setShowMenu(true)} />,
+    headerLeft: () => <GlassLoginButton onPress={handleLoginPress} />,
     headerRight: () => <GlassSearchButton onPress={() => setShowSearch(true)} />,
   };
 
@@ -164,7 +169,7 @@ export default function HomeScreen() {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#E36B2C" />
         }
       >
-        <MobileStocksStrip tickers={tickers} />
+        <AnimatedStocksTicker tickers={tickers} />
 
         <View style={styles.mostReadSection}>
           {mostRead.slice(0, 2).map((article) => (
