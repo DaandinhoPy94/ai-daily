@@ -30,7 +30,8 @@ struct Article: Identifiable, Codable, Hashable {
         if path.hasPrefix("http") {
             return URL(string: path)
         }
-        return URL(string: "\(SupabaseConfig.storageURL)/\(path)")
+        // Prepend 'media' bucket as per native app logic
+        return URL(string: "\(SupabaseConfig.storageURL)/media/\(path)")
     }
 
     // Formatted time ago

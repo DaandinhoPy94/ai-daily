@@ -11,14 +11,16 @@ import SwiftUI
 
 enum TabSelection: String, CaseIterable {
     case home = "house.fill"
-    case discover = "compass.fill"
-    case saved = "bookmark.fill"
+    case netBinnen = "clock.fill"
+    case myNews = "heart.fill"
+    case more = "ellipsis.circle.fill"
 
     var title: String {
         switch self {
         case .home: return "Home"
-        case .discover: return "Ontdek"
-        case .saved: return "Opgeslagen"
+        case .netBinnen: return "Net Binnen"
+        case .myNews: return "Mijn Nieuws"
+        case .more: return "Meer"
         }
     }
 }
@@ -29,93 +31,62 @@ struct ContentView: View {
     @StateObject private var viewModel = NewsViewModel()
     @State private var scrollOffset: CGFloat = 0
     @State private var selectedTab: TabSelection = .home
+    @State private var showSearch = false
+    @State private var showProfile = false
 
     private let coordinateSpaceName = "scroll"
 
     var body: some View {
         NavigationStack {
             ZStack(alignment: .bottom) {
-                // Main content
-                ZStack(alignment: .top) {
-                    // Scrollable content
-                    ScrollView(.vertical, showsIndicators: false) {
-                        VStack(spacing: 0) {
-                            // Offset reader
-                            GeometryReader { geometry in
-                                Color.clear.preference(
-                                    key: ScrollOffsetPreferenceKey.self,
-                                    value: geometry.frame(in: .named(coordinateSpaceName)).minY
-                                )
-                            }
-                            .frame(height: 0)
-
-                            // Large title area with logo
-                            VStack(alignment: .leading, spacing: 8) {
-                                // Logo image (falls back to text if not found)
-                                LogoView()
-                                    .frame(height: 32)
-
-                                Text("Het laatste AI nieuws")
-                                    .font(.subheadline)
-                                    .foregroundStyle(.secondary)
-                            }
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(.horizontal, 20)
-                            .padding(.top, 60)
-                            .padding(.bottom, 16)
-                            .opacity(largeTitleOpacity)
-
-                            // News feed
-                            if viewModel.isLoading && viewModel.latestArticles.isEmpty {
-                                LoadingView()
-                                    .padding(.top, 100)
-                            } else if let error = viewModel.error, viewModel.latestArticles.isEmpty {
-                                ErrorView(message: error) {
-                                    Task { await viewModel.refresh() }
-                                }
-                                .padding(.top, 100)
-                            } else {
-                                LazyVStack(spacing: 12) {
-                                    ForEach(viewModel.latestArticles) { article in
-                                        NewsCardView(article: article)
-                                    }
-                                }
-                                .padding(.horizontal, 16)
-                                .padding(.bottom, 120) // Space for tab bar
-                            }
-                        }
+                // Background
+                Color.brandBackground.ignoresSafeArea()
+                
+                // Main Content
+                Group {
+                    switch selectedTab {
+                    case .home:
+                        homeView
+                    case .netBinnen:
+                        NetBinnenView(viewModel: viewModel)
+                    case .myNews:
+                        ContentUnavailableView("Mijn Nieuws", systemImage: "heart", description: Text("Binnenkort beschikbaar"))
+                    case .more:
+                        MoreView()
                     }
-                    .coordinateSpace(name: coordinateSpaceName)
-                    .onPreferenceChange(ScrollOffsetPreferenceKey.self) { value in
-                        scrollOffset = value
-                    }
-                    .ignoresSafeArea(edges: .top)
-                    .refreshable {
-                        await viewModel.refresh()
-                    }
-
-                    // Glassmorphism header overlay
-                    GlassHeaderView(
-                        scrollOffset: scrollOffset,
-                        headerOpacity: headerMaterialOpacity
-                    )
                 }
-
+                
                 // Floating glass tab bar
                 FloatingTabBar(selectedTab: $selectedTab)
                     .padding(.horizontal, 60)
                     .padding(.bottom, 28)
+                
+                // Search Overlay
+                if showSearch {
+                    SearchView(isPresented: $showSearch)
+                        .zIndex(2)
+                }
+            }
+            .navigationDestination(for: Article.self) { article in
+                ArticleDetailView(article: article)
+            }
+            .sheet(isPresented: $showProfile) {
+                ProfileView()
             }
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     HStack(spacing: 16) {
-                        Button(action: { }) {
+                        Button(action: { 
+                            withAnimation {
+                                showSearch = true 
+                            }
+                        }) {
                             Image(systemName: "magnifyingglass")
                                 .font(.system(size: 17, weight: .medium))
                                 .foregroundStyle(.primary)
                         }
 
-                        Button(action: { }) {
+                        Button(action: { showProfile = true }) {
                             Image(systemName: "person.circle")
                                 .font(.system(size: 20, weight: .regular))
                                 .foregroundStyle(.primary)
@@ -134,6 +105,87 @@ struct ContentView: View {
         }
         .task {
             await viewModel.refresh()
+        }
+    }
+
+    // MARK: - Home View
+    
+    private var homeView: some View {
+        ZStack(alignment: .top) {
+            // Scrollable content
+            ScrollView(.vertical, showsIndicators: false) {
+                VStack(spacing: 0) {
+                    // Offset reader
+                    GeometryReader { geometry in
+                        Color.clear.preference(
+                            key: ScrollOffsetPreferenceKey.self,
+                            value: geometry.frame(in: .named(coordinateSpaceName)).minY
+                        )
+                    }
+                    .frame(height: 0)
+
+                    // Large title area with logo
+                    VStack(alignment: .leading, spacing: 8) {
+                        // Logo image (falls back to text if not found)
+                        LogoView()
+                            .frame(height: 32)
+
+                        Text("Het laatste AI nieuws")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal, 20)
+                    .padding(.top, 60)
+                    .padding(.bottom, 16)
+                    .opacity(largeTitleOpacity)
+
+                    // News feed
+                    if viewModel.isLoading && viewModel.latestArticles.isEmpty {
+                        LoadingView()
+                            .padding(.top, 100)
+                    } else if let error = viewModel.error, viewModel.latestArticles.isEmpty {
+                        ErrorView(message: error) {
+                            Task { await viewModel.refresh() }
+                        }
+                        .padding(.top, 100)
+                    } else {
+                        LazyVStack(spacing: 16) {
+                            // First 2 Large Cards
+                            ForEach(viewModel.latestArticles.prefix(2)) { article in
+                                NavigationLink(value: article) {
+                                    LargeNewsCardView(article: article)
+                                }
+                                .buttonStyle(PlainButtonStyle())
+                            }
+                            
+                            // Rest Small Cards
+                            ForEach(viewModel.latestArticles.dropFirst(2)) { article in
+                                NavigationLink(value: article) {
+                                    SmallNewsCardView(article: article)
+                                }
+                                .buttonStyle(PlainButtonStyle())
+                            }
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.bottom, 120) // Space for tab bar
+                    }
+                }
+            }
+            .coordinateSpace(name: coordinateSpaceName)
+            .onPreferenceChange(ScrollOffsetPreferenceKey.self) { value in
+                scrollOffset = value
+            }
+            .ignoresSafeArea(edges: .top)
+            .refreshable {
+                await viewModel.refresh()
+            }
+
+            // Glassmorphism header overlay
+            GlassHeaderView(
+                scrollOffset: scrollOffset,
+                headerOpacity: headerMaterialOpacity
+            )
         }
     }
 
@@ -220,23 +272,43 @@ struct FloatingTabBar: View {
                         Image(systemName: tab.rawValue)
                             .font(.system(size: 20, weight: selectedTab == tab ? .semibold : .regular))
                             .symbolRenderingMode(.hierarchical)
+                            .scaleEffect(selectedTab == tab ? 1.1 : 1.0) // Lift effect
 
                         Text(tab.title)
                             .font(.system(size: 10, weight: .medium))
                     }
-                    .foregroundStyle(selectedTab == tab ? .primary : .secondary)
+                    .foregroundStyle(selectedTab == tab ? Color.brandOrange : .secondary)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 10)
+                    .contentShape(Rectangle())
                 }
+                .buttonStyle(TabButtonStyle()) // Add press effect
             }
         }
         .padding(.horizontal, 8)
         .padding(.vertical, 6)
         .background(
-            Capsule()
-                .fill(.ultraThinMaterial)
-                .shadow(color: .black.opacity(0.15), radius: 20, x: 0, y: 10)
+            ZStack {
+                // Custom blur layer for "frosted" look
+                Rectangle()
+                    .fill(.ultraThinMaterial)
+                    .opacity(0.95) // Increased opacity for better blur visibility
+                
+                // Subtle white tint for "glass" feel
+                Rectangle()
+                    .fill(Color.white.opacity(0.1))
+            }
+            .clipShape(Capsule())
+            .shadow(color: .black.opacity(0.15), radius: 20, x: 0, y: 10)
         )
+    }
+}
+
+struct TabButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .scaleEffect(configuration.isPressed ? 0.9 : 1)
+            .animation(.spring(response: 0.2, dampingFraction: 0.6), value: configuration.isPressed)
     }
 }
 
@@ -266,115 +338,7 @@ struct GlassHeaderView: View {
 
 // MARK: - News Card View (Horizontal Layout)
 
-struct NewsCardView: View {
-    let article: Article
-    @State private var isPressed = false
 
-    var body: some View {
-        Button {
-            // TODO: Navigate to article detail
-        } label: {
-            HStack(spacing: 12) {
-                // Thumbnail (left side)
-                AsyncImage(url: article.imageURL) { phase in
-                    switch phase {
-                    case .empty:
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(Color(.systemGray5))
-                            .overlay {
-                                ProgressView()
-                                    .tint(.secondary)
-                            }
-                    case .success(let image):
-                        image
-                            .resizable()
-                            .scaledToFill()
-                    case .failure:
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(
-                                LinearGradient(
-                                    colors: [Color(.systemGray4), Color(.systemGray5)],
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                )
-                            )
-                            .overlay {
-                                Image(systemName: "photo")
-                                    .font(.title2)
-                                    .foregroundStyle(.tertiary)
-                            }
-                    @unknown default:
-                        EmptyView()
-                    }
-                }
-                .frame(width: 120, height: 80)
-                .clipShape(RoundedRectangle(cornerRadius: 12))
-
-                // Text content (right side)
-                VStack(alignment: .leading, spacing: 6) {
-                    // Meta info
-                    HStack(spacing: 6) {
-                        if let topicName = article.topicName {
-                            Text(topicName)
-                                .font(.system(size: 11, weight: .semibold))
-                                .foregroundStyle(.blue)
-                        }
-
-                        if article.topicName != nil && !article.readTimeDisplay.isEmpty {
-                            Circle()
-                                .fill(.tertiary)
-                                .frame(width: 3, height: 3)
-                        }
-
-                        if !article.readTimeDisplay.isEmpty {
-                            Text(article.readTimeDisplay)
-                                .font(.system(size: 11))
-                                .foregroundStyle(.tertiary)
-                        }
-                    }
-
-                    // Title
-                    Text(article.title)
-                        .font(.system(size: 15, weight: .semibold))
-                        .foregroundStyle(.primary)
-                        .lineLimit(2)
-                        .multilineTextAlignment(.leading)
-
-                    // Time ago
-                    if !article.timeAgo.isEmpty {
-                        Text(article.timeAgo)
-                            .font(.system(size: 11))
-                            .foregroundStyle(.tertiary)
-                    }
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-
-                // Chevron
-                Image(systemName: "chevron.right")
-                    .font(.system(size: 12, weight: .semibold))
-                    .foregroundStyle(.tertiary)
-            }
-            .padding(12)
-            .background(
-                RoundedRectangle(cornerRadius: 20)
-                    .fill(Color(.systemBackground))
-                    .shadow(color: .black.opacity(0.04), radius: 8, x: 0, y: 2)
-            )
-        }
-        .buttonStyle(CardButtonStyle())
-    }
-}
-
-// MARK: - Card Button Style
-
-struct CardButtonStyle: ButtonStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .scaleEffect(configuration.isPressed ? 0.98 : 1)
-            .opacity(configuration.isPressed ? 0.9 : 1)
-            .animation(.easeInOut(duration: 0.15), value: configuration.isPressed)
-    }
-}
 
 // MARK: - Loading View
 
