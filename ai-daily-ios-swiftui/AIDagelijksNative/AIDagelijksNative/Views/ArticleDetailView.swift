@@ -252,8 +252,6 @@ struct ArticleDetailView: View {
                     .frame(width: geometry.size.width) // Force the content to fit the screen width
                 }
             }
-            .background(Color.brandBackground)
-            .ignoresSafeArea(edges: .top)
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(.bar, for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
@@ -265,7 +263,7 @@ struct ArticleDetailView: View {
             }
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    HStack(spacing: 12) {
+                    HStack(spacing: 16) {
                         // Share Button
                         ShareLink(item: URL(string: "https://aidagelijks.nl/artikel/\(article.slug)")!) {
                             Image(systemName: "square.and.arrow.up")
