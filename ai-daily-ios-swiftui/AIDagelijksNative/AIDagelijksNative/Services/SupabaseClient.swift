@@ -51,7 +51,9 @@ actor SupabaseClient {
         order: String? = nil,
         limit: Int? = nil
     ) async throws -> [T] {
-        var components = URLComponents(url: baseURL.appendingPathComponent(table), resolvingAgainstBaseURL: false)!
+        guard var components = URLComponents(url: baseURL.appendingPathComponent(table), resolvingAgainstBaseURL: false) else {
+            throw SupabaseError.invalidURL
+        }
 
         var queryItems = [URLQueryItem(name: "select", value: select)]
 
@@ -69,7 +71,11 @@ actor SupabaseClient {
 
         components.queryItems = queryItems
 
-        var request = URLRequest(url: components.url!)
+        guard let url = components.url else {
+            throw SupabaseError.invalidURL
+        }
+
+        var request = URLRequest(url: url)
         request.httpMethod = "GET"
         headers.forEach { request.setValue($0.value, forHTTPHeaderField: $0.key) }
 
