@@ -18,13 +18,13 @@ struct CommentRow: View {
                     .clipShape(Circle())
                 } else {
                     Circle()
-                        .fill(Color.brandOrange.opacity(0.1))
+                        .fill(Color.brandTeal.opacity(0.1))
                         .frame(width: 32, height: 32)
                         .overlay(
                             Text(String(comment.userName.prefix(1)))
                                 .font(.caption)
                                 .fontWeight(.bold)
-                                .foregroundStyle(Color.brandOrange)
+                                .foregroundStyle(Color.brandTeal)
                         )
                 }
                 

@@ -38,7 +38,7 @@ struct LargeNewsCardView: View {
                     if let topicName = article.topicName {
                         Text(topicName)
                             .font(.system(size: 13, weight: .semibold))
-                            .foregroundStyle(Color.brandOrange)
+                            .foregroundStyle(Color.brandTeal)
                     }
                     
                     if !article.timeAgo.isEmpty {

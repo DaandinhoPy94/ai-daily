@@ -36,7 +36,7 @@ struct SmallNewsCardView: View {
                     if let topicName = article.topicName {
                         Text(topicName)
                             .font(.system(size: 11, weight: .semibold))
-                            .foregroundStyle(Color.brandOrange)
+                            .foregroundStyle(Color.brandTeal)
                     }
                     
                     if !article.readTimeDisplay.isEmpty {
