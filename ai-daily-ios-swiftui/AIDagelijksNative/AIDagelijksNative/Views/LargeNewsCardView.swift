@@ -6,7 +6,7 @@ struct LargeNewsCardView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             // Hero Image
-            AsyncImage(url: article.imageURL) { phase in
+            AsyncImage(url: article.heroImageURL) { phase in
                 switch phase {
                 case .empty:
                     Rectangle()

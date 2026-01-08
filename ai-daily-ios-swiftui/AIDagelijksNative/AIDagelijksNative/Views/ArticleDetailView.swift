@@ -8,7 +8,7 @@ struct ArticleDetailView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
                 // Hero Image
-                AsyncImage(url: article.imageURL) { phase in
+                AsyncImage(url: article.heroImageURL) { phase in
                     switch phase {
                     case .empty:
                         Rectangle()

@@ -23,15 +23,24 @@ struct Article: Identifiable, Codable, Hashable {
     let topicName: String?
     let topicSlug: String?
 
-    // Computed property for image URL
-    var imageURL: URL? {
-        guard let path = imagePath else { return nil }
-        // Handle both full URLs and storage paths
-        if path.hasPrefix("http") {
-            return URL(string: path)
-        }
-        // Prepend 'media' bucket as per native app logic
-        return URL(string: "\(SupabaseConfig.storageURL)/media/\(path)")
+    // Computed properties for different image types
+    var heroImageURL: URL? {
+        return constructImageURL(type: "hero", width: 1200)
+    }
+
+    var listThumbURL: URL? {
+        return constructImageURL(type: "list", width: 480)
+    }
+
+    var standardImageURL: URL? {
+        return constructImageURL(type: "standard", width: 400)
+    }
+
+    private func constructImageURL(type: String, width: Int) -> URL? {
+        // Use the article ID to construct the path as per imagesBase.ts
+        // Path: {storageURL}/media/articles/{id}/{type}_{width}.webp
+        let urlString = "\(SupabaseConfig.storageURL)/media/articles/\(id)/\(type)_\(width).webp"
+        return URL(string: urlString)
     }
 
     // Formatted time ago

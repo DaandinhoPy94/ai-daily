@@ -6,7 +6,7 @@ struct SmallNewsCardView: View {
     var body: some View {
         HStack(spacing: 12) {
             // Thumbnail (Left)
-            AsyncImage(url: article.imageURL) { phase in
+            AsyncImage(url: article.listThumbURL) { phase in
                 switch phase {
                 case .empty:
                     Rectangle()
