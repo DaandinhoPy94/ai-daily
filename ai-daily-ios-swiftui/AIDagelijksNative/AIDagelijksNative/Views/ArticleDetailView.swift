@@ -133,7 +133,7 @@ struct ArticleDetailView: View {
                             }
                             
                             ScrollView(.horizontal, showsIndicators: false) {
-                                HStack(spacing: 16) {
+                                HStack(alignment: .top, spacing: 16) {
                                     ForEach(viewModel.latestArticles.prefix(5)) { item in
                                         NavigationLink(destination: ArticleDetailView(article: item)) {
                                             VStack(alignment: .leading, spacing: 8) {
@@ -172,7 +172,7 @@ struct ArticleDetailView: View {
                                 
                                 ForEach(viewModel.relatedArticles) { related in
                                     NavigationLink(destination: ArticleDetailView(article: related)) {
-                                        HStack(spacing: 12) {
+                                        HStack(alignment: .top, spacing: 12) {
                                             AsyncImage(url: related.listThumbURL) { image in
                                                 image.resizable().scaledToFill()
                                             } placeholder: {
@@ -193,7 +193,7 @@ struct ArticleDetailView: View {
                                                 Text(related.title)
                                                     .font(.subheadline)
                                                     .fontWeight(.semibold)
-                                                    .lineLimit(2)
+                                                    .lineLimit(3)
                                                     .multilineTextAlignment(.leading)
                                                     .foregroundStyle(.primary)
                                             }
