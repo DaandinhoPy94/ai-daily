@@ -94,10 +94,12 @@ struct ContentView: View {
                     }
                 }
 
-                ToolbarItem(placement: .principal) {
-                    LogoView()
-                        .frame(height: 20)
-                        .opacity(smallTitleOpacity)
+                if selectedTab != .netBinnen {
+                    ToolbarItem(placement: .principal) {
+                        LogoView()
+                            .frame(height: 20)
+                            .opacity(smallTitleOpacity)
+                    }
                 }
             }
             .toolbarBackground(.hidden, for: .navigationBar)
