@@ -32,6 +32,6 @@ struct SearchView: View {
             .searchFocused($isSearchFocused)
             .onAppear { isSearchFocused = true }
         }
-        .tint(Color.brandOrange)
+        .tint(Color.brandTeal)
     }
 }

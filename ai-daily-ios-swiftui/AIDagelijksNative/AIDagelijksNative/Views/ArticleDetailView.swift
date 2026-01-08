@@ -39,7 +39,7 @@ struct ArticleDetailView: View {
                                     Text(topic)
                                         .font(.subheadline)
                                         .fontWeight(.semibold)
-                                        .foregroundStyle(Color.brandOrange)
+                                        .foregroundStyle(Color.brandTeal)
                                 }
                                 
                                 Spacer()
@@ -85,7 +85,7 @@ struct ArticleDetailView: View {
                                 // Simulating bullet points since we only have a summary string
                                 HStack(alignment: .top, spacing: 12) {
                                     Circle()
-                                        .fill(Color.brandOrange)
+                                        .fill(Color.brandTeal)
                                         .frame(width: 6, height: 6)
                                         .padding(.top, 8)
                                     
@@ -128,7 +128,7 @@ struct ArticleDetailView: View {
                                 NavigationLink(destination: Text("Net Binnen Pagina")) { // Replace with actual destination
                                     Text("Net binnen")
                                         .font(.subheadline)
-                                        .foregroundStyle(Color.brandOrange)
+                                        .foregroundStyle(Color.brandTeal)
                                 }
                             }
                             
@@ -187,7 +187,7 @@ struct ArticleDetailView: View {
                                                     Text(topic)
                                                         .font(.caption2)
                                                         .fontWeight(.bold)
-                                                        .foregroundStyle(Color.brandOrange)
+                                                        .foregroundStyle(Color.brandTeal)
                                                 }
                                                 
                                                 Text(related.title)

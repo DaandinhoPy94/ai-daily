@@ -39,7 +39,7 @@ struct ProfileView: View {
             if showsDoneButton {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Gereed") { dismiss() }
-                        .foregroundStyle(Color.brandOrange)
+                        .foregroundStyle(Color.brandTeal)
                 }
             }
         }
@@ -65,7 +65,7 @@ struct ProfileView: View {
                         PhotosPicker(selection: $selectedAvatarItem, matching: .images) {
                             Text(isUploadingAvatar ? "Uploaden…" : "Foto wijzigen")
                                 .font(.footnote)
-                                .foregroundStyle(Color.brandOrange)
+                                .foregroundStyle(Color.brandTeal)
                         }
                         .disabled(isUploadingAvatar)
                     }
@@ -84,7 +84,7 @@ struct ProfileView: View {
 
             Section(header: Text("Voorkeuren")) {
                 Toggle("Nieuwsbrief", isOn: $newsletter)
-                    .tint(Color.brandOrange)
+                    .tint(Color.brandTeal)
                     .onChange(of: newsletter) { newValue in
                         Task { _ = await auth.updateEmailOptIn(newValue) }
                     }
@@ -106,7 +106,7 @@ struct ProfileView: View {
                     }
                 }
                 .frame(maxWidth: .infinity)
-                .foregroundStyle(Color.brandOrange)
+                .foregroundStyle(Color.brandTeal)
                 .fontWeight(.semibold)
 
                 Button("Uitloggen") {
