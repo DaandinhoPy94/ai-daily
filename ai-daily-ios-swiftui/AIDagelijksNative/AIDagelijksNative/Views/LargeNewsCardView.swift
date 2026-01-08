@@ -4,7 +4,7 @@ struct LargeNewsCardView: View {
     let article: Article
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: 8) {
             // Hero Image
             AsyncImage(url: article.heroImageURL) { phase in
                 switch phase {
@@ -66,8 +66,8 @@ struct LargeNewsCardView: View {
                         .multilineTextAlignment(.leading)
                 }
             }
-            .padding(.horizontal, 4)
-            .padding(.bottom, 12)
+            .padding(.horizontal, 16)
+            .padding(.bottom, 16)
         }
         .background(.background, in: RoundedRectangle(cornerRadius: 20, style: .continuous))
         .overlay(
