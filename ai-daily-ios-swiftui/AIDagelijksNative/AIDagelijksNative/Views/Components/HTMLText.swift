@@ -36,12 +36,14 @@ struct HTMLText: UIViewRepresentable {
         """
         
         if let data = styledHTML.data(using: .utf8) {
-            if let attributedString = try? NSAttributedString(
-                data: data,
-                options: [.documentType: NSAttributedString.DocumentType.html, .characterEncoding: String.Encoding.utf8.rawValue],
-                documentAttributes: nil
-            ) {
-                uiView.attributedText = attributedString
+            DispatchQueue.main.async {
+                if let attributedString = try? NSAttributedString(
+                    data: data,
+                    options: [.documentType: NSAttributedString.DocumentType.html, .characterEncoding: String.Encoding.utf8.rawValue],
+                    documentAttributes: nil
+                ) {
+                    uiView.attributedText = attributedString
+                }
             }
         }
     }

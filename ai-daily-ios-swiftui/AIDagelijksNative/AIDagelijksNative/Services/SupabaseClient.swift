@@ -11,12 +11,11 @@ import Foundation
 
 enum SupabaseConfig {
     // Development credentials (same as web app fallbacks)
-    // nonisolated(unsafe) allows access from any isolation context (safe for immutable constants)
-    nonisolated(unsafe) static let url = "https://ykfiubiogxetbgdkavep.supabase.co"
-    nonisolated(unsafe) static let anonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlrZml1YmlvZ3hldGJnZGthdmVwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY1NTA1MzcsImV4cCI6MjA3MjEyNjUzN30.MuTGy7n4nCZcsE7qdAmu51CJSyIuU2ePeKHTbBlReNg"
+    static let url = "https://ykfiubiogxetbgdkavep.supabase.co"
+    static let anonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlrZml1YmlvZ3hldGJnZGthdmVwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY1NTA1MzcsImV4cCI6MjA3MjEyNjUzN30.MuTGy7n4nCZcsE7qdAmu51CJSyIuU2ePeKHTbBlReNg"
 
     // Storage bucket URL for images
-    nonisolated(unsafe) static let storageURL = "\(url)/storage/v1/object/public"
+    static let storageURL = "\(url)/storage/v1/object/public"
 }
 
 // MARK: - Supabase Client
