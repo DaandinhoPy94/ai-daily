@@ -34,6 +34,16 @@ export default function RootLayout() {
                 headerTintColor: '#0a0a0a',
               }}
             />
+            <Stack.Screen
+              name="topic/[slug]"
+              options={{
+                headerShown: true,
+                headerTransparent: true,
+                headerBlurEffect: 'systemMaterial',
+                headerBackTitle: 'Terug',
+                headerTintColor: '#0a0a0a',
+              }}
+            />
           </Stack>
         </StockProvider>
       </QueryClientProvider>

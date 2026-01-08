@@ -1,10 +1,11 @@
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet, TextInput } from 'react-native';
-import { Stack } from 'expo-router';
-import { ChevronRight, X, Search } from 'lucide-react-native';
+import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
+import { Stack, useRouter } from 'expo-router';
+import { ChevronRight, Search } from 'lucide-react-native';
 import { SearchModal } from '@/components/SearchModal';
 import { useState, useEffect } from 'react';
 import { getMainTopics } from '@/src/lib/supabase';
 import { AccountMenu } from '@/components/AccountMenu';
+import { GlassSearchButton, GlassAvatarButton } from '@/components/GlassHeaderButtons';
 
 interface Topic {
   id: string;
@@ -12,27 +13,8 @@ interface Topic {
   slug: string;
 }
 
-// Native header button components
-function HeaderRight({ onSearchPress }: { onSearchPress: () => void }) {
-  return (
-    <TouchableOpacity onPress={onSearchPress} style={styles.headerButton}>
-      <Search size={22} color="#0a0a0a" strokeWidth={2} />
-    </TouchableOpacity>
-  );
-}
-
-function HeaderLeft({ onPress }: { onPress: () => void }) {
-  return (
-    <TouchableOpacity onPress={onPress} style={styles.headerButton}>
-      <View style={styles.avatar}>
-        <Text style={styles.avatarText}>D</Text>
-      </View>
-    </TouchableOpacity>
-  );
-}
-
 export default function MeerScreen() {
-  const [searchQuery, setSearchQuery] = useState('');
+  const router = useRouter();
   const [showSearch, setShowSearch] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [mainTopics, setMainTopics] = useState<Topic[]>([]);
@@ -54,6 +36,10 @@ export default function MeerScreen() {
     loadTopics();
   }, []);
 
+  const handleTopicPress = (topic: Topic) => {
+    router.push(`/topic/${topic.slug}` as any);
+  };
+
   return (
     <>
       {/* Native header with GPU-accelerated Liquid Glass blur */}
@@ -68,8 +54,8 @@ export default function MeerScreen() {
           title: 'Meer',
           headerLargeTitleStyle: styles.largeTitleStyle,
           headerTitleStyle: styles.titleStyle,
-          headerLeft: () => <HeaderLeft onPress={() => setShowMenu(true)} />,
-          headerRight: () => <HeaderRight onSearchPress={() => setShowSearch(true)} />,
+          headerLeft: () => <GlassAvatarButton onPress={() => setShowMenu(true)} />,
+          headerRight: () => <GlassSearchButton onPress={() => setShowSearch(true)} />,
         }}
       />
 
@@ -81,35 +67,30 @@ export default function MeerScreen() {
       >
         {/* Search Bar */}
         <View style={styles.searchContainer}>
-          <View style={styles.searchBar}>
+          <TouchableOpacity
+            style={styles.searchBar}
+            onPress={() => setShowSearch(true)}
+            activeOpacity={0.7}
+          >
             <Search size={20} color="#71717a" strokeWidth={2} />
-            <TextInput
-              value={searchQuery}
-              onChangeText={setSearchQuery}
-              placeholder="Zoek in artikelen..."
-              placeholderTextColor="#71717a"
-              style={styles.searchInput}
-            />
-            {searchQuery.length > 0 && (
-              <TouchableOpacity onPress={() => setSearchQuery('')}>
-                <X size={20} color="#71717a" strokeWidth={2} />
-              </TouchableOpacity>
-            )}
-          </View>
+            <Text style={styles.searchPlaceholder}>Zoek in artikelen...</Text>
+          </TouchableOpacity>
         </View>
 
-        {/* Alle onderwerpen */}
-        <TouchableOpacity style={styles.topicItem}>
-          <Text style={styles.topicText}>Alle onderwerpen</Text>
-          <ChevronRight size={20} color="#71717a" strokeWidth={2} />
-        </TouchableOpacity>
+        {/* Section Header */}
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>Onderwerpen</Text>
+        </View>
 
-        {/* Simply render all topics */}
-        {mainTopics.map((topic, index) => (
-          <TouchableOpacity key={topic.id} style={styles.topicItem}>
-            <Text style={styles.topicText}>
-              {index + 1}. {topic.name}
-            </Text>
+        {/* Render all topics with navigation */}
+        {mainTopics.map((topic) => (
+          <TouchableOpacity
+            key={topic.id}
+            style={styles.topicItem}
+            onPress={() => handleTopicPress(topic)}
+            activeOpacity={0.7}
+          >
+            <Text style={styles.topicText}>{topic.name}</Text>
             <ChevronRight size={20} color="#71717a" strokeWidth={2} />
           </TouchableOpacity>
         ))}
@@ -117,7 +98,14 @@ export default function MeerScreen() {
         {/* Show if empty */}
         {mainTopics.length === 0 && !loading && (
           <View style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>Geen topics!</Text>
+            <Text style={styles.emptyText}>Geen onderwerpen gevonden</Text>
+          </View>
+        )}
+
+        {/* Loading state */}
+        {loading && (
+          <View style={styles.loadingContainer}>
+            <Text style={styles.loadingText}>Laden...</Text>
           </View>
         )}
       </ScrollView>
@@ -145,22 +133,32 @@ const styles = StyleSheet.create({
   searchContainer: {
     padding: 16,
     paddingBottom: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: '#e4e4e7',
   },
   searchBar: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#f4f4f5',
-    borderRadius: 8,
+    borderRadius: 10,
     paddingHorizontal: 12,
-    paddingVertical: 10,
+    paddingVertical: 12,
     gap: 8,
   },
-  searchInput: {
+  searchPlaceholder: {
     flex: 1,
     fontSize: 16,
-    color: '#0a0a0a',
+    color: '#71717a',
+  },
+  sectionHeader: {
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: '#fafafa',
+  },
+  sectionTitle: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#71717a',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
   topicItem: {
     flexDirection: 'row',
@@ -169,36 +167,29 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     paddingHorizontal: 16,
     backgroundColor: '#ffffff',
-    borderBottomWidth: 1,
+    borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: '#e4e4e7',
   },
   topicText: {
-    fontSize: 16,
-    fontWeight: '500',
+    fontSize: 17,
+    fontWeight: '400',
     color: '#0a0a0a',
   },
   emptyContainer: {
-    padding: 16,
+    padding: 24,
+    alignItems: 'center',
   },
   emptyText: {
-    color: '#dc2626',
-    fontSize: 14,
+    color: '#71717a',
+    fontSize: 15,
   },
-  headerButton: {
-    padding: 8,
-  },
-  avatar: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: '#E36B2C',
+  loadingContainer: {
+    padding: 24,
     alignItems: 'center',
-    justifyContent: 'center',
   },
-  avatarText: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#ffffff',
+  loadingText: {
+    color: '#71717a',
+    fontSize: 15,
   },
   largeTitleStyle: {
     fontFamily: 'Georgia',

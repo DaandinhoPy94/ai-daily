@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { View, Text, ScrollView, RefreshControl, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, ScrollView, RefreshControl, StyleSheet } from 'react-native';
 import { Stack } from 'expo-router';
 import { LargeNewsCard } from '@/components/LargeNewsCard';
 import { ArticleListRow } from '@/components/ArticleListRow';
@@ -10,8 +10,8 @@ import { SearchModal } from '@/components/SearchModal';
 import { getMostRead, getLatest, getTopicSections } from '@/src/lib/supabase';
 import { TopicBlock } from '@/components/TopicBlock';
 import { useStocks } from '@/src/contexts/StockProvider';
-import { Search, User } from 'lucide-react-native';
 import { AccountMenu } from '@/components/AccountMenu';
+import { GlassSearchButton, GlassAvatarButton } from '@/components/GlassHeaderButtons';
 
 interface Article {
   id: string;
@@ -22,25 +22,6 @@ interface Article {
   topicName?: string;
   media_asset_url?: string;
   media_asset_alt?: string;
-}
-
-// Native header button components
-function HeaderRight({ onSearchPress }: { onSearchPress: () => void }) {
-  return (
-    <TouchableOpacity onPress={onSearchPress} style={styles.headerButton}>
-      <Search size={22} color="#0a0a0a" strokeWidth={2} />
-    </TouchableOpacity>
-  );
-}
-
-function HeaderLeft({ onPress }: { onPress: () => void }) {
-  return (
-    <TouchableOpacity onPress={onPress} style={styles.headerButton}>
-      <View style={styles.avatar}>
-        <Text style={styles.avatarText}>D</Text>
-      </View>
-    </TouchableOpacity>
-  );
 }
 
 export default function HomeScreen() {
@@ -91,7 +72,9 @@ export default function HomeScreen() {
       setMostRead(mostReadArticles);
       setLatest(latestArticles);
 
-      const firstSection = (topicSections || []).find((s: any) => s.is_active && s.articles && s.articles.length > 0);
+      const firstSection = (topicSections || []).find(
+        (s: any) => s.is_active && s.articles && s.articles.length > 0
+      );
       if (firstSection) {
         setTopicHeading(firstSection.heading);
         const mapped = firstSection.articles.slice(0, 4).map((a: any) => ({
@@ -130,22 +113,25 @@ export default function HomeScreen() {
     setRefreshing(false);
   };
 
+  // Common header options for all states
+  const headerOptions = {
+    headerShown: true,
+    headerTransparent: true,
+    headerBlurEffect: 'systemMaterial' as const,
+    headerLargeTitle: true,
+    headerLargeTitleShadowVisible: false,
+    headerShadowVisible: false,
+    title: 'AI Dagelijks',
+    headerLargeTitleStyle: styles.largeTitleStyle,
+    headerTitleStyle: styles.titleStyle,
+    headerLeft: () => <GlassAvatarButton onPress={() => setShowMenu(true)} />,
+    headerRight: () => <GlassSearchButton onPress={() => setShowSearch(true)} />,
+  };
+
   if (loading) {
     return (
       <>
-        <Stack.Screen
-          options={{
-            headerShown: true,
-            headerTransparent: true,
-            headerBlurEffect: 'systemMaterial',
-            headerLargeTitle: true,
-            headerLargeTitleShadowVisible: false,
-            headerShadowVisible: false,
-            title: 'AI Dagelijks',
-            headerLargeTitleStyle: styles.largeTitleStyle,
-            headerTitleStyle: styles.titleStyle,
-          }}
-        />
+        <Stack.Screen options={headerOptions} />
         <LoadingSkeleton />
       </>
     );
@@ -154,19 +140,7 @@ export default function HomeScreen() {
   if (error) {
     return (
       <>
-        <Stack.Screen
-          options={{
-            headerShown: true,
-            headerTransparent: true,
-            headerBlurEffect: 'systemMaterial',
-            headerLargeTitle: true,
-            headerLargeTitleShadowVisible: false,
-            headerShadowVisible: false,
-            title: 'AI Dagelijks',
-            headerLargeTitleStyle: styles.largeTitleStyle,
-            headerTitleStyle: styles.titleStyle,
-          }}
-        />
+        <Stack.Screen options={headerOptions} />
         <View style={styles.errorContainer}>
           <Text style={styles.errorText}>{error}</Text>
           <Text style={styles.errorHint}>Trek naar beneden om opnieuw te laden</Text>
@@ -178,21 +152,7 @@ export default function HomeScreen() {
   return (
     <>
       {/* Native header with GPU-accelerated Liquid Glass blur */}
-      <Stack.Screen
-        options={{
-          headerShown: true,
-          headerTransparent: true,
-          headerBlurEffect: 'systemMaterial',
-          headerLargeTitle: true,
-          headerLargeTitleShadowVisible: false,
-          headerShadowVisible: false,
-          title: 'AI Dagelijks',
-          headerLargeTitleStyle: styles.largeTitleStyle,
-          headerTitleStyle: styles.titleStyle,
-          headerLeft: () => <HeaderLeft onPress={() => setShowMenu(true)} />,
-          headerRight: () => <HeaderRight onSearchPress={() => setShowSearch(true)} />,
-        }}
-      />
+      <Stack.Screen options={headerOptions} />
 
       {/* Edge-to-edge ScrollView - content scrolls behind native header */}
       <ScrollView
@@ -201,11 +161,7 @@ export default function HomeScreen() {
         contentContainerStyle={styles.scrollContent}
         scrollEventThrottle={16}
         refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            tintColor="#E36B2C"
-          />
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#E36B2C" />
         }
       >
         <MobileStocksStrip tickers={tickers} />
@@ -281,22 +237,6 @@ const styles = StyleSheet.create({
     color: '#71717a',
     textAlign: 'center',
     fontSize: 14,
-  },
-  headerButton: {
-    padding: 8,
-  },
-  avatar: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: '#E36B2C',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  avatarText: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#ffffff',
   },
   largeTitleStyle: {
     fontFamily: 'Georgia',

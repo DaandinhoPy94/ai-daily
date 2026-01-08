@@ -1,15 +1,13 @@
 import { useState, useEffect } from 'react';
-import { View, Text, ScrollView, ActivityIndicator, StyleSheet, Image } from 'react-native';
-import { StatusBar } from 'expo-status-bar';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useLocalSearchParams } from 'expo-router';
-import { ArticleHeader } from '@/components/ArticleHeader';
+import { View, Text, ScrollView, ActivityIndicator, StyleSheet, Image, TouchableOpacity, Share } from 'react-native';
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { ArticleMeta } from '@/components/ArticleMeta';
 import { SummaryBox } from '@/components/SummaryBox';
 import { RelatedTopicsNative } from '@/components/RelatedTopicsNative';
 import { RelatedListNative } from '@/components/RelatedListNative';
 import { supabase } from '@/src/lib/supabase';
 import { getHeroImage } from '@/src/lib/imagesBase';
+import { Share2, Bookmark, ChevronLeft } from 'lucide-react-native';
 
 interface Article {
   id: string;
@@ -23,20 +21,67 @@ interface Article {
   topics?: Array<{ id: string; name: string; slug: string }>;
 }
 
+// Header button components
+function HeaderLeft() {
+  const router = useRouter();
+  return (
+    <TouchableOpacity onPress={() => router.back()} style={styles.headerButton}>
+      <ChevronLeft size={28} color="#0a0a0a" strokeWidth={2} />
+    </TouchableOpacity>
+  );
+}
+
+function HeaderRight({ articleTitle }: { articleTitle?: string }) {
+  const [isBookmarked, setIsBookmarked] = useState(false);
+
+  const handleShare = async () => {
+    try {
+      await Share.share({
+        message: articleTitle || 'Check dit artikel op AI Dagelijks',
+        title: articleTitle,
+      });
+    } catch (error) {
+      console.error('Share error:', error);
+    }
+  };
+
+  return (
+    <View style={styles.headerRightContainer}>
+      <TouchableOpacity onPress={() => setIsBookmarked(!isBookmarked)} style={styles.headerButton}>
+        <Bookmark
+          size={22}
+          color={isBookmarked ? '#E36B2C' : '#0a0a0a'}
+          fill={isBookmarked ? '#E36B2C' : 'none'}
+          strokeWidth={2}
+        />
+      </TouchableOpacity>
+      <TouchableOpacity onPress={handleShare} style={styles.headerButton}>
+        <Share2 size={22} color="#0a0a0a" strokeWidth={2} />
+      </TouchableOpacity>
+    </View>
+  );
+}
+
 export default function ArticleDetailScreen() {
   const { slug } = useLocalSearchParams<{ slug: string }>();
   const [article, setArticle] = useState<Article | null>(null);
   const [relatedArticles, setRelatedArticles] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchArticle();
+    if (slug) {
+      fetchArticle();
+    }
   }, [slug]);
 
   const fetchArticle = async () => {
     try {
       setLoading(true);
-      
+      setError(null);
+
+      console.log('[ArticleDetail] Fetching article with slug:', slug);
+
       // Fetch article with topics
       const { data: articleData, error: articleError } = await supabase
         .from('articles_with_topics')
@@ -44,7 +89,34 @@ export default function ArticleDetailScreen() {
         .eq('slug', slug)
         .maybeSingle();
 
-      if (articleError || !articleData) throw articleError;
+      console.log('[ArticleDetail] Article data:', articleData ? 'found' : 'null');
+      console.log('[ArticleDetail] Article error:', articleError);
+
+      if (articleError) {
+        console.error('[ArticleDetail] Supabase error:', articleError);
+        setError('Kon artikel niet laden');
+        return;
+      }
+
+      if (!articleData) {
+        console.log('[ArticleDetail] No article found for slug:', slug);
+        setError('Artikel niet gevonden');
+        return;
+      }
+
+      // Parse topics if needed
+      let parsedTopics: Array<{ id: string; name: string; slug: string }> = [];
+      if (articleData.topics) {
+        if (Array.isArray(articleData.topics)) {
+          parsedTopics = articleData.topics;
+        } else if (typeof articleData.topics === 'string') {
+          try {
+            parsedTopics = JSON.parse(articleData.topics);
+          } catch (e) {
+            console.log('[ArticleDetail] Could not parse topics:', e);
+          }
+        }
+      }
 
       // Fetch related articles (same topic)
       if (articleData.primary_topic_id) {
@@ -58,11 +130,13 @@ export default function ArticleDetailScreen() {
           .limit(3);
 
         if (related) {
-          setRelatedArticles(related.map((r: any) => ({
-            ...r,
-            readTimeMinutes: r.read_time_minutes,
-            topicName: articleData.primary_topic_name,
-          })));
+          setRelatedArticles(
+            related.map((r: any) => ({
+              ...r,
+              readTimeMinutes: r.read_time_minutes,
+              topicName: articleData.primary_topic_name,
+            }))
+          );
         }
       }
 
@@ -75,38 +149,50 @@ export default function ArticleDetailScreen() {
         body: articleData.body,
         readTimeMinutes: articleData.read_time_minutes || 5,
         publishedAt: articleData.published_at,
-        topics: Array.isArray(articleData.topics) 
-          ? articleData.topics 
-          : (typeof articleData.topics === 'string' 
-            ? (articleData.topics.startsWith('[') ? JSON.parse(articleData.topics) : [])
-            : []),
+        topics: parsedTopics,
       });
-    } catch (error) {
-      console.error('Error fetching article:', error);
+    } catch (err) {
+      console.error('[ArticleDetail] Exception:', err);
+      setError('Er ging iets mis bij het laden');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-background" edges={['top']}>
-      <StatusBar style="auto" />
-      
-      {/* Header with Bookmark & Share */}
-      <ArticleHeader 
-        articleId={article?.id}
-        articleTitle={article?.title}
+    <>
+      {/* Native header with GPU-accelerated Liquid Glass blur */}
+      <Stack.Screen
+        options={{
+          headerShown: true,
+          headerTransparent: true,
+          headerBlurEffect: 'systemMaterial',
+          headerTitle: '',
+          headerShadowVisible: false,
+          headerLeft: () => <HeaderLeft />,
+          headerRight: () => <HeaderRight articleTitle={article?.title} />,
+        }}
       />
 
-      {/* Content */}
       {loading ? (
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#E36B2C" />
+          <Text style={styles.loadingText}>Artikel laden...</Text>
+        </View>
+      ) : error ? (
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorText}>{error}</Text>
+          <Text style={styles.errorHint}>Probeer het later opnieuw</Text>
         </View>
       ) : article ? (
-        <ScrollView style={styles.content}>
+        <ScrollView
+          style={styles.scrollView}
+          contentInsetAdjustmentBehavior="automatic"
+          contentContainerStyle={styles.scrollContent}
+          scrollEventThrottle={16}
+        >
           {/* Meta Info */}
-          <ArticleMeta 
+          <ArticleMeta
             publishedAt={article.publishedAt}
             readTimeMinutes={article.readTimeMinutes}
           />
@@ -136,7 +222,7 @@ export default function ArticleDetailScreen() {
 
           {/* Summary Box - IN HET KORT */}
           {article.summary && (
-            <SummaryBox items={article.summary.split('. ').filter(s => s.trim())} />
+            <SummaryBox items={article.summary.split('. ').filter((s) => s.trim())} />
           )}
 
           {/* Body */}
@@ -152,42 +238,51 @@ export default function ArticleDetailScreen() {
           )}
 
           {/* Related Articles */}
-          {relatedArticles.length > 0 && (
-            <RelatedListNative articles={relatedArticles} />
-          )}
+          {relatedArticles.length > 0 && <RelatedListNative articles={relatedArticles} />}
 
           {/* Bottom spacing */}
-          <View style={{ height: 40 }} />
+          <View style={{ height: 100 }} />
         </ScrollView>
-      ) : (
-        <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>Artikel niet gevonden</Text>
-        </View>
-      )}
-
-    </SafeAreaView>
+      ) : null}
+    </>
   );
 }
 
 const styles = StyleSheet.create({
+  scrollView: {
+    flex: 1,
+    backgroundColor: '#fafafa',
+  },
+  scrollContent: {
+    paddingBottom: 40,
+  },
   loadingContainer: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: '#fafafa',
+  },
+  loadingText: {
+    marginTop: 16,
+    fontSize: 16,
+    color: '#71717a',
   },
   errorContainer: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
     padding: 16,
+    backgroundColor: '#fafafa',
   },
   errorText: {
-    fontSize: 16,
-    color: '#71717a',
-    fontFamily: 'System',
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#0a0a0a',
+    marginBottom: 8,
   },
-  content: {
-    flex: 1,
+  errorHint: {
+    fontSize: 14,
+    color: '#71717a',
   },
   titleContainer: {
     paddingHorizontal: 16,
@@ -230,5 +325,12 @@ const styles = StyleSheet.create({
     lineHeight: 26,
     color: '#0a0a0a',
     fontFamily: 'Georgia',
+  },
+  headerButton: {
+    padding: 8,
+  },
+  headerRightContainer: {
+    flexDirection: 'row',
+    gap: 4,
   },
 });
