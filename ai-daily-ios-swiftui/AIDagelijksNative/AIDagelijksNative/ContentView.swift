@@ -59,6 +59,7 @@ struct ContentView: View {
         .sheet(isPresented: $showSearch) {
             SearchView(isPresented: $showSearch)
         }
+        .environmentObject(viewModel)
         .task { await viewModel.refresh() }
     }
 

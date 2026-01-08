@@ -71,6 +71,9 @@ struct Topic: Identifiable, Codable, Hashable {
     let id: String
     let name: String
     let slug: String
+    let type: String?
+    let parentSlug: String?
+    let displayOrder: Int?
 }
 
 struct Comment: Identifiable, Codable, Hashable {
@@ -112,6 +115,8 @@ class NewsViewModel: ObservableObject {
     @Published var currentArticle: Article?
     @Published var relatedArticles: [Article] = []
     @Published var comments: [Comment] = []
+    @Published var topics: [Topic] = []
+    @Published var topicArticles: [Article] = []
     @Published var isLoading = false
     @Published var error: String?
 
@@ -259,15 +264,27 @@ class NewsViewModel: ObservableObject {
                 let id: String
                 let name: String
                 let slug: String
+                let type: String?
+                let parent_slug: String?
+                let display_order: Int?
             }
             
             let topicData: [ArticleTopicResponse] = try await client.fetch(
                 from: "article_topics",
-                select: "topics(id, name, slug)",
+                select: "topics(id, name, slug, type, parent_slug, display_order)",
                 filters: ["article_id": "eq.\(id)"]
             )
             
-            let topics = topicData.map { Topic(id: $0.topics.id, name: $0.topics.name, slug: $0.topics.slug) }
+            let topics = topicData.map { 
+                Topic(
+                    id: $0.topics.id, 
+                    name: $0.topics.name, 
+                    slug: $0.topics.slug,
+                    type: $0.topics.type,
+                    parentSlug: $0.topics.parent_slug,
+                    displayOrder: $0.topics.display_order
+                ) 
+            }
             let primaryTopic = topics.first
             
             // Construct Article
@@ -387,6 +404,63 @@ class NewsViewModel: ObservableObject {
         } catch {
             print("[NewsViewModel] Error fetching comments: \(error)")
         }
+    }
+
+    // MARK: - Fetch Topics
+
+    func fetchTopics() async {
+        do {
+            let topics: [Topic] = try await client.fetch(
+                from: "topics",
+                select: "id, name, slug, type, parent_slug, display_order",
+                order: "display_order.asc"
+            )
+            // Filter for main topics (where parent_slug is null or type is main)
+            // For now, let's just return all main topics
+             self.topics = topics.filter { $0.parentSlug == nil }
+        } catch {
+            print("[NewsViewModel] Error fetching topics: \(error)")
+        }
+    }
+
+    // MARK: - Fetch Articles for Topic
+
+    func fetchArticles(forTopic topicSlug: String) async {
+        isLoading = true
+        error = nil
+        
+        do {
+            // We need to filter by topic_slug. The view `v_latest_published` has `topic_slug`.
+            let articles: [LatestArticleResponse] = try await client.fetch(
+                from: "v_latest_published",
+                select: "*",
+                filters: ["topic_slug": "eq.\(topicSlug)"],
+                limit: 50
+            )
+
+            self.topicArticles = articles.map { response in
+                Article(
+                    id: response.id,
+                    slug: response.slug,
+                    title: response.title,
+                    summary: response.summary,
+                    body: nil,
+                    publishedAt: response.publishedAt,
+                    readTimeMinutes: response.readTimeMinutes,
+                    imagePath: response.imagePath,
+                    imageAlt: response.imageAlt,
+                    topicName: response.topicName,
+                    topicSlug: response.topicSlug,
+                    author: nil,
+                    topics: nil
+                )
+            }
+        } catch {
+            self.error = error.localizedDescription
+            print("[NewsViewModel] Error fetching topic articles: \(error)")
+        }
+        
+        isLoading = false
     }
 
     // MARK: - Refresh All
