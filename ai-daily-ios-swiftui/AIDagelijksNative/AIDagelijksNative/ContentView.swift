@@ -122,16 +122,8 @@ struct ContentView: View {
                     }
                     .frame(height: 0)
 
-                    // Large title area with logo
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("Het laatste AI nieuws")
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                    }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.horizontal, 20)
-                    .padding(.top, 100)
-                    .padding(.bottom, 16)
+                    Spacer()
+                        .frame(height: 80) // Reduced padding since subtitle is gone
 
                     // News feed
                     if viewModel.isLoading && viewModel.latestArticles.isEmpty {
