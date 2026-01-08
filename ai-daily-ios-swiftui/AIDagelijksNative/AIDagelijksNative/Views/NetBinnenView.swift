@@ -19,13 +19,5 @@ struct NetBinnenView: View {
             .padding(.bottom, 120) // Space for tab bar
         }
         .background(Color.brandBackground)
-        .toolbar {
-            ToolbarItem(placement: .topBarLeading) {
-                Text("Net Binnen")
-                    .font(.system(size: 26, weight: .bold))
-                    .foregroundStyle(.primary)
-                    .fixedSize(horizontal: true, vertical: false)
-            }
-        }
     }
 }

@@ -66,6 +66,13 @@ struct ContentView: View {
                     SearchView(isPresented: $showSearch)
                         .zIndex(2)
                 }
+
+                // Glassmorphism header overlay
+                GlassHeaderView(
+                    scrollOffset: scrollOffset,
+                    headerOpacity: headerMaterialOpacity,
+                    selectedTab: selectedTab
+                )
             }
             .navigationDestination(for: Article.self) { article in
                 ArticleDetailView(article: article)
@@ -182,12 +189,6 @@ struct ContentView: View {
             .refreshable {
                 await viewModel.refresh()
             }
-
-            // Glassmorphism header overlay
-            GlassHeaderView(
-                scrollOffset: scrollOffset,
-                headerOpacity: headerMaterialOpacity
-            )
         }
     }
 
@@ -289,20 +290,8 @@ struct FloatingTabBar: View {
         }
         .padding(.horizontal, 8)
         .padding(.vertical, 6)
-        .background(
-            ZStack {
-                // Custom blur layer for "frosted" look
-                Rectangle()
-                    .fill(.ultraThinMaterial)
-                    .opacity(0.95) // Increased opacity for better blur visibility
-                
-                // Subtle white tint for "glass" feel
-                Rectangle()
-                    .fill(Color.white.opacity(0.1))
-            }
-            .clipShape(Capsule())
-            .shadow(color: .black.opacity(0.15), radius: 20, x: 0, y: 10)
-        )
+        .background(.ultraThinMaterial, in: Capsule())
+        .shadow(color: .black.opacity(0.1), radius: 15, x: 0, y: 8)
     }
 }
 
@@ -319,6 +308,7 @@ struct TabButtonStyle: ButtonStyle {
 struct GlassHeaderView: View {
     let scrollOffset: CGFloat
     let headerOpacity: Double
+    let selectedTab: TabSelection
 
     var body: some View {
         VStack(spacing: 0) {
@@ -327,6 +317,17 @@ struct GlassHeaderView: View {
                 .opacity(headerOpacity)
                 .frame(height: 100)
                 .overlay(alignment: .bottom) {
+                    if selectedTab == .netBinnen {
+                        HStack {
+                            Text("Net Binnen")
+                                .font(.system(size: 26, weight: .bold))
+                                .foregroundStyle(.primary)
+                                .padding(.leading, 20)
+                                .padding(.bottom, 12)
+                            Spacer()
+                        }
+                    }
+                    
                     Divider()
                         .opacity(headerOpacity)
                 }
