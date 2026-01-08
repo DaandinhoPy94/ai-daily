@@ -9,9 +9,15 @@ import SwiftUI
 
 @main
 struct AIDagelijksNativeApp: App {
+    @StateObject private var auth = AuthManager()
+
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(auth)
+                .onOpenURL { url in
+                    Task { await auth.handleOpenURL(url) }
+                }
         }
     }
 }

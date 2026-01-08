@@ -20,9 +20,15 @@ enum SupabaseConfig {
 }
 
 // MARK: - Supabase Client
+//
+// NOTE:
+// This is a lightweight REST-only client used for public (anon) reads (e.g. news feeds).
+// The app also uses the official Supabase Swift SDK for authenticated flows; this type is
+// intentionally named to avoid clashing with the SDK's `SupabaseClient`.
+//
 
-actor SupabaseClient {
-    static let shared = SupabaseClient()
+actor SupabaseRESTClient {
+    static let shared = SupabaseRESTClient()
 
     private let session: URLSession
     private let baseURL: URL

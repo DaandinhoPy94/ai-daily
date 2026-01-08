@@ -83,7 +83,7 @@ class NewsViewModel: ObservableObject {
     @Published var isLoading = false
     @Published var error: String?
 
-    private let client = SupabaseClient.shared
+    private let client = SupabaseRESTClient.shared
 
     // MARK: - Fetch Latest Articles
 
