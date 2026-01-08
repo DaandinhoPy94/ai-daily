@@ -252,9 +252,10 @@ struct ArticleDetailView: View {
                     .frame(width: geometry.size.width) // Force the content to fit the screen width
                 }
             }
+            .ignoresSafeArea(edges: .top) // De belangrijkste voor de 'flow'
             .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(.bar, for: .navigationBar)
-            .toolbarBackground(.visible, for: .navigationBar)
+            .toolbarBackground(.hidden, for: .navigationBar) // Tip: Gebruik .dark alleen als je zeker weet dat je foto's donker genoeg zijn
+            .toolbarColorScheme(.dark, for: .navigationBar) // Optioneel: maakt knoppen wit als je image donker is
             .onAppear {
                 Task {
                     await viewModel.fetchArticleDetail(id: article.id)
