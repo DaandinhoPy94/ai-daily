@@ -263,18 +263,13 @@ struct ArticleDetailView: View {
             }
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    HStack(spacing: 16) {
-                        // Share Button
-                        ShareLink(item: URL(string: "https://aidagelijks.nl/artikel/\(article.slug)")!) {
-                            Image(systemName: "square.and.arrow.up")
-                        }
-                        
-                        // Bookmark Button
-                        Button(action: {
-                            // TODO: Implement bookmark functionality
-                        }) {
-                            Image(systemName: "bookmark")
-                        }
+                    ShareLink(item: URL(string: "...")!) {
+                        Image(systemName: "square.and.arrow.up")
+                    }
+                }
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(action: { /* actie */ }) {
+                        Image(systemName: "bookmark")
                     }
                 }
             }
