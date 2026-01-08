@@ -1,17 +1,14 @@
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
-import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useHeaderHeight } from '@react-navigation/elements';
 import { useNativeTabBarHeight } from '@/src/lib/nativeTabs';
 
-export default function OpgeslagenScreen() {
+export default function MijnNieuwsScreen() {
   const tabBarHeight = useNativeTabBarHeight();
   const headerHeight = useHeaderHeight();
 
   return (
     <SafeAreaView className="flex-1 bg-background" edges={['left', 'right']}>
-      <StatusBar style="auto" />
-
       <ScrollView
         style={styles.content}
         contentInsetAdjustmentBehavior="never"
@@ -19,15 +16,15 @@ export default function OpgeslagenScreen() {
         contentContainerStyle={{ paddingTop: headerHeight, paddingBottom: tabBarHeight, flexGrow: 1 }}
       >
         <View style={styles.pageTitleContainer}>
-          <Text style={styles.pageTitle}>Opgeslagen Artikelen</Text>
+          <Text style={styles.pageTitle}>Mijn Nieuws</Text>
           <View style={styles.divider} />
         </View>
 
         <View style={styles.contentContainer}>
         <View style={styles.emptyState}>
-          <Text style={styles.emptyTitle}>Geen opgeslagen artikelen</Text>
+          <Text style={styles.emptyTitle}>Je persoonlijke nieuwsfeed</Text>
           <Text style={styles.emptyText}>
-            Tap op het bookmark icoon in een artikel om het op te slaan voor later.
+            Volg onderwerpen om hier gepersonaliseerd nieuws te zien. Ga naar "Meer" → selecteer onderwerpen en tap "Volg".
           </Text>
         </View>
         </View>
@@ -70,6 +67,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#0a0a0a',
     marginBottom: 8,
+    textAlign: 'center',
     fontFamily: 'System',
   },
   emptyText: {

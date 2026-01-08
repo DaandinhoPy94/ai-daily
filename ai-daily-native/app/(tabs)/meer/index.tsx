@@ -1,5 +1,4 @@
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, TextInput } from 'react-native';
-import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useHeaderHeight } from '@react-navigation/elements';
 import { useNativeTabBarHeight } from '@/src/lib/nativeTabs';
@@ -43,8 +42,6 @@ export default function MeerScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-background" edges={['left', 'right']}>
-      <StatusBar style="auto" />
-
       {/* Content */}
       <ScrollView
         style={styles.content}

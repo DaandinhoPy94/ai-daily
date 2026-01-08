@@ -1,10 +1,8 @@
 import { useState, useEffect } from 'react';
 import { View, Text, ScrollView, ActivityIndicator, StyleSheet, Image } from 'react-native';
-import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Stack, useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 import { useHeaderHeight } from '@react-navigation/elements';
-import { ArticleHeaderRightActions } from '@/components/header/ArticleHeaderRightActions';
 import { ArticleMeta } from '@/components/ArticleMeta';
 import { SummaryBox } from '@/components/SummaryBox';
 import { RelatedTopicsNative } from '@/components/RelatedTopicsNative';
@@ -92,13 +90,6 @@ export default function ArticleDetailScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-background" edges={['left', 'right']}>
-      <StatusBar style="auto" />
-      <Stack.Screen
-        options={{
-          headerRight: () => <ArticleHeaderRightActions articleTitle={article?.title} />,
-        }}
-      />
-
       {/* Content */}
       {loading ? (
         <View style={[styles.loadingContainer, { paddingTop: headerHeight }]}>

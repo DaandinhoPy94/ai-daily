@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { View, Text, FlatList, ActivityIndicator, StyleSheet } from 'react-native';
-import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useHeaderHeight } from '@react-navigation/elements';
 import { useNativeTabBarHeight } from '@/src/lib/nativeTabs';
@@ -90,8 +89,6 @@ export default function NetBinnenScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-background" edges={['left', 'right']}>
-      <StatusBar style="auto" />
-
       {/* Articles List */}
       {loading ? (
         <View style={[styles.loadingContainer, { paddingTop: headerHeight }]}>

@@ -1,5 +1,4 @@
 import { View, Text, ScrollView, StyleSheet, TextInput, TouchableOpacity, Switch } from 'react-native';
-import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useHeaderHeight } from '@react-navigation/elements';
 import { useNativeTabBarHeight } from '@/src/lib/nativeTabs';
@@ -27,8 +26,6 @@ export default function ProfileScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-background" edges={['left', 'right']}>
-      <StatusBar style="auto" />
-
       <ScrollView
         style={styles.content}
         contentInsetAdjustmentBehavior="never"

@@ -16,7 +16,7 @@ export function TabsHeaderLeftAccount() {
           weight="semibold"
           scale="medium"
           tintColor="#0a0a0a"
-          style={{ width: 22, height: 22 }}
+          style={{ width: 22, height: 22, margin: 0, padding: 0 }}
         />
       </GlassHeaderIconButton>
 
