@@ -16,7 +16,7 @@ struct NetBinnenView: View {
                 }
             }
             .padding(.top, 12)
-            .padding(.bottom, 120) // Space for tab bar
+            .padding(.bottom, 16)
         }
         .background(Color.brandBackground)
         .toolbar {

@@ -7,42 +7,50 @@ struct ProfileView: View {
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject private var auth: AuthManager
 
+    /// When `true`, shows a trailing "Gereed" button that dismisses the current presentation.
+    /// Keep this `false` when `ProfileView` is used inside a tab or pushed via navigation.
+    let showsDoneButton: Bool
+
     @State private var displayName = ""
     @State private var newsletter = false
     @State private var selectedAvatarItem: PhotosPickerItem?
     @State private var avatarPreview: Image?
     @State private var isUploadingAvatar = false
     
+    init(showsDoneButton: Bool = false) {
+        self.showsDoneButton = showsDoneButton
+    }
+
     var body: some View {
-        NavigationStack {
-            Group {
-                if auth.isLoading {
-                    ProgressView("Bezig met laden…")
-                } else if auth.user == nil {
-                    AuthView()
-                } else if auth.profile == nil {
-                    ProgressView("Je profiel wordt ingesteld…")
-                } else {
-                    profileForm
-                }
+        Group {
+            if auth.isLoading {
+                ProgressView("Bezig met laden…")
+            } else if auth.user == nil {
+                AuthView()
+            } else if auth.profile == nil {
+                ProgressView("Je profiel wordt ingesteld…")
+            } else {
+                profileForm
             }
-            .navigationTitle("Profiel")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
+        }
+        .navigationTitle("Profiel")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            if showsDoneButton {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Gereed") { dismiss() }
                         .foregroundStyle(Color.brandOrange)
                 }
             }
-            .onAppear {
-                syncFromAuth()
-            }
-            .onChange(of: auth.profile) { _ in
-                syncFromAuth()
-            }
-            .onChange(of: auth.preferences) { _ in
-                syncFromAuth()
-            }
+        }
+        .onAppear {
+            syncFromAuth()
+        }
+        .onChange(of: auth.profile) { _ in
+            syncFromAuth()
+        }
+        .onChange(of: auth.preferences) { _ in
+            syncFromAuth()
         }
     }
 
