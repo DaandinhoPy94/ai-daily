@@ -17,8 +17,8 @@ enum TabSelection: String, CaseIterable {
 
     var title: String {
         switch self {
-        case .home: return "AI Dagelijks"
-        case .netBinnen: return "Net Binnen"
+        case .home: return "AI dagelijks"
+        case .netBinnen: return "Net binnen"
         case .myNews: return "Mijn Nieuws"
         case .more: return "Meer"
         }
@@ -32,46 +32,50 @@ struct ContentView: View {
     @State private var scrollOffset: CGFloat = 0
     @State private var selectedTab: TabSelection = .home
     @State private var showSearch = false
-    @State private var showProfile = false
 
     private let coordinateSpaceName = "scroll"
 
     var body: some View {
+        TabView(selection: $selectedTab) {
+            homeTab
+                .tabItem { Label(TabSelection.home.title, systemImage: TabSelection.home.rawValue) }
+                .tag(TabSelection.home)
+
+            netBinnenTab
+                .tabItem { Label(TabSelection.netBinnen.title, systemImage: TabSelection.netBinnen.rawValue) }
+                .tag(TabSelection.netBinnen)
+
+            NavigationStack {
+                ProfileView()
+            }
+            .tabItem { Label(TabSelection.myNews.title, systemImage: TabSelection.myNews.rawValue) }
+            .tag(TabSelection.myNews)
+
+            MoreView()
+                .tabItem { Label(TabSelection.more.title, systemImage: TabSelection.more.rawValue) }
+                .tag(TabSelection.more)
+        }
+        .sheet(isPresented: $showSearch) {
+            SearchView(isPresented: $showSearch)
+        }
+        .task { await viewModel.refresh() }
+    }
+
+    // MARK: - Tabs
+
+    private var homeTab: some View {
         NavigationStack {
-            ZStack(alignment: .bottom) {
-                // Background
+            ZStack {
                 Color.brandBackground.ignoresSafeArea()
-                
-                // Main Content
-                Group {
-                    switch selectedTab {
-                    case .home:
-                        homeView
-                    case .netBinnen:
-                        NetBinnenView(viewModel: viewModel)
-                    case .myNews:
-                        ContentUnavailableView("Mijn Nieuws", systemImage: "heart", description: Text("Binnenkort beschikbaar"))
-                    case .more:
-                        MoreView()
-                    }
-                }
-                
-                // Floating glass tab bar removed
-                
+                homeView
             }
             .navigationDestination(for: Article.self) { article in
                 ArticleDetailView(article: article)
             }
-            .sheet(isPresented: $showProfile) {
-                ProfileView()
-            }
-            .sheet(isPresented: $showSearch) {
-                SearchView(isPresented: $showSearch)
-            }
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     HStack(spacing: 16) {
-                        Button(action: { 
+                        Button(action: {
                             showSearch = true
                         }) {
                             Image(systemName: "magnifyingglass")
@@ -79,7 +83,7 @@ struct ContentView: View {
                                 .foregroundStyle(.primary)
                         }
 
-                        Button(action: { showProfile = true }) {
+                        Button(action: { selectedTab = .myNews }) {
                             Image(systemName: "person.circle")
                                 .font(.system(size: 20, weight: .regular))
                                 .foregroundStyle(.primary)
@@ -87,19 +91,23 @@ struct ContentView: View {
                     }
                 }
 
-                if selectedTab != .netBinnen {
-                    ToolbarItem(placement: .principal) {
-                        LogoView()
-                            .frame(height: 20)
-                    }
+                ToolbarItem(placement: .principal) {
+                    LogoView()
+                        .frame(height: 20)
                 }
             }
             .toolbarBackground(.bar, for: .navigationBar)
-            .toolbarBackground(navigationBarBackgroundVisibility, for: .navigationBar)
+            .toolbarBackground(homeNavigationBarBackgroundVisibility, for: .navigationBar)
             .navigationBarTitleDisplayMode(.inline)
         }
-        .task {
-            await viewModel.refresh()
+    }
+
+    private var netBinnenTab: some View {
+        NavigationStack {
+            NetBinnenView(viewModel: viewModel)
+                .navigationDestination(for: Article.self) { article in
+                    ArticleDetailView(article: article)
+                }
         }
     }
 
@@ -150,7 +158,7 @@ struct ContentView: View {
                             }
                         }
                         .padding(.horizontal, 16)
-                        .padding(.bottom, 120) // Space for tab bar
+                        .padding(.bottom, 16)
                     }
                 }
             }
@@ -167,11 +175,8 @@ struct ContentView: View {
 
     // MARK: - Computed Properties
 
-    private var navigationBarBackgroundVisibility: Visibility {
-        if selectedTab == .home {
-            return scrollOffset < -30 ? .visible : .hidden
-        }
-        return .visible
+    private var homeNavigationBarBackgroundVisibility: Visibility {
+        scrollOffset < -30 ? .visible : .hidden
     }
 
 
