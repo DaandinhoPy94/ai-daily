@@ -311,9 +311,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
-    borderWidth: 0.5,
-    borderColor: 'rgba(255, 255, 255, 0.5)',
+    // No extra background/border - BlurView provides the glass effect
   },
   sfSymbol: {
     width: 20,

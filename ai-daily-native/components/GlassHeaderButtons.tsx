@@ -171,21 +171,12 @@ export function GlassAvatarButton({ onPress, initials = 'D' }: GlassAvatarButton
 const styles = StyleSheet.create({
   glassButton: {
     overflow: 'hidden',
-    // Subtle shadow for depth
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.08,
-    shadowRadius: 2,
-    elevation: 2,
   },
   glassContent: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.25)',
-    // Inner glow effect via border
-    borderWidth: 0.5,
-    borderColor: 'rgba(255, 255, 255, 0.4)',
+    // No extra background/border - let BlurView do the work
   },
   avatarButton: {
     overflow: 'hidden',

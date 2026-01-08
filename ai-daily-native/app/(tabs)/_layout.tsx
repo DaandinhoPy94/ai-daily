@@ -10,7 +10,7 @@ export default function TabLayout() {
       blurEffect="systemMaterial"
       disableTransparentOnScrollEdge={false}
     >
-      {/* Visible Tabs */}
+      {/* Visible Tabs - 5 tabs */}
       <NativeTabs.Trigger name="index">
         <Icon sf="house.fill" />
         <Label>Voorpagina</Label>
@@ -26,12 +26,16 @@ export default function TabLayout() {
         <Label>Mijn nieuws</Label>
       </NativeTabs.Trigger>
 
+      <NativeTabs.Trigger name="zoeken">
+        <Icon sf="magnifyingglass" />
+        <Label>Zoeken</Label>
+      </NativeTabs.Trigger>
+
       <NativeTabs.Trigger name="meer">
         <Icon sf="ellipsis" />
         <Label>Meer</Label>
       </NativeTabs.Trigger>
 
-      {/* Hidden Tabs */}
       <NativeTabs.Trigger name="profile" hidden>
         <Icon sf="person.fill" />
         <Label>Profile</Label>

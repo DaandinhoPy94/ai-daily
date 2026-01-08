@@ -1,17 +1,14 @@
 import { useState, useEffect } from 'react';
 import { View, Text, ScrollView, RefreshControl, StyleSheet } from 'react-native';
-import { Stack, useRouter } from 'expo-router';
+import { Stack } from 'expo-router';
 import { LargeNewsCard } from '@/components/LargeNewsCard';
 import { ArticleListRow } from '@/components/ArticleListRow';
 import { AnimatedStocksTicker } from '@/components/AnimatedStocksTicker';
 import { SectionSpacer } from '@/components/SectionSpacer';
 import { LoadingSkeleton } from '@/components/LoadingSkeleton';
-import { SearchModal } from '@/components/SearchModal';
 import { getMostRead, getLatest, getTopicSections } from '@/src/lib/supabase';
 import { TopicBlock } from '@/components/TopicBlock';
 import { useStocks } from '@/src/contexts/StockProvider';
-import { AccountMenu } from '@/components/AccountMenu';
-import { GlassSearchButton, GlassLoginButton } from '@/components/GlassHeaderButtons';
 
 interface Article {
   id: string;
@@ -25,7 +22,6 @@ interface Article {
 }
 
 export default function HomeScreen() {
-  const router = useRouter();
   const { tickers } = useStocks();
   const [mostRead, setMostRead] = useState<Article[]>([]);
   const [latest, setLatest] = useState<Article[]>([]);
@@ -34,12 +30,6 @@ export default function HomeScreen() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [showSearch, setShowSearch] = useState(false);
-  const [showMenu, setShowMenu] = useState(false);
-
-  const handleLoginPress = () => {
-    router.push('/auth/login');
-  };
 
   const fetchData = async () => {
     try {
@@ -118,7 +108,7 @@ export default function HomeScreen() {
     setRefreshing(false);
   };
 
-  // Common header options for all states
+  // Clean header - no icons (search is in tab bar, login is in Meer)
   const headerOptions = {
     headerShown: true,
     headerTransparent: true,
@@ -129,8 +119,6 @@ export default function HomeScreen() {
     title: 'AI Dagelijks',
     headerLargeTitleStyle: styles.largeTitleStyle,
     headerTitleStyle: styles.titleStyle,
-    headerLeft: () => <GlassLoginButton onPress={handleLoginPress} />,
-    headerRight: () => <GlassSearchButton onPress={() => setShowSearch(true)} />,
   };
 
   if (loading) {
@@ -197,15 +185,6 @@ export default function HomeScreen() {
 
         <View style={styles.bottomPadding} />
       </ScrollView>
-
-      {/* Modals */}
-      <SearchModal visible={showSearch} onClose={() => setShowSearch(false)} />
-      <AccountMenu
-        visible={showMenu}
-        onClose={() => setShowMenu(false)}
-        userEmail="daanvdster@gmail.com"
-        displayName="Daan van der Ster"
-      />
     </>
   );
 }

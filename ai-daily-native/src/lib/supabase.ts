@@ -86,3 +86,21 @@ export const getMainTopics = async () => {
     return [];
   }
 };
+
+// Search articles by title
+export const searchArticles = async (query: string, limit = 20) => {
+  const { data, error } = await supabase
+    .from('v_latest_published')
+    .select('*')
+    .ilike('title', `%${query}%`)
+    .limit(limit);
+
+  if (error) throw error as any;
+
+  return (data || []).map((item: any) => ({
+    ...item,
+    media_asset_url: item.image_path,
+    media_asset_alt: item.image_alt,
+    readTimeMinutes: item.read_time_minutes,
+  }));
+};
