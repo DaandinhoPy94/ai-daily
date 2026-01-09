@@ -219,16 +219,12 @@ struct ArticleDetailView: View {
                                             selectedTopic = topic
                                         } label: {
                                             Text(topic.name)
-                                                .font(.caption)
-                                                .fontWeight(.medium)
-                                                .foregroundStyle(.primary)
-                                                .padding(.horizontal, 12)
-                                                .padding(.vertical, 6)
-                                                .background(Color(.systemGray6))
-                                                .cornerRadius(16)
+                                                .font(.caption.weight(.semibold))
                                         }
-                                        .buttonStyle(.plain)
-                                        .contentShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                                        .tint(Color.brandTeal)
+                                        .buttonStyle(.bordered)
+                                        .buttonBorderShape(.capsule)
+                                        .controlSize(.small)
                                         .accessibilityLabel("Onderwerp: \(topic.name)")
                                     }
                                 }
