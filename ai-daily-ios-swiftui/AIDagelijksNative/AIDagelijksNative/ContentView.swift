@@ -95,7 +95,7 @@ struct ContentView: View {
 
                 ToolbarItem(placement: .principal) {
                     LogoView()
-                        .frame(height: 20)
+                        .frame(height: 80)
                 }
             }
             .toolbarBackground(.bar, for: .navigationBar)
