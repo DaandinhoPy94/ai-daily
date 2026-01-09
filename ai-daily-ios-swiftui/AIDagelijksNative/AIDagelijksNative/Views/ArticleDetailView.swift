@@ -4,6 +4,7 @@ struct ArticleDetailView: View {
     let article: Article
     @StateObject private var viewModel = NewsViewModel()
     @Environment(\.dismiss) var dismiss
+    @State private var selectedTopic: Topic?
     
     var body: some View {
         GeometryReader { geometry in
@@ -214,13 +215,21 @@ struct ArticleDetailView: View {
                                 
                                 FlowLayout(spacing: 8) {
                                     ForEach(topics) { topic in
-                                        Text(topic.name)
-                                            .font(.caption)
-                                            .fontWeight(.medium)
-                                            .padding(.horizontal, 12)
-                                            .padding(.vertical, 6)
-                                            .background(Color(.systemGray6))
-                                            .cornerRadius(16)
+                                        Button {
+                                            selectedTopic = topic
+                                        } label: {
+                                            Text(topic.name)
+                                                .font(.caption)
+                                                .fontWeight(.medium)
+                                                .foregroundStyle(.primary)
+                                                .padding(.horizontal, 12)
+                                                .padding(.vertical, 6)
+                                                .background(Color(.systemGray6))
+                                                .cornerRadius(16)
+                                        }
+                                        .buttonStyle(.plain)
+                                        .contentShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                                        .accessibilityLabel("Onderwerp: \(topic.name)")
                                     }
                                 }
                             }
@@ -256,6 +265,10 @@ struct ArticleDetailView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(.hidden, for: .navigationBar) // Tip: Gebruik .dark alleen als je zeker weet dat je foto's donker genoeg zijn
             .toolbarColorScheme(.dark, for: .navigationBar) // Optioneel: maakt knoppen wit als je image donker is
+            .navigationDestination(item: $selectedTopic) { topic in
+                TopicDetailView(topic: topic)
+                    .environmentObject(viewModel)
+            }
             .onAppear {
                 Task {
                     await viewModel.fetchArticleDetail(id: article.id)
@@ -294,8 +307,12 @@ struct FlowLayout: Layout {
         for row in rows {
             var x = bounds.minX
             for item in row.items {
-                item.place(at: CGPoint(x: x, y: y), proposal: .unspecified)
-                x += item.dimensions(in: .unspecified).width + spacing
+                let size = item.sizeThatFits(.unspecified)
+                item.place(
+                    at: CGPoint(x: x, y: y),
+                    proposal: ProposedViewSize(width: size.width, height: size.height)
+                )
+                x += size.width + spacing
             }
             y += row.height + spacing
         }
