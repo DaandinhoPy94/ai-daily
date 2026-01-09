@@ -2,8 +2,6 @@
 //  TopicDetailView.swift
 //  AIDagelijksNative
 //
-//  Created by Daan van der Ster on 09/01/2026.
-//
 
 import SwiftUI
 
@@ -12,55 +10,51 @@ struct TopicDetailView: View {
     @EnvironmentObject var viewModel: NewsViewModel
     
     var body: some View {
-        ZStack(alignment: .topLeading) {
+        ZStack {
+            Color.brandBackground
+                .ignoresSafeArea()
+            
             ScrollView {
-                LazyVStack(spacing: 0) {
+                LazyVStack(alignment: .leading, spacing: 0) {
+                    
+                    // MARK: - Content State Logic
                     if viewModel.isLoading {
-                        ProgressView()
-                            .padding(.top, 100)
+                        VStack {
+                            ProgressView()
+                                .controlSize(.large)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding(.top, 100)
                     } else if let error = viewModel.error {
-                        Text(error)
-                            .foregroundStyle(.red)
-                            .padding()
-                            .padding(.top, 60)
+                        ContentUnavailableView {
+                            Label("Fout bij laden", systemImage: "exclamationmark.triangle")
+                        } description: {
+                            Text(error)
+                        }
                     } else if viewModel.topicArticles.isEmpty {
-                        Text("Geen artikelen gevonden voor dit onderwerp.")
-                            .foregroundStyle(.secondary)
-                            .padding(.top, 100)
+                        ContentUnavailableView {
+                            Label("Geen artikelen", systemImage: "doc.text.magnifyingglass")
+                        } description: {
+                            Text("Er zijn momenteel geen artikelen gevonden voor dit onderwerp.")
+                        }
                     } else {
+                        // MARK: - Articles List
                         ForEach(viewModel.topicArticles) { article in
                             NavigationLink(destination: ArticleDetailView(article: article)) {
                                 SmallNewsCardView(article: article)
                             }
-                            .buttonStyle(PlainButtonStyle())
+                            .buttonStyle(.plain)
                             .padding(.horizontal, 16)
-                            .padding(.bottom, 12)
+                            .padding(.bottom, 16)
                         }
                     }
                 }
-                .padding(.top, 60) // Space for the fixed header
-                .padding(.bottom, 16)
             }
-            
-            // Fixed Header
-            Text(topic.name)
-                .font(.system(size: 24, weight: .bold, design: .default))
-                .foregroundStyle(
-                    LinearGradient(
-                        colors: [.primary, .primary.opacity(0.8)],
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    )
-                )
-                .padding(.horizontal, 16)
-                .padding(.top, 16)
-                .padding(.bottom, 12)
-                .background(Color.brandBackground.opacity(0.95)) // Add background for readability when scrolling
-                .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .background(Color.brandBackground)
-        .navigationBarTitleDisplayMode(.inline) // Use inline title or hide it since we have a custom header
-        .toolbarBackground(.hidden, for: .navigationBar) // Hide default nav bar background if needed
+        // MARK: - Apple UI Modifiers
+        .navigationTitle(topic.name) // Nodig voor de 'Back' knop in de volgende view
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(.hidden, for: .navigationBar) // Houdt de balk transparant
         .task {
             await viewModel.fetchArticles(forTopic: topic)
         }
