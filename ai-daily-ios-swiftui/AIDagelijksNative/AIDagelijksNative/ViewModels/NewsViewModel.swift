@@ -425,18 +425,60 @@ class NewsViewModel: ObservableObject {
 
     // MARK: - Fetch Articles for Topic
 
-    func fetchArticles(forTopic topicSlug: String) async {
+    func fetchArticles(forTopic topic: Topic) async {
         isLoading = true
         error = nil
         
         do {
-            // We need to filter by topic_slug. The view `v_latest_published` has `topic_slug`.
-            let articles: [LatestArticleResponse] = try await client.fetch(
-                from: "v_latest_published",
-                select: "*",
-                filters: ["topic_slug": "eq.\(topicSlug)"],
+            var filterKey = "primary_topic_id"
+            var filterValue = "eq.\(topic.id)"
+            
+            // If main topic, include subtopics
+            if topic.type == "main" {
+                // Fetch subtopics
+                struct SubTopic: Decodable { let id: String }
+                let subTopics: [SubTopic] = try await client.fetch(
+                    from: "topics",
+                    select: "id",
+                    filters: ["parent_slug": "eq.\(topic.slug)", "is_active": "eq.true"]
+                )
+                
+                let ids = [topic.id] + subTopics.map { $0.id }
+                let idsString = ids.joined(separator: ",")
+                filterValue = "in.(\(idsString))"
+            }
+            
+            // Define response struct for joined query
+            struct ArticleListResponse: Decodable {
+                let id: String
+                let slug: String
+                let title: String
+                let summary: String?
+                let published_at: String?
+                let read_time_minutes: Int?
+                let media_assets: MediaAsset?
+                
+                struct MediaAsset: Decodable {
+                    let path: String
+                    let alt: String?
+                }
+            }
+            
+            // Fetch articles
+            // Note: Using the foreign key relationship name for media_assets
+            let articles: [ArticleListResponse] = try await client.fetch(
+                from: "articles",
+                select: "id, slug, title, summary, published_at, read_time_minutes, media_assets:media_assets!articles_hero_image_id_fkey(path, alt)",
+                filters: [
+                    filterKey: filterValue,
+                    "status": "eq.published"
+                ],
+                order: "published_at.desc",
                 limit: 50
             )
+
+            let formatter = ISO8601DateFormatter()
+            formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
 
             self.topicArticles = articles.map { response in
                 Article(
@@ -445,12 +487,12 @@ class NewsViewModel: ObservableObject {
                     title: response.title,
                     summary: response.summary,
                     body: nil,
-                    publishedAt: response.publishedAt,
-                    readTimeMinutes: response.readTimeMinutes,
-                    imagePath: response.imagePath,
-                    imageAlt: response.imageAlt,
-                    topicName: response.topicName,
-                    topicSlug: response.topicSlug,
+                    publishedAt: response.published_at.flatMap { formatter.date(from: $0) },
+                    readTimeMinutes: response.read_time_minutes,
+                    imagePath: response.media_assets?.path,
+                    imageAlt: response.media_assets?.alt,
+                    topicName: topic.name, // We know the topic
+                    topicSlug: topic.slug,
                     author: nil,
                     topics: nil
                 )
