@@ -98,8 +98,7 @@ struct ContentView: View {
                         .frame(height: 80)
                 }
             }
-            .toolbarBackground(.bar, for: .navigationBar)
-            .toolbarBackground(homeNavigationBarBackgroundVisibility, for: .navigationBar)
+            .toolbarBackground(.hidden, for: .navigationBar)
             .navigationBarTitleDisplayMode(.inline)
         }
     }
@@ -130,7 +129,7 @@ struct ContentView: View {
                     .frame(height: 0)
 
                     Spacer()
-                        .frame(height: 80) // Reduced padding since subtitle is gone
+                        .frame(height: 16)
 
                     // News feed
                     if viewModel.isLoading && viewModel.latestArticles.isEmpty {
@@ -168,7 +167,6 @@ struct ContentView: View {
             .onPreferenceChange(ScrollOffsetPreferenceKey.self) { value in
                 scrollOffset = value
             }
-            .ignoresSafeArea(edges: .top)
             .refreshable {
                 await viewModel.refresh()
             }
@@ -176,11 +174,6 @@ struct ContentView: View {
     }
 
     // MARK: - Computed Properties
-
-    private var homeNavigationBarBackgroundVisibility: Visibility {
-        scrollOffset < -30 ? .visible : .hidden
-    }
-
 
 }
 
