@@ -7,7 +7,7 @@ struct MoreView: View {
         NavigationStack {
             List {
                 // Topics Section
-                Section(header: Text("Onderwerpen")) {
+                Section {
                     if viewModel.topics.isEmpty {
                         ProgressView()
                             .frame(maxWidth: .infinity, alignment: .center)
