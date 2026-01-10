@@ -1,4 +1,4 @@
-name: Scrape NOS Tech
+name: Scrape & Process News
 
 on:
   schedule:
@@ -8,7 +8,7 @@ on:
     # Allow manual triggering
 
 jobs:
-  scrape:
+  scrape-and-process:
     runs-on: ubuntu-latest
 
     steps:
@@ -20,7 +20,8 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install dependencies
+      # Step 1: Scraper
+      - name: Install scraper dependencies
         run: pip install -r scripts/scraper/requirements.txt
 
       - name: Run scraper
@@ -28,3 +29,14 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
         run: python scripts/scraper/main.py
+
+      # Step 2: AI Processor
+      - name: Install processor dependencies
+        run: pip install -r scripts/tekstverwerker/requirements.txt
+
+      - name: Run AI processor
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: python scripts/tekstverwerker/processor.py
