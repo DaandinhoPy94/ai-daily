@@ -1,0 +1,5 @@
+supabase
+trafilatura
+beautifulsoup4
+python-dotenv
+requests
