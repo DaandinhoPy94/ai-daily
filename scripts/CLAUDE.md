@@ -16,12 +16,18 @@ scripts/
 │   ├── processor.py
 │   ├── requirements.txt
 │   └── .env
-└── afbeelding-generator/ # Stap 3 & 4: AI thumbnails + processing
-    ├── image_generator.py
+├── afbeelding-generator/ # Stap 3: AI thumbnails
+│   ├── image_generator.py
+│   ├── requirements.txt
+│   ├── .env
+│   ├── .gitignore
+│   └── afbeeldingen/     # Tijdelijke opslag
+└── afbeelding-processor/ # Stap 4: Image verwerking
     ├── image_processor.py
     ├── requirements.txt
     ├── .env
-    └── afbeeldingen/     # Tijdelijke opslag
+    ├── .gitignore
+    └── afbeeldingen/     # Lokale cache
 ```
 
 ---
@@ -104,7 +110,7 @@ Titel wordt omgezet naar veilige bestandsnaam:
 
 ---
 
-## 4. Image Processor (`/scripts/afbeelding-generator`)
+## 4. Image Processor (`/scripts/afbeelding-processor`)
 
 ### Wat doet het?
 - Scant PNG bestanden in `afbeeldingen/`
@@ -172,6 +178,9 @@ pip install -r requirements.txt
 python image_generator.py
 
 # Stap 4: Image processor
+cd scripts/afbeelding-processor
+python -m venv venv && source venv/bin/activate
+pip install -r requirements.txt
 python image_processor.py
 ```
 
@@ -196,7 +205,7 @@ Workflow: `.github/workflows/scrape_cron.yml`
 - **Secrets**: `SUPABASE_URL`, `SUPABASE_SERVICE_KEY`, `OPENAI_API_KEY`
 
 ### Pipeline volgorde:
-1. Install + Run scraper
-2. Install + Run tekstverwerker
-3. Install + Run image_generator
-4. Run image_processor
+1. Install + Run scraper (scripts/scraper)
+2. Install + Run tekstverwerker (scripts/tekstverwerker)
+3. Install + Run image_generator (scripts/afbeelding-generator)
+4. Install + Run image_processor (scripts/afbeelding-processor)

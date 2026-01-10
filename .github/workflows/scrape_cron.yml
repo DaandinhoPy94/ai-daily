@@ -53,8 +53,11 @@ jobs:
         run: python scripts/afbeelding-generator/image_generator.py
 
       # Step 4: Image Processor
+      - name: Install image processor dependencies
+        run: pip install -r scripts/afbeelding-processor/requirements.txt
+
       - name: Run image processor
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
-        run: python scripts/afbeelding-generator/image_processor.py
+        run: python scripts/afbeelding-processor/image_processor.py

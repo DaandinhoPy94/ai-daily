@@ -6,6 +6,7 @@ Processes generated PNG images, creates optimized variants, and uploads to Supab
 
 import os
 from pathlib import Path
+from datetime import datetime, timezone
 from PIL import Image
 from supabase import create_client, Client
 from dotenv import load_dotenv
@@ -26,33 +27,28 @@ IMAGES_DIR = SCRIPT_DIR / "afbeeldingen"
 # Storage bucket
 BUCKET_NAME = "media"
 
-# Image size ladders
+# Image size ladders - 16:9 formats (hero images)
 SIZES_16_9 = [
-    (320, 180),
-    (480, 270),
-    (640, 360),
-    (768, 432),
-    (1024, 576),
-    (1280, 720),
+    ((1280, 720), "hero_1600.webp"),
+    ((1024, 576), "hero_1200.webp"),
+    ((768, 432), "hero_800.webp"),
+    ((480, 270), "hero_400.webp"),
 ]
 
+# Image size ladders - 1:1 formats (list/thumbnail images)
 SIZES_1_1 = [
-    (64, 64),
-    (128, 128),
-    (256, 256),
-    (384, 384),
-    (512, 512),
-    (768, 768),
-    (1024, 1024),
+    ((384, 384), "list_320.webp"),
+    ((512, 512), "list_480.webp"),
+    ((768, 768), "list_600.webp"),
 ]
 
 # Mapping for database columns
 DB_COLUMN_MAPPING = {
-    (1280, 720): "image_large",
-    (1024, 576): "image_standard",
-    (768, 432): "image_tablet",
-    (480, 270): "image_mobile",
-    (384, 384): "image_list",
+    "hero_1600.webp": "image_large",
+    "hero_1200.webp": "image_standard",
+    "hero_800.webp": "image_tablet",
+    "hero_400.webp": "image_mobile",
+    "list_320.webp": "image_list",
 }
 
 
@@ -66,7 +62,7 @@ def get_png_files():
 def get_article_by_image_filename(filename: str):
     """Find article by image_standard filename."""
     # The image_generator stores the filename in image_standard
-    response = supabase.table("articles").select("id, slug").eq("image_standard", filename).limit(1).execute()
+    response = supabase.table("articles").select("id").eq("image_standard", filename).limit(1).execute()
     if response.data and len(response.data) > 0:
         return response.data[0]
     return None
@@ -99,21 +95,19 @@ def process_image(png_path: Path) -> dict:
         if img.mode in ('RGBA', 'P'):
             img = img.convert('RGB')
 
-        # Generate 16:9 variants
-        for size in SIZES_16_9:
+        # Generate 16:9 variants (hero images)
+        for size, filename in SIZES_16_9:
             resized = resize_image(img, size, crop_square=False)
-            filename = f"{size[0]}x{size[1]}.webp"
             temp_path = IMAGES_DIR / f"temp_{filename}"
             resized.save(temp_path, 'WEBP', quality=85)
-            variants[size] = temp_path
+            variants[filename] = temp_path
 
-        # Generate 1:1 variants (center crop)
-        for size in SIZES_1_1:
+        # Generate 1:1 variants (list images - center crop)
+        for size, filename in SIZES_1_1:
             resized = resize_image(img, size, crop_square=True)
-            filename = f"{size[0]}x{size[1]}.webp"
             temp_path = IMAGES_DIR / f"temp_{filename}"
             resized.save(temp_path, 'WEBP', quality=85)
-            variants[size] = temp_path
+            variants[filename] = temp_path
 
     return variants
 
@@ -169,8 +163,8 @@ def process_single_image(png_path: Path) -> bool:
         print(f"  Article not found for image: {filename}")
         return False
 
-    slug = article['slug']
-    print(f"  Found article ID: {article['id']}, slug: {slug}")
+    article_id = article['id']
+    print(f"  Found article ID: {article_id}")
 
     # Process image into variants
     print("  Creating image variants...")
@@ -181,29 +175,42 @@ def process_single_image(png_path: Path) -> bool:
     print("  Uploading to Supabase Storage...")
     image_urls = {}
 
-    for size, temp_path in variants.items():
-        storage_path = f"articles/{slug}/{size[0]}x{size[1]}.webp"
+    for filename, temp_path in variants.items():
+        storage_path = f"articles/{article_id}/{filename}"
         try:
             public_url = upload_to_storage(temp_path, storage_path)
 
-            # Check if this size maps to a database column
-            if size in DB_COLUMN_MAPPING:
-                column = DB_COLUMN_MAPPING[size]
+            # Check if this filename maps to a database column
+            if filename in DB_COLUMN_MAPPING:
+                column = DB_COLUMN_MAPPING[filename]
                 image_urls[column] = public_url
-                print(f"    Uploaded {size[0]}x{size[1]} → {column}")
+                print(f"    Uploaded {filename} → {column}")
             else:
-                print(f"    Uploaded {size[0]}x{size[1]}")
+                print(f"    Uploaded {filename}")
         except Exception as e:
-            print(f"    Error uploading {size[0]}x{size[1]}: {e}")
+            print(f"    Error uploading {filename}: {e}")
 
-    # Update database
+    # Update database with image URLs
     if image_urls:
-        print("  Updating database...")
-        if update_article_images(article['id'], image_urls):
+        print("  Updating database with image URLs...")
+        if update_article_images(article_id, image_urls):
             print(f"  Updated {len(image_urls)} image columns")
         else:
             print("  Failed to update database")
             return False
+
+    # Set published_at to publish the article
+    print("  Setting published_at timestamp...")
+    now = datetime.now(timezone.utc).isoformat()
+
+    try:
+        supabase.table("articles").update({
+            "published_at": now
+        }).eq("id", article_id).execute()
+        print(f"  Article published at: {now}")
+    except Exception as e:
+        print(f"  Error setting published_at: {e}")
+        return False
 
     # Cleanup
     print("  Cleaning up local files...")
