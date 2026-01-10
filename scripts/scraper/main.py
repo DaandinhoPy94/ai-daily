@@ -6,6 +6,7 @@ Scrapes articles from NOS.nl/nieuws/tech and stores them in Supabase.
 
 import os
 import time
+from typing import Optional
 import requests
 from bs4 import BeautifulSoup
 from supabase import create_client, Client
@@ -53,7 +54,7 @@ def get_article_links() -> list:
         return []
 
 
-def extract_article_content(url: str) -> dict | None:
+def extract_article_content(url: str) -> Optional[dict]:
     """Extract title and content from an article URL using trafilatura."""
     try:
         downloaded = trafilatura.fetch_url(url)

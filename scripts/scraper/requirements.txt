@@ -3,3 +3,4 @@ trafilatura
 beautifulsoup4
 python-dotenv
 requests
+lxml_html_clean
