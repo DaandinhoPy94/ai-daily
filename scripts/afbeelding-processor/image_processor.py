@@ -22,7 +22,7 @@ supabase: Client = create_client(SUPABASE_URL, SUPABASE_SERVICE_KEY)
 
 # Directories
 SCRIPT_DIR = Path(__file__).parent
-IMAGES_DIR = SCRIPT_DIR / "afbeeldingen"
+IMAGES_DIR = SCRIPT_DIR.parent / "afbeelding-generator" / "afbeeldingen"
 
 # Storage bucket
 BUCKET_NAME = "media"
