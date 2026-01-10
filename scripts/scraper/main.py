@@ -5,6 +5,7 @@ Scrapes tech news articles from multiple sources and stores them in Supabase.
 """
 
 import os
+import re
 import time
 from typing import Optional
 import requests
@@ -35,7 +36,7 @@ SOURCES = [
     {
         "name": "guardian",
         "url": "https://www.theguardian.com/uk/technology",
-        "link_pattern": "/technology/",
+        "link_pattern": r"/technology/\d{4}/",  # Alleen artikelen met jaar (geen topic pagina's)
         "base_url": "https://www.theguardian.com",
     },
 ]
@@ -62,8 +63,8 @@ def get_article_links(source: dict) -> list:
         for a_tag in soup.find_all("a", href=True):
             href = a_tag["href"]
 
-            # Check if link matches the pattern for this source
-            if source["link_pattern"] in href:
+            # Check if link matches the pattern for this source (supports regex)
+            if re.search(source["link_pattern"], href):
                 # Build full URL
                 if href.startswith("http"):
                     full_url = href
