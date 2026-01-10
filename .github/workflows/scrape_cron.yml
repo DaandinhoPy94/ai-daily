@@ -42,9 +42,12 @@ jobs:
         run: python scripts/tekstverwerker/processor.py
 
       # Step 3: Image Generator
+      - name: Install image generator dependencies
+        run: pip install -r scripts/afbeelding-generator/requirements.txt
+
       - name: Run image generator
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-        run: python scripts/tekstverwerker/image_generator.py
+        run: python scripts/afbeelding-generator/image_generator.py

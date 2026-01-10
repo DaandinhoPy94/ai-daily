@@ -68,7 +68,7 @@ def generate_thumbnail(title: str, summary: str) -> str:
     else:
         summary_text = str(summary)
 
-    prompt = f"Make a clickbate thumpnail for a news website, given the following title: '{title}' and summary: '{summary_text}'"
+    prompt = f"Make a clickbate thumpnail for a news website, given the following title: '{title}' and summary: '{summary_text}' USE NO TEXT IN IMAGE!"
 
     print(f"  Generating image with prompt: {prompt[:100]}...")
 
