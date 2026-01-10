@@ -16,11 +16,12 @@ scripts/
 │   ├── processor.py
 │   ├── requirements.txt
 │   └── .env
-└── afbeelding-generator/ # Stap 3: AI thumbnail generator
+└── afbeelding-generator/ # Stap 3 & 4: AI thumbnails + processing
     ├── image_generator.py
+    ├── image_processor.py
     ├── requirements.txt
     ├── .env
-    └── afbeeldingen/     # Gegenereerde thumbnails
+    └── afbeeldingen/     # Tijdelijke opslag
 ```
 
 ---
@@ -36,6 +37,9 @@ scripts/
                 ↓
 3. AFBEELDING-GENERATOR
    articles → OpenAI Images → afbeeldingen/*.png
+                ↓
+4. IMAGE-PROCESSOR
+   *.png → Pillow → 13 webp varianten → Supabase Storage
 ```
 
 ---
@@ -92,11 +96,57 @@ Het script selecteert automatisch een passend topic uit 30+ categorieën (AI, Bi
 - Genereert clickbait thumbnail met OpenAI Images API
 - Model: gpt-image-1, quality: medium
 - Prompt: titel + summary + "USE NO TEXT IN IMAGE!"
-- Slaat op als slugified bestandsnaam
+- Slaat op als slugified bestandsnaam in `afbeeldingen/`
 
 ### Bestandsnaam
 Titel wordt omgezet naar veilige bestandsnaam:
 - "AI revolutie in 2026!" → `ai-revolutie-in-2026.png`
+
+---
+
+## 4. Image Processor (`/scripts/afbeelding-generator`)
+
+### Wat doet het?
+- Scant PNG bestanden in `afbeeldingen/`
+- Vindt artikel via `image_standard` veld
+- Genereert 13 webp varianten met Pillow (quality 85)
+- Upload naar Supabase Storage (`media/articles/[slug]/`)
+- Update database met 5 hoofd-URLs
+- Verwijdert lokale bestanden na upload
+
+### Gegenereerde formaten
+
+**16:9 Ladder:**
+| Resolutie | Database kolom |
+|-----------|----------------|
+| 1280×720 | `image_large` |
+| 1024×576 | `image_standard` |
+| 768×432 | `image_tablet` |
+| 480×270 | `image_mobile` |
+| 640×360 | - |
+| 320×180 | - |
+
+**1:1 Ladder (center crop):**
+| Resolutie | Database kolom |
+|-----------|----------------|
+| 384×384 | `image_list` |
+| 1024×1024 | - |
+| 768×768 | - |
+| 512×512 | - |
+| 256×256 | - |
+| 128×128 | - |
+| 64×64 | - |
+
+### Storage structuur
+```
+media/
+└── articles/
+    └── [slug]/
+        ├── 1280x720.webp
+        ├── 1024x576.webp
+        ├── ...
+        └── 64x64.webp
+```
 
 ---
 
@@ -120,6 +170,9 @@ cd scripts/afbeelding-generator
 python -m venv venv && source venv/bin/activate
 pip install -r requirements.txt
 python image_generator.py
+
+# Stap 4: Image processor
+python image_processor.py
 ```
 
 ---
@@ -130,6 +183,7 @@ python image_generator.py
 - **Tabellen**:
   - `article_websites`: ruwe gescrapete artikelen
   - `articles`: verwerkte artikelen voor publicatie
+- **Storage Bucket**: `media`
 
 ---
 
@@ -144,4 +198,5 @@ Workflow: `.github/workflows/scrape_cron.yml`
 ### Pipeline volgorde:
 1. Install + Run scraper
 2. Install + Run tekstverwerker
-3. Install + Run afbeelding-generator
+3. Install + Run image_generator
+4. Run image_processor
