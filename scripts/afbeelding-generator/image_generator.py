@@ -75,7 +75,7 @@ def generate_thumbnail(title: str, summary: str) -> str:
     response = openai_client.images.generate(
         model="gpt-image-1",
         prompt=prompt,
-        size="1024x1024",
+        size="1792x1024",  # Landscape 16:9 formaat
         quality="medium",
         n=1,
     )
