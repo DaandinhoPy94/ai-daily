@@ -74,7 +74,7 @@ BELANGRIJKE REGELS:
 GENEREER DE VOLGENDE VELDEN (JSON formaat):
 
 1. title: Pakkende krantenkop (max 80 karakters)
-2. summary: Array van exact 3 bullet points die de kern samenvatten
+2. summary: Een enkele string van platte tekst. Genereer exact 3 krachtige zinnen en zet deze direct achter elkaar in één tekstblok. Gebruik GEEN lijst-notatie, GEEN bullets en GEEN blokhaken []
 3. body: Volledig artikel in HTML met <p> tags
 4. read_time_minutes: Geschatte leestijd in hele minuten (integer)
 5. seo_title: SEO-geoptimaliseerde titel (max 60 karakters)
@@ -120,7 +120,7 @@ def save_processed_article(ai_data: dict) -> bool:
     # Build the article record
     article = {
         "title": ai_data.get("title", ""),
-        "summary": ai_data.get("summary", []),
+        "summary": ai_data.get("summary", ""),
         "body": ai_data.get("body", ""),
         "read_time_minutes": ai_data.get("read_time_minutes", 5),
         "seo_title": ai_data.get("seo_title", ""),
