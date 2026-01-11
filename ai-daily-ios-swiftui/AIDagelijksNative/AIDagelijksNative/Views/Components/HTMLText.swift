@@ -3,7 +3,8 @@ import SwiftUI
 struct HTMLText: UIViewRepresentable {
     let html: String
     let width: CGFloat
-    
+    @Environment(\.colorScheme) var colorScheme
+
     func makeUIView(context: Context) -> UILabel {
         let label = UILabel()
         label.numberOfLines = 0
@@ -11,10 +12,13 @@ struct HTMLText: UIViewRepresentable {
         label.preferredMaxLayoutWidth = width
         return label
     }
-    
+
     func updateUIView(_ uiView: UILabel, context: Context) {
         uiView.preferredMaxLayoutWidth = width
-        
+
+        // Dynamic text color based on color scheme
+        let textColor = colorScheme == .dark ? "#FFFFFF" : "#000000"
+
         // Wrap HTML in basic styling to match app theme
         let styledHTML = """
         <style>
@@ -22,7 +26,7 @@ struct HTMLText: UIViewRepresentable {
                 font-family: -apple-system, system-ui;
                 font-size: 17px;
                 line-height: 1.6;
-                color: #000000;
+                color: \(textColor);
                 word-wrap: break-word;
                 overflow-wrap: break-word;
             }
@@ -36,7 +40,7 @@ struct HTMLText: UIViewRepresentable {
         </style>
         <body>\(html)</body>
         """
-        
+
         if let data = styledHTML.data(using: .utf8) {
             DispatchQueue.main.async {
                 if let attributedString = try? NSAttributedString(

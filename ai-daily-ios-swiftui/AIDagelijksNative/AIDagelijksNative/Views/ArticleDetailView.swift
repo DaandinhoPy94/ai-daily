@@ -34,44 +34,64 @@ struct ArticleDetailView: View {
                     
                     VStack(alignment: .leading, spacing: 24) {
                         // Header Info
-                        VStack(alignment: .leading, spacing: 16) {
+                        VStack(alignment: .leading, spacing: 12) {
+                            // Datum links, Topic rechts
                             HStack {
+                                // Links: Datum format "11 jan 2026 • 10:58"
+                                if let date = article.publishedAt {
+                                    Text(formatPublishedDate(date))
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                }
+
+                                Spacer()
+
+                                // Rechts: Topic naam
                                 if let topic = article.topicName {
                                     Text(topic)
                                         .font(.subheadline)
                                         .fontWeight(.semibold)
                                         .foregroundStyle(Color.brandTeal)
                                 }
-                                
-                                Spacer()
-                                
-                                Text(article.timeAgo)
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
                             }
-                            
+                            .padding(.top, 20)
+                            .padding(.bottom, 4)
+
                             Text(article.title)
                                 .font(.title)
                                 .fontWeight(.bold)
                                 .foregroundStyle(.primary)
                                 .lineSpacing(4)
-                                .fixedSize(horizontal: false, vertical: true) // Ensure text wraps
-                            
+                                .fixedSize(horizontal: false, vertical: true)
+
+                            // Auteur links, Leestijd rechts
                             if let author = viewModel.currentArticle?.author {
                                 HStack(spacing: 12) {
-                                    if let avatarURL = author.avatarURL, let url = URL(string: avatarURL) {
-                                        AsyncImage(url: url) { image in
-                                            image.resizable().scaledToFill()
-                                        } placeholder: {
-                                            Color.gray.opacity(0.3)
+                                    // Auteur
+                                    HStack(spacing: 8) {
+                                        if let avatarURL = author.avatarURL, let url = URL(string: avatarURL) {
+                                            AsyncImage(url: url) { image in
+                                                image.resizable().scaledToFill()
+                                            } placeholder: {
+                                                Color.gray.opacity(0.3)
+                                            }
+                                            .frame(width: 40, height: 40)
+                                            .clipShape(Circle())
                                         }
-                                        .frame(width: 40, height: 40)
-                                        .clipShape(Circle())
+
+                                        Text("Door \(author.name)")
+                                            .font(.subheadline)
+                                            .foregroundStyle(.secondary)
                                     }
-                                    
-                                    Text("Door \(author.name)")
-                                        .font(.subheadline)
-                                        .foregroundStyle(.secondary)
+
+                                    Spacer()
+
+                                    // Leestijd rechts
+                                    if let minutes = viewModel.currentArticle?.readTimeMinutes {
+                                        Text("\(minutes) min leestijd")
+                                            .font(.subheadline)
+                                            .foregroundStyle(.secondary)
+                                    }
                                 }
                             }
                         }
@@ -82,18 +102,21 @@ struct ArticleDetailView: View {
                                 Text("In het kort")
                                     .font(.headline)
                                     .fontWeight(.bold)
-                                
-                                // Simulating bullet points since we only have a summary string
-                                HStack(alignment: .top, spacing: 12) {
-                                    Circle()
-                                        .fill(Color.brandTeal)
-                                        .frame(width: 6, height: 6)
-                                        .padding(.top, 8)
-                                    
-                                    Text(summary)
-                                        .font(.body)
-                                        .lineSpacing(6)
-                                        .fixedSize(horizontal: false, vertical: true)
+
+                                // Split summary on newlines and render each as bullet point
+                                let summaryLines = summary.components(separatedBy: "\n").filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
+                                ForEach(Array(summaryLines.enumerated()), id: \.offset) { _, line in
+                                    HStack(alignment: .top, spacing: 12) {
+                                        Circle()
+                                            .fill(Color.brandTeal)
+                                            .frame(width: 6, height: 6)
+                                            .padding(.top, 8)
+
+                                        Text(line)
+                                            .font(.body)
+                                            .lineSpacing(6)
+                                            .fixedSize(horizontal: false, vertical: true)
+                                    }
                                 }
                             }
                             .padding(20)
@@ -284,6 +307,19 @@ struct ArticleDetailView: View {
                 }
             }
         }
+    }
+
+    // Format date as "11 jan 2026 • 10:58"
+    private func formatPublishedDate(_ date: Date) -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = Locale(identifier: "nl_NL")
+        dateFormatter.dateFormat = "d MMM yyyy"
+
+        let timeFormatter = DateFormatter()
+        timeFormatter.locale = Locale(identifier: "nl_NL")
+        timeFormatter.dateFormat = "HH:mm"
+
+        return "\(dateFormatter.string(from: date)) • \(timeFormatter.string(from: date))"
     }
 }
 
