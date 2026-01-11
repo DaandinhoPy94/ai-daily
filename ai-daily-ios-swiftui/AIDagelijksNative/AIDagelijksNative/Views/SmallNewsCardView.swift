@@ -40,9 +40,6 @@ struct SmallNewsCardView: View {
                     }
                     
                     if !article.readTimeDisplay.isEmpty {
-                        Circle()
-                            .fill(.tertiary)
-                            .frame(width: 3, height: 3)
                         Text(article.readTimeDisplay)
                             .font(.system(size: 11))
                             .foregroundStyle(.secondary)

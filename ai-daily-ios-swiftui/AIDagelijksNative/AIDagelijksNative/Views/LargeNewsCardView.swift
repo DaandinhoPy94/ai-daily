@@ -29,7 +29,7 @@ struct LargeNewsCardView: View {
                 }
             }
             .frame(height: 220)
-            .clipped()
+            .clipShape(RoundedRectangle(cornerRadius: 20))
 
             // Content
             VStack(alignment: .leading, spacing: 8) {
