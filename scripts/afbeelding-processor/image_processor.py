@@ -79,10 +79,35 @@ def center_crop_square(img: Image.Image) -> Image.Image:
     return img.crop((left, top, right, bottom))
 
 
-def resize_image(img: Image.Image, size: tuple, crop_square: bool = False) -> Image.Image:
-    """Resize image to specified size."""
+def center_crop_16_9(img: Image.Image) -> Image.Image:
+    """Crop image to 16:9 aspect ratio from center."""
+    width, height = img.size
+    target_ratio = 16 / 9
+
+    current_ratio = width / height
+
+    if abs(current_ratio - target_ratio) < 0.01:
+        # Already 16:9, no crop needed
+        return img
+
+    if current_ratio > target_ratio:
+        # Image is wider than 16:9, crop width
+        new_width = int(height * target_ratio)
+        left = (width - new_width) // 2
+        return img.crop((left, 0, left + new_width, height))
+    else:
+        # Image is taller than 16:9, crop height
+        new_height = int(width / target_ratio)
+        top = (height - new_height) // 2
+        return img.crop((0, top, width, top + new_height))
+
+
+def resize_image(img: Image.Image, size: tuple, crop_square: bool = False, crop_16_9: bool = False) -> Image.Image:
+    """Resize image to specified size with optional cropping."""
     if crop_square:
         img = center_crop_square(img)
+    elif crop_16_9:
+        img = center_crop_16_9(img)
     return img.resize(size, Image.Resampling.LANCZOS)
 
 
@@ -95,14 +120,19 @@ def process_image(png_path: Path) -> dict:
         if img.mode in ('RGBA', 'P'):
             img = img.convert('RGB')
 
+        # Log input dimensions
+        width, height = img.size
+        print(f"  Input image: {width}x{height} (ratio: {width/height:.2f})")
+
         # Generate 16:9 variants (hero images)
+        # First crop to 16:9 if needed, then resize
         for size, filename in SIZES_16_9:
-            resized = resize_image(img, size, crop_square=False)
+            resized = resize_image(img, size, crop_16_9=True)
             temp_path = IMAGES_DIR / f"temp_{filename}"
             resized.save(temp_path, 'WEBP', quality=85)
             variants[filename] = temp_path
 
-        # Generate 1:1 variants (list images - center crop)
+        # Generate 1:1 variants (list images - center crop from original)
         for size, filename in SIZES_1_1:
             resized = resize_image(img, size, crop_square=True)
             temp_path = IMAGES_DIR / f"temp_{filename}"
