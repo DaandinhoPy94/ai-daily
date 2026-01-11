@@ -149,13 +149,37 @@ struct ContentView: View {
                                 }
                                 .buttonStyle(PlainButtonStyle())
                             }
-                            
-                            // Rest Small Cards
-                            ForEach(viewModel.latestArticles.dropFirst(2)) { article in
+
+                            // Next 10 Small Cards (limited from unlimited)
+                            ForEach(viewModel.latestArticles.dropFirst(2).prefix(10)) { article in
                                 NavigationLink(value: article) {
                                     SmallNewsCardView(article: article)
                                 }
                                 .buttonStyle(PlainButtonStyle())
+                            }
+
+                            // Topic Sections
+                            ForEach(viewModel.mainTopics) { topic in
+                                VStack(alignment: .leading, spacing: 12) {
+                                    // Topic Header
+                                    Text(topic.name)
+                                        .font(.system(size: 22, weight: .bold))
+                                        .padding(.top, 16)
+
+                                    // 4 Articles for this topic
+                                    if let articles = viewModel.articlesByTopic[topic.slug] {
+                                        ForEach(articles.prefix(4)) { article in
+                                            NavigationLink(value: article) {
+                                                SmallNewsCardView(article: article)
+                                            }
+                                            .buttonStyle(PlainButtonStyle())
+                                        }
+                                    }
+
+                                    // Divider between topics
+                                    Divider()
+                                        .padding(.top, 8)
+                                }
                             }
                         }
                         .padding(.horizontal, 16)

@@ -116,6 +116,8 @@ class NewsViewModel: ObservableObject {
     @Published var relatedArticles: [Article] = []
     @Published var comments: [Comment] = []
     @Published var topics: [Topic] = []
+    @Published var mainTopics: [Topic] = []
+    @Published var articlesByTopic: [String: [Article]] = [:]
     @Published var topicArticles: [Article] = []
     @Published var isLoading = false
     @Published var error: String?
@@ -423,6 +425,61 @@ class NewsViewModel: ObservableObject {
         }
     }
 
+    // MARK: - Fetch Main Topics (type='main')
+
+    func fetchMainTopics() async {
+        do {
+            let topics: [Topic] = try await client.fetch(
+                from: "topics",
+                select: "id, name, slug, type, parent_slug, display_order",
+                filters: ["type": "eq.main"],
+                order: "display_order.asc"
+            )
+            self.mainTopics = topics
+        } catch {
+            print("[NewsViewModel] Error fetching main topics: \(error)")
+        }
+    }
+
+    // MARK: - Fetch Articles for All Main Topics
+
+    func fetchArticlesForMainTopics() async {
+        guard !mainTopics.isEmpty else { return }
+
+        for topic in mainTopics {
+            do {
+                let articles: [LatestArticleResponse] = try await client.fetch(
+                    from: "v_latest_published",
+                    select: "*",
+                    filters: ["topic_slug": "eq.\(topic.slug)"],
+                    limit: 4
+                )
+
+                let mappedArticles = articles.map { response in
+                    Article(
+                        id: response.id,
+                        slug: response.slug,
+                        title: response.title,
+                        summary: response.summary,
+                        body: nil,
+                        publishedAt: response.publishedAt,
+                        readTimeMinutes: response.readTimeMinutes,
+                        imagePath: response.imagePath,
+                        imageAlt: response.imageAlt,
+                        topicName: response.topicName,
+                        topicSlug: response.topicSlug,
+                        author: nil,
+                        topics: nil
+                    )
+                }
+
+                self.articlesByTopic[topic.slug] = mappedArticles
+            } catch {
+                print("[NewsViewModel] Error fetching articles for topic \(topic.slug): \(error)")
+            }
+        }
+    }
+
     // MARK: - Fetch Articles for Topic
 
     func fetchArticles(forTopic topic: Topic) async {
@@ -511,6 +568,9 @@ class NewsViewModel: ObservableObject {
         await withTaskGroup(of: Void.self) { group in
             group.addTask { await self.fetchLatestArticles() }
             group.addTask { await self.fetchMostRead() }
+            group.addTask { await self.fetchMainTopics() }
         }
+        // After main topics are fetched, fetch articles for each topic
+        await fetchArticlesForMainTopics()
     }
 }
