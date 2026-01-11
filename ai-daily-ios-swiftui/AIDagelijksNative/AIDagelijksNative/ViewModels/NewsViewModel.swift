@@ -58,7 +58,7 @@ struct Article: Identifiable, Codable, Hashable {
     // Reading time display
     var readTimeDisplay: String {
         guard let minutes = readTimeMinutes else { return "" }
-        return "\(minutes) min"
+        return "\(minutes) min leestijd"
     }
 }
 
