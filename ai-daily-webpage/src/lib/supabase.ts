@@ -24,10 +24,11 @@ export async function getHomepageSlots() {
       .order('display_order', { ascending: true })
       .order('item_order', { ascending: true });
     if (error) throw error;
-    
+
     // Map the fields to consistent naming
     return data?.map((item: any) => ({
       ...item,
+      id: item.article_id, // Map article_id to id for NewsCard compatibility
       article_id: item.article_id,
       media_asset_url: item.image_path,
       media_asset_alt: item.image_alt,
