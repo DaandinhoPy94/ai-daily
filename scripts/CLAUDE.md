@@ -103,6 +103,7 @@ Het script selecteert automatisch een passend topic uit 30+ categorieën (AI, Bi
 - Haalt artikelen op waar `image_standard IS NULL`
 - Genereert clickbait thumbnail met OpenAI Images API
 - Model: gpt-image-1, quality: medium
+- **Formaat: 1792×1024 (landscape 16:9)**
 - Prompt: titel + summary + "USE NO TEXT IN IMAGE!"
 - Slaat op als slugified bestandsnaam in `afbeeldingen/`
 
@@ -122,6 +123,20 @@ Titel wordt omgezet naar veilige bestandsnaam:
 - Update database met 5 image URLs
 - Zet `published_at` timestamp (artikel gaat live)
 - Verwijdert lokale bestanden na upload
+
+### Aspect Ratio Handling
+
+**Input:** 1792×1024 PNG (landscape 16:9) van image generator
+
+**16:9 Flow (hero images):**
+- Input is al 16:9, crop naar exact 16:9 indien nodig (`center_crop_16_9()`)
+- Direct resize naar doelformaten
+- Geen uitrekking of vervorming
+
+**1:1 Flow (list images):**
+1. Center crop naar vierkant (1024×1024 uit 1792×1024)
+2. Resize naar 1:1 ladder
+3. Voorkomt "platgedrukte" thumbnails
 
 ### Gegenereerde formaten
 
