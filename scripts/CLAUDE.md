@@ -26,8 +26,7 @@ scripts/
     ├── image_processor.py
     ├── requirements.txt
     ├── .env
-    ├── .gitignore
-    └── afbeeldingen/     # Lokale cache
+    └── .gitignore
 ```
 
 ---
@@ -45,7 +44,7 @@ scripts/
    articles → OpenAI Images → afbeeldingen/*.png
                 ↓
 4. IMAGE-PROCESSOR
-   *.png → Pillow → 13 webp varianten → Supabase Storage
+   *.png → Pillow → 7 webp varianten → Supabase Storage → published_at
 ```
 
 ---
@@ -86,9 +85,12 @@ Open `scripts/scraper/main.py` en voeg toe aan `SOURCES`:
 ### Wat doet het?
 - Haalt artikelen op met `status='new'` uit `article_websites`
 - Verwerkt tekst met OpenAI (gpt-4o-mini)
-- Genereert: title, summary, body, SEO velden, topic
+- Genereert: title, summary (3 zinnen als platte tekst), body, SEO velden, topic
 - Slaat op in `articles` tabel
 - Update status naar 'processed'
+
+### Summary formaat
+De summary is een enkele string van platte tekst met exact 3 krachtige zinnen. Geen lijst-notatie, geen bullets, geen blokhaken.
 
 ### Topics
 Het script selecteert automatisch een passend topic uit 30+ categorieën (AI, Big Tech, Europa, etc.)
@@ -113,45 +115,43 @@ Titel wordt omgezet naar veilige bestandsnaam:
 ## 4. Image Processor (`/scripts/afbeelding-processor`)
 
 ### Wat doet het?
-- Scant PNG bestanden in `afbeeldingen/`
-- Vindt artikel via `image_standard` veld
-- Genereert 13 webp varianten met Pillow (quality 85)
-- Upload naar Supabase Storage (`media/articles/[slug]/`)
-- Update database met 5 hoofd-URLs
+- Leest PNG bestanden uit `/afbeelding-generator/afbeeldingen/`
+- Vindt artikel via `image_standard` veld (bestandsnaam = slug)
+- Genereert 7 webp varianten met Pillow (quality 85)
+- Upload naar Supabase Storage (`media/articles/[UUID]/`)
+- Update database met 5 image URLs
+- Zet `published_at` timestamp (artikel gaat live)
 - Verwijdert lokale bestanden na upload
 
 ### Gegenereerde formaten
 
-**16:9 Ladder:**
-| Resolutie | Database kolom |
-|-----------|----------------|
-| 1280×720 | `image_large` |
-| 1024×576 | `image_standard` |
-| 768×432 | `image_tablet` |
-| 480×270 | `image_mobile` |
-| 640×360 | - |
-| 320×180 | - |
+**16:9 Ladder (hero images):**
+| Resolutie | Bestandsnaam | Database kolom |
+|-----------|--------------|----------------|
+| 1280×720 | hero_1600.webp | `image_large` |
+| 1024×576 | hero_1200.webp | `image_standard` |
+| 768×432 | hero_800.webp | `image_tablet` |
+| 480×270 | hero_400.webp | `image_mobile` |
 
-**1:1 Ladder (center crop):**
-| Resolutie | Database kolom |
-|-----------|----------------|
-| 384×384 | `image_list` |
-| 1024×1024 | - |
-| 768×768 | - |
-| 512×512 | - |
-| 256×256 | - |
-| 128×128 | - |
-| 64×64 | - |
+**1:1 Ladder (center crop, list images):**
+| Resolutie | Bestandsnaam | Database kolom |
+|-----------|--------------|----------------|
+| 384×384 | list_320.webp | `image_list` |
+| 512×512 | list_480.webp | - |
+| 768×768 | list_600.webp | - |
 
 ### Storage structuur
 ```
 media/
 └── articles/
-    └── [slug]/
-        ├── 1280x720.webp
-        ├── 1024x576.webp
-        ├── ...
-        └── 64x64.webp
+    └── [UUID]/
+        ├── hero_1600.webp
+        ├── hero_1200.webp
+        ├── hero_800.webp
+        ├── hero_400.webp
+        ├── list_320.webp
+        ├── list_480.webp
+        └── list_600.webp
 ```
 
 ---
